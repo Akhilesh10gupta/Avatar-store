@@ -1,69 +1,155 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from './ui/Button';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowRight, Sparkles, Gamepad2, Plus } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
+import { Game } from '@/lib/firestore';
+import { getOptimizedImage } from '@/lib/cloudinary';
+import { cn } from '@/lib/utils';
 
-const Hero = () => {
+interface HeroProps {
+    games: Game[];
+}
+
+const Hero = ({ games }: HeroProps) => {
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+
+    // Filter games to ensure we have content, or use a fallback if empty
+    const heroGames = games.length > 0 ? games.slice(0, 5) : [];
+
+    useEffect(() => {
+        if (!isAutoPlaying || heroGames.length === 0) return;
+
+        const timer = setInterval(() => {
+            setCurrentIndex((prev) => (prev + 1) % heroGames.length);
+        }, 5000);
+
+        return () => clearInterval(timer);
+    }, [isAutoPlaying, heroGames.length]);
+
+    if (heroGames.length === 0) return null;
+
+    const activeGame = heroGames[currentIndex];
+
+    // Helper to handle manual selection
+    const handleSelect = (index: number) => {
+        setCurrentIndex(index);
+        setIsAutoPlaying(false); // Pause auto-play on interaction
+        // Resume auto-play after 10s of inactivity if desired, or keep it paused
+        setTimeout(() => setIsAutoPlaying(true), 10000);
+    };
+
     return (
-        <section className="relative h-[500px] md:h-[600px] w-full overflow-hidden rounded-3xl my-8">
-            {/* Background Image */}
-            <div className="absolute inset-0">
-                <Image
-                    src="https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=2071&auto=format&fit=crop"
-                    alt="Hero Background"
-                    fill
-                    className="object-cover"
-                    priority
-                />
-                <div className="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-transparent" />
-                <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
-            </div>
-
-            {/* Content */}
-            <div className="relative h-full flex items-center px-8 md:px-16">
-                <div className="max-w-2xl space-y-6">
+        <section className="grid grid-cols-1 lg:grid-cols-4 gap-6 h-[600px] w-full my-8">
+            {/* Main Stage (3 cols) */}
+            <div className="lg:col-span-3 relative rounded-3xl overflow-hidden group">
+                <AnimatePresence mode="wait">
                     <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5 }}
+                        key={activeGame.id}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.7 }}
+                        className="absolute inset-0"
                     >
-                        <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/20 text-primary text-sm font-medium mb-4 border border-primary/20">
-                            <Sparkles className="w-4 h-4" />
-                            New Arrivals
-                        </span>
-                        <h1 className="text-4xl md:text-6xl font-bold leading-tight tracking-tight">
-                            Discover Your <br />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-400">
-                                Next Adventure
-                            </span>
-                        </h1>
+                        {/* Background Image */}
+                        <Image
+                            src={getOptimizedImage(activeGame.coverImage, 1200, 800)}
+                            alt={activeGame.title}
+                            fill
+                            className="object-cover"
+                            priority
+                        />
+                        {/* Gradients */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
+                        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/40 to-transparent" />
                     </motion.div>
+                </AnimatePresence>
 
-                    <motion.p
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5, delay: 0.2 }}
-                        className="text-lg text-muted-foreground md:pr-12"
-                    >
-                        Explore a vast library of premium games. From indie gems to AAA masterpieces, find it all here.
-                    </motion.p>
-
+                {/* Content Overlay */}
+                <div className="absolute bottom-0 left-0 p-8 md:p-12 max-w-2xl flex flex-col items-start gap-4 z-10">
                     <motion.div
+                        key={`content-${activeGame.id}`}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5, delay: 0.4 }}
-                        className="flex flex-wrap gap-4"
+                        transition={{ delay: 0.2, duration: 0.5 }}
                     >
-                        <Button size="lg" className="rounded-full">
-                            Browse Games <ArrowRight className="ml-2 w-5 h-5" />
-                        </Button>
-                        <Button size="lg" variant="outline" className="rounded-full bg-background/50 backdrop-blur-sm border-white/10 hover:bg-white/10">
-                            View Collections
-                        </Button>
+                        {/* Logo or Title */}
+                        <h2 className="text-4xl md:text-5xl font-bold mb-4 leading-tight drop-shadow-lg text-white">
+                            {activeGame.title}
+                        </h2>
+
+                        <div className="flex flex-wrap gap-3 mb-6">
+                            <span className="px-3 py-1 rounded bg-secondary/80 backdrop-blur-md text-secondary-foreground text-sm font-medium">
+                                {activeGame.genre}
+                            </span>
+                            <span className="px-3 py-1 rounded bg-primary/80 backdrop-blur-md text-primary-foreground text-sm font-medium">
+                                {activeGame.platform === 'Both' ? 'PC & Android' : activeGame.platform}
+                            </span>
+                        </div>
+
+                        <p className="text-lg text-white/90 line-clamp-2 md:line-clamp-3 mb-8 max-w-xl drop-shadow-md">
+                            {activeGame.description}
+                        </p>
+
+                        <div className="flex gap-4">
+                            <Link href={`/game/${activeGame.id}`}>
+                                <Button size="lg" className="rounded-xl px-8 py-6 text-lg font-semibold shadow-xl shadow-primary/20">
+                                    Download Now <ArrowRight className="ml-2 w-5 h-5" />
+                                </Button>
+                            </Link>
+                            <Button size="lg" variant="secondary" className="rounded-xl px-6 py-6 border border-white/10 bg-white/10 hover:bg-white/20 backdrop-blur text-white">
+                                <Plus className="w-5 h-5 mr-2" /> Add to Wishlist
+                            </Button>
+                        </div>
                     </motion.div>
                 </div>
+            </div>
+
+            {/* Right List (1 col) */}
+            <div className="hidden lg:flex flex-col gap-2 h-full overflow-y-auto pr-2 custom-scrollbar">
+                {heroGames.map((game, index) => (
+                    <button
+                        key={game.id}
+                        onClick={() => handleSelect(index)}
+                        className={cn(
+                            "relative flex items-center gap-4 p-3 rounded-xl transition-all duration-300 text-left group",
+                            currentIndex === index
+                                ? "bg-secondary shadow-lg scale-[1.02]"
+                                : "hover:bg-secondary/50 hover:pl-4 opacity-70 hover:opacity-100"
+                        )}
+                    >
+                        {/* Thumbnail */}
+                        <div className="relative w-12 h-16 rounded-lg overflow-hidden shrink-0 shadow-sm border border-white/5">
+                            <Image
+                                src={getOptimizedImage(game.coverImage, 200, 300)}
+                                alt={game.title}
+                                fill
+                                className="object-cover"
+                            />
+                        </div>
+
+                        {/* Title */}
+                        <span className={cn(
+                            "font-medium text-sm line-clamp-2",
+                            currentIndex === index ? "text-secondary-foreground" : "text-muted-foreground group-hover:text-foreground"
+                        )}>
+                            {game.title}
+                        </span>
+
+                        {/* Active Indicator (Epic style progress bar logic could go here, but keeping it simple for now) */}
+                        {currentIndex === index && (
+                            <motion.div
+                                layoutId="activeIndicator"
+                                className="absolute left-0 w-1 h-8 bg-primary rounded-r-full"
+                            />
+                        )}
+                    </button>
+                ))}
             </div>
         </section>
     );

@@ -77,7 +77,7 @@ export default async function Home() {
 
   return (
     <div className="flex flex-col gap-12 pb-16">
-      <Hero />
+      <Hero games={displayGames} />
 
       {/* Featured Games Section */}
       <section>
