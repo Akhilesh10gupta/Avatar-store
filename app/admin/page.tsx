@@ -45,7 +45,8 @@ export default function AdminDashboard() {
                 </Link>
             </div>
 
-            <div className="bg-card rounded-xl border border-border shadow-sm overflow-hidden">
+            {/* Desktop Table View */}
+            <div className="hidden md:block bg-card rounded-xl border border-border shadow-sm overflow-hidden">
                 <table className="w-full text-left text-sm">
                     <thead className="bg-secondary/50 border-b border-border">
                         <tr>
@@ -76,31 +77,72 @@ export default function AdminDashboard() {
                                     <div className="flex items-center justify-end gap-2">
                                         <Link href={`/game/${game.id}`} target="_blank">
                                             <Button size="sm" variant="ghost" title="View Page">
-                                                <ExternalLink className="w-3 h-3" />
+                                                <ExternalLink className="w-4 h-4" />
                                             </Button>
                                         </Link>
                                         <Link href={`/admin/edit/${game.id}`}>
                                             <Button size="sm" variant="secondary">
-                                                <Pencil className="w-3 h-3" />
+                                                <Pencil className="w-4 h-4" />
                                             </Button>
                                         </Link>
                                         <Button size="sm" variant="danger" onClick={() => handleDelete(game.id!, game.title)}>
-                                            <Trash2 className="w-3 h-3" />
+                                            <Trash2 className="w-4 h-4" />
                                         </Button>
                                     </div>
                                 </td>
                             </tr>
                         ))}
-                        {games.length === 0 && (
-                            <tr>
-                                <td colSpan={4} className="p-8 text-center text-muted-foreground">
-                                    No games found. Click "Add New Game" to start.
-                                </td>
-                            </tr>
-                        )}
                     </tbody>
                 </table>
             </div>
+
+            {/* Mobile Card View */}
+            <div className="md:hidden grid gap-4">
+                {games.map((game) => (
+                    <div key={game.id} className="bg-card p-4 rounded-xl border border-border shadow-sm space-y-4">
+                        <div className="flex items-start justify-between gap-4">
+                            <div className="flex items-center gap-3">
+                                <div className="relative w-12 h-12 rounded overflow-hidden bg-secondary shrink-0">
+                                    {game.icon ? (
+                                        <Image src={game.icon} alt={game.title} fill className="object-cover" />
+                                    ) : (
+                                        <div className="w-full h-full flex items-center justify-center text-xs">No Icon</div>
+                                    )}
+                                </div>
+                                <div>
+                                    <h3 className="font-bold text-foreground line-clamp-1">{game.title}</h3>
+                                    <div className="text-xs text-muted-foreground flex gap-2">
+                                        <span className="bg-secondary px-2 py-0.5 rounded">{game.genre}</span>
+                                        <span>{game.releaseDate}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center justify-end gap-2 pt-2 border-t border-border/50">
+                            <Link href={`/game/${game.id}`} target="_blank" className="flex-1">
+                                <Button size="sm" variant="outline" className="w-full text-xs h-8">
+                                    <ExternalLink className="w-3 h-3 mr-2" /> View
+                                </Button>
+                            </Link>
+                            <Link href={`/admin/edit/${game.id}`} className="flex-1">
+                                <Button size="sm" variant="secondary" className="w-full text-xs h-8">
+                                    <Pencil className="w-3 h-3 mr-2" /> Edit
+                                </Button>
+                            </Link>
+                            <Button size="sm" variant="danger" className="h-8 px-3" onClick={() => handleDelete(game.id!, game.title)}>
+                                <Trash2 className="w-3 h-3" />
+                            </Button>
+                        </div>
+                    </div>
+                ))}
+            </div>
+
+            {games.length === 0 && (
+                <div className="p-8 text-center text-muted-foreground bg-card rounded-xl border border-border mt-4">
+                    No games found. Click "Add New Game" to start.
+                </div>
+            )}
         </div>
     );
 }
