@@ -112,6 +112,16 @@ export default function GameForm({ initialData }: GameFormProps) {
                 screenshotUrls = [...screenshotUrls, ...newScreenshots];
             }
 
+            // Get current user ID
+            const { auth } = await import('@/lib/firebase'); // Dynamic import to avoid SSR issues if any, though regular import is fine too
+            const user = auth.currentUser;
+
+            if (!user) {
+                alert("You must be logged in to create a game.");
+                setLoading(false);
+                return;
+            }
+
             const gameData = {
                 ...formData,
                 coverImage: coverUrl,
@@ -120,6 +130,7 @@ export default function GameForm({ initialData }: GameFormProps) {
                 screenshots: screenshotUrls,
                 // Ensure legacy field is filled if needed, or rely on new fields
                 downloadLink: formData.downloadLinkPC || formData.downloadLinkAndroid || '',
+                userId: user.uid, // Save owner ID
             } as Game;
 
             if (initialData?.id) {

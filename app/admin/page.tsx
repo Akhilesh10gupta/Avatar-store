@@ -11,21 +11,34 @@ export default function AdminDashboard() {
     const [games, setGames] = useState<Game[]>([]);
     const [loading, setLoading] = useState(true);
 
-    const fetchGames = async () => {
-        setLoading(true);
-        const data = await getGames();
-        setGames(data);
-        setLoading(false);
-    };
-
     useEffect(() => {
-        fetchGames();
+        const loadUserGames = async () => {
+            const { auth } = await import('@/lib/firebase');
+            // Wait for auth to initialize if needed, or check currentUser
+            // A listener is safer for initial load
+            const unsubscribe = auth.onAuthStateChanged(async (user) => {
+                if (user) {
+                    const data = await import('@/lib/firestore').then(mod => mod.getUserGames(user.uid));
+                    setGames(data);
+                } else {
+                    // Handle unauthenticated state if necessary (middleware should handle this though)
+                    setGames([]);
+                }
+                setLoading(false);
+            });
+            return unsubscribe;
+        };
+
+        const cleanup = loadUserGames();
+        return () => { cleanup.then(unsub => unsub && unsub()); };
     }, []);
 
     const handleDelete = async (id: string, title: string) => {
         if (confirm(`Are you sure you want to delete "${title}"?`)) {
             await deleteGame(id);
-            fetchGames();
+            await deleteGame(id);
+            // Re-fetch or filter locally
+            setGames(prev => prev.filter(g => g.id !== id));
         }
     };
 

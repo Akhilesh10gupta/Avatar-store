@@ -9,7 +9,8 @@ import {
     query,
     orderBy,
     getDoc,
-    limit
+    limit,
+    where
 } from "firebase/firestore";
 
 // Define the interface for a Game
@@ -47,6 +48,7 @@ export interface Game {
     gameplayVideo?: string; // URL for gameplay video
     featured?: boolean;
     createdAt?: string;
+    userId?: string; // Owner of the game
 }
 
 const GAMES_COLLECTION = "games";
@@ -60,8 +62,20 @@ const docToGame = (doc: any): Game => {
     } as Game;
 };
 
+// Fetch all games (public view)
 export const getGames = async () => {
     const q = query(collection(db, GAMES_COLLECTION), orderBy("createdAt", "desc"));
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map(docToGame);
+};
+
+// Fetch only games belonging to a specific user (admin view)
+export const getUserGames = async (userId: string) => {
+    const q = query(
+        collection(db, GAMES_COLLECTION),
+        where("userId", "==", userId),
+        orderBy("createdAt", "desc")
+    );
     const querySnapshot = await getDocs(q);
     return querySnapshot.docs.map(docToGame);
 };
