@@ -84,7 +84,7 @@ export default function FeaturedGames({ games }: FeaturedGamesProps) {
                 <div
                     ref={scrollContainerRef}
                     onScroll={checkScroll}
-                    className="flex gap-4 overflow-x-auto pb-6 -mx-4 px-6 md:mx-0 md:px-2 md:pb-6 scrollbar-hide snap-x snap-mandatory scroll-smooth"
+                    className="flex gap-4 overflow-x-auto pb-6 md:mx-0 md:px-2 md:pb-6 scrollbar-hide snap-x snap-mandatory scroll-smooth"
                 >
                     {games.map((game) => (
                         <div key={game.id} className="min-w-[calc(50%-8px)] md:min-w-[calc(25%-12px)] snap-start relative">

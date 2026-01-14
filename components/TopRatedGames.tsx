@@ -94,7 +94,7 @@ export default function TopRatedGames({ games }: TopRatedGamesProps) {
                 <div
                     ref={scrollContainerRef}
                     onScroll={checkScroll}
-                    className="flex gap-4 overflow-x-auto pb-4 -mx-4 px-4 md:mx-0 md:px-0 scrollbar-hide snap-x snap-mandatory scroll-smooth"
+                    className="flex gap-4 overflow-x-auto pb-4 md:mx-0 md:px-0 scrollbar-hide snap-x snap-mandatory scroll-smooth"
                 >
                     {sortedGames.map((game, index) => (
                         <div key={game.id} className="min-w-[calc(50%-8px)] md:min-w-[calc(25%-12px)] snap-start relative">
