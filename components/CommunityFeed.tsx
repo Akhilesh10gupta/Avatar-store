@@ -94,11 +94,11 @@ export default function CommunityFeed() {
     }
 
     return (
-        <div className="max-w-2xl mx-auto space-y-8">
+        <div className="max-w-2xl mx-auto space-y-4">
 
 
             {/* Create Post Widget */}
-            <div className="bg-[#121212] border border-white/5 rounded-2xl p-6 shadow-xl">
+            <div className="bg-[#121212] border border-white/5 rounded-2xl p-4 md:p-6 shadow-xl">
                 {user ? (
                     <form onSubmit={handleCreatePost} className="space-y-4">
                         <div className="flex gap-4">
