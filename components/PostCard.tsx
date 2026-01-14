@@ -1,10 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Post, toggleLikePost } from '@/lib/firestore';
-import { User, onAuthStateChanged } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
-import { useEffect } from 'react';
+import { useAuth } from '@/components/AuthProvider';
 import { Heart, MessageCircle, UserCircle, Share2, MoreHorizontal } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import CommentSection from './CommentSection';
@@ -15,26 +13,19 @@ interface PostCardProps {
 }
 
 export default function PostCard({ post }: PostCardProps) {
-    const [user, setUser] = useState<User | null>(null);
+    const { user } = useAuth();
     const [isLiked, setIsLiked] = useState(false);
     const [likeCount, setLikeCount] = useState(post.likes.length);
     const [commentCount, setCommentCount] = useState(post.commentCount || 0);
     const [showComments, setShowComments] = useState(false);
 
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-            setUser(currentUser);
-            if (currentUser) {
-                setIsLiked(post.likes.includes(currentUser.uid));
-            }
-        });
-        return () => unsubscribe();
-    }, [post.likes]);
-
-    // Sync local state with prop when it updates (e.g. after repair)
-    useEffect(() => {
-        setCommentCount(post.commentCount || 0);
-    }, [post.commentCount]);
+        if (user) {
+            setIsLiked(post.likes.includes(user.uid));
+        } else {
+            setIsLiked(false);
+        }
+    }, [user, post.likes]);
 
     // Sync local state with prop when it updates (e.g. after repair)
     useEffect(() => {

@@ -1,13 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { User, onAuthStateChanged } from 'firebase/auth';
+import { useAuth } from '@/components/AuthProvider';
 import { auth } from '@/lib/firebase';
 import { addComment, getPostComments, toggleLikeComment, Comment } from '@/lib/firestore';
 import { Button } from '@/components/ui/Button';
 import { Send, UserCircle, Heart, MessageCircle, CornerDownRight } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
 export default function CommentSection({ postId, onCommentAdded, onCommentsLoaded }: {
@@ -15,7 +16,8 @@ export default function CommentSection({ postId, onCommentAdded, onCommentsLoade
     onCommentAdded?: () => void,
     onCommentsLoaded?: (count: number) => void
 }) {
-    const [user, setUser] = useState<User | null>(null);
+    const { user } = useAuth();
+    const router = useRouter();
     const [comments, setComments] = useState<Comment[]>([]);
     const [newComment, setNewComment] = useState('');
     const [replyingTo, setReplyingTo] = useState<string | null>(null);
@@ -24,13 +26,7 @@ export default function CommentSection({ postId, onCommentAdded, onCommentsLoade
     const [submitting, setSubmitting] = useState(false);
 
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-            setUser(currentUser);
-        });
-
         loadComments();
-
-        return () => unsubscribe();
     }, [postId]);
 
     const loadComments = async () => {
@@ -42,7 +38,7 @@ export default function CommentSection({ postId, onCommentAdded, onCommentsLoade
 
     const handleLike = async (commentId: string) => {
         if (!user) {
-            window.location.href = '/login';
+            router.push('/login');
             return;
         }
 
@@ -145,7 +141,7 @@ export default function CommentSection({ postId, onCommentAdded, onCommentsLoade
                             <button
                                 onClick={() => {
                                     if (!user) {
-                                        window.location.href = '/login';
+                                        router.push('/login');
                                         return;
                                     }
                                     setReplyingTo(replyingTo === comment.id ? null : comment.id!);
@@ -208,7 +204,7 @@ export default function CommentSection({ postId, onCommentAdded, onCommentsLoade
                         value={newComment}
                         onChange={(e) => setNewComment(e.target.value)}
                         onFocus={() => {
-                            if (!user) window.location.href = '/login';
+                            if (!user) router.push('/login');
                         }}
                         placeholder={user ? "Write a comment..." : "Log in to comment..."}
                         className="w-full bg-white/5 border border-white/10 rounded-full px-4 py-2 text-sm text-white placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 focus:bg-white/10 pr-12 transition-all cursor-text"

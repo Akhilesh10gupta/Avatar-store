@@ -4,16 +4,15 @@ import { useState, useEffect, useRef } from 'react';
 import { getPosts, addPost, Post } from '@/lib/firestore';
 import PostCard from './PostCard';
 import { Plus, UserCircle, Image as ImageIcon, Loader2, Link as LinkIcon, X } from 'lucide-react';
-import { User, onAuthStateChanged } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+import { useAuth } from '@/components/AuthProvider';
 import { Button } from './ui/Button';
 import Link from 'next/link';
 import { uploadFile } from '@/lib/storage';
 
 export default function CommunityFeed() {
+    const { user } = useAuth();
     const [posts, setPosts] = useState<Post[]>([]);
     const [loading, setLoading] = useState(true);
-    const [user, setUser] = useState<User | null>(null);
     const [newPostContent, setNewPostContent] = useState('');
     const [imageUrl, setImageUrl] = useState('');
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -22,13 +21,7 @@ export default function CommunityFeed() {
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-            setUser(currentUser);
-        });
-
         loadPosts();
-
-        return () => unsubscribe();
     }, []);
 
     const loadPosts = async () => {
