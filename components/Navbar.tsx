@@ -77,7 +77,7 @@ const Navbar = () => {
                     <div className="bg-primary p-1.5 rounded-lg">
                         <Gamepad2 className="w-5 h-5 text-white" />
                     </div>
-                    <span className="text-white">Avatar<span className="text-primary"> Store</span></span>
+                    <span className="text-white">Avatar<span className="text-violet-400"> Store</span></span>
                 </Link>
 
                 {/* Desktop Navigation */}
