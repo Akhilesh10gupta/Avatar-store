@@ -3,18 +3,21 @@ import Link from 'next/link';
 import { Download, Monitor, Smartphone, Layers } from 'lucide-react';
 import { Game } from '@/lib/firestore'; // Assuming types are exported from here or a types file
 import { Button } from './ui/Button';
+import { getOptimizedImage } from '@/lib/cloudinary';
 
 interface GameCardProps {
     game: Game;
 }
 
 const GameCard = ({ game }: GameCardProps) => {
+    const imageUrl = game.coverImage ? getOptimizedImage(game.coverImage, 600, 800) : 'https://images.unsplash.com/photo-1552820728-8b83bb6b773f?q=80&w=2070&auto=format&fit=crop';
+
     return (
         <div className="group relative overflow-hidden rounded-xl bg-card border border-border/50 hover:border-primary/50 transition-colors">
             {/* Image Container */}
             <div className="aspect-[3/4] relative overflow-hidden">
                 <Image
-                    src={game.coverImage || 'https://images.unsplash.com/photo-1552820728-8b83bb6b773f?q=80&w=2070&auto=format&fit=crop'} // Fallback image
+                    src={imageUrl}
                     alt={game.title}
                     fill
                     className="object-cover transition-transform duration-500 group-hover:scale-110"

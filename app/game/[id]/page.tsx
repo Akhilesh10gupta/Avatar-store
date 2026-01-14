@@ -5,6 +5,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { getOptimizedImage } from "@/lib/cloudinary";
+
+// ... imports
+
 // Force dynamic rendering since we are fetching data
 export const dynamic = 'force-dynamic';
 
@@ -15,6 +19,8 @@ export default async function GameDetails({ params }: { params: Promise<{ id: st
     if (!game) {
         return notFound();
     }
+
+    const coverUrl = game.coverImage ? getOptimizedImage(game.coverImage, 800, 1200) : 'https://images.unsplash.com/photo-1552820728-8b83bb6b773f?q=80&w=2070&auto=format&fit=crop';
 
     return (
         <div className="space-y-8 animate-in fade-in duration-500">
@@ -28,7 +34,7 @@ export default async function GameDetails({ params }: { params: Promise<{ id: st
                 {/* Cover Image */}
                 <div className="relative aspect-[3/4] rounded-xl overflow-hidden shadow-2xl border border-border/50">
                     <Image
-                        src={game.coverImage || 'https://images.unsplash.com/photo-1552820728-8b83bb6b773f?q=80&w=2070&auto=format&fit=crop'}
+                        src={coverUrl}
                         alt={game.title}
                         fill
                         className="object-cover"
