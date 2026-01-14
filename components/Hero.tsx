@@ -115,14 +115,24 @@ const Hero = ({ games }: HeroProps) => {
                         key={game.id}
                         onClick={() => handleSelect(index)}
                         className={cn(
-                            "relative flex items-center gap-4 p-3 rounded-xl transition-all duration-300 text-left group",
+                            "relative flex items-center gap-4 p-3 rounded-xl transition-all duration-300 text-left group w-full overflow-hidden",
                             currentIndex === index
-                                ? "bg-secondary shadow-lg scale-[1.02]"
+                                ? "scale-[1.02] shadow-lg"
                                 : "hover:bg-secondary/50 hover:pl-4 opacity-70 hover:opacity-100"
                         )}
                     >
+                        {/* Progress Fill Background */}
+                        {currentIndex === index && (
+                            <motion.div
+                                className="absolute inset-0 bg-secondary/80 z-0"
+                                initial={{ width: "0%" }}
+                                animate={{ width: "100%" }}
+                                transition={{ duration: 5, ease: "linear" }}
+                            />
+                        )}
+
                         {/* Thumbnail */}
-                        <div className="relative w-12 h-16 rounded-lg overflow-hidden shrink-0 shadow-sm border border-white/5">
+                        <div className="relative w-12 h-16 rounded-lg overflow-hidden shrink-0 shadow-sm border border-white/5 z-10">
                             <Image
                                 src={getOptimizedImage(game.coverImage, 200, 300)}
                                 alt={game.title}
@@ -133,19 +143,11 @@ const Hero = ({ games }: HeroProps) => {
 
                         {/* Title */}
                         <span className={cn(
-                            "font-medium text-sm line-clamp-2",
-                            currentIndex === index ? "text-secondary-foreground" : "text-muted-foreground group-hover:text-foreground"
+                            "font-medium text-sm line-clamp-2 z-10 relative transition-colors",
+                            currentIndex === index ? "text-foreground" : "text-muted-foreground group-hover:text-foreground"
                         )}>
                             {game.title}
                         </span>
-
-                        {/* Active Indicator (Epic style progress bar logic could go here, but keeping it simple for now) */}
-                        {currentIndex === index && (
-                            <motion.div
-                                layoutId="activeIndicator"
-                                className="absolute left-0 w-1 h-8 bg-primary rounded-r-full"
-                            />
-                        )}
                     </button>
                 ))}
             </div>
