@@ -146,7 +146,7 @@ export default function Login() {
                             <button
                                 type="button"
                                 onClick={() => setIsResetting(true)}
-                                className="text-xs text-primary hover:underline"
+                                className="text-xs text-violet-400 hover:text-violet-300 hover:underline"
                             >
                                 Forgot password?
                             </button>
@@ -173,7 +173,7 @@ export default function Login() {
 
                     <div className="text-center text-sm text-muted-foreground pt-4">
                         Need an admin account?{' '}
-                        <Link href="/signup" className="text-primary hover:underline">
+                        <Link href="/signup" className="text-violet-400 hover:text-violet-300 hover:underline">
                             Create one
                         </Link>
                     </div>
