@@ -96,15 +96,13 @@ const Hero = ({ games }: HeroProps) => {
                             {activeGame.description}
                         </p>
 
-                        <div className="flex gap-4">
-                            <Link href={`/game/${activeGame.id}`}>
-                                <Button size="lg" className="rounded-xl px-8 py-6 text-lg font-semibold shadow-xl shadow-primary/20">
+                        <div className="flex gap-4 w-full md:w-auto">
+                            <Link href={`/game/${activeGame.id}`} className="w-full md:w-auto">
+                                <Button size="lg" className="rounded-xl px-8 py-6 text-lg font-semibold shadow-xl shadow-primary/20 w-full md:w-auto whitespace-nowrap flex items-center justify-center">
                                     Download Now <ArrowRight className="ml-2 w-5 h-5" />
                                 </Button>
                             </Link>
-                            <Button size="lg" variant="secondary" className="rounded-xl px-6 py-6 border border-white/10 bg-white/10 hover:bg-white/20 backdrop-blur text-white">
-                                <Plus className="w-5 h-5 mr-2" /> Add to Wishlist
-                            </Button>
+                            {/* Wishlist button removed for now */}
                         </div>
                     </motion.div>
                 </div>
