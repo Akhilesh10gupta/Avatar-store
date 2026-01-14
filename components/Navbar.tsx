@@ -18,7 +18,7 @@ const Navbar = () => {
     };
 
     return (
-        <nav className="sticky top-0 z-50 w-full border-b border-white/10 bg-black/80 backdrop-blur-md supports-[backdrop-filter]:bg-black/60">
+        <nav className="sticky top-0 z-50 w-full border-b border-white/5 bg-[#0a0a0a]/90 backdrop-blur-xl supports-[backdrop-filter]:bg-[#0a0a0a]/80">
             <div className="container mx-auto px-4 h-16 flex items-center justify-between">
 
                 {/* Logo */}
@@ -30,27 +30,27 @@ const Navbar = () => {
                 </Link>
 
                 {/* Desktop Navigation */}
-                <div className="hidden md:flex items-center gap-8 text-sm font-medium text-white/80">
-                    <Link href="/" className="hover:text-primary transition-colors">Store</Link>
-                    <Link href="/browse" className="hover:text-primary transition-colors">Browse</Link>
-                    <Link href="/admin" className="hover:text-primary transition-colors text-xs bg-white/10 px-2 py-1 rounded border border-white/10">Admin Panel</Link>
+                <div className="hidden md:flex items-center gap-8 text-sm font-medium text-white/70">
+                    <Link href="/" className="hover:text-white transition-colors">Store</Link>
+                    <Link href="/browse" className="hover:text-white transition-colors">Browse</Link>
+                    <Link href="/admin" className="hover:text-white transition-colors text-xs bg-white/5 hover:bg-white/10 px-3 py-1.5 rounded-full border border-white/10">Admin Panel</Link>
                 </div>
 
                 {/* Right Actions (Desktop) */}
                 <div className="hidden md:flex items-center gap-4">
-                    <div className="relative">
-                        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <div className="relative group">
+                        <Search className="absolute left-3 top-2.5 h-4 w-4 text-white/50 group-focus-within:text-white transition-colors" />
                         <input
                             type="text"
                             placeholder="Search games..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             onKeyDown={handleSearch}
-                            className="h-9 w-64 rounded-full border border-border bg-secondary/50 px-9 text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+                            className="h-10 w-64 rounded-full border border-white/10 bg-white/5 px-10 text-sm text-white placeholder:text-white/40 outline-none focus:border-violet-500/50 focus:bg-white/10 focus:ring-1 focus:ring-violet-500/50 transition-all"
                         />
                     </div>
                     <Link href="/login">
-                        <button className="p-2 rounded-full hover:bg-secondary transition-colors" title="Admin Login">
+                        <button className="p-2.5 rounded-full bg-white/5 hover:bg-white/10 text-white/80 hover:text-white transition-all border border-white/5" title="Admin Login">
                             <User className="w-5 h-5" />
                         </button>
                     </Link>
