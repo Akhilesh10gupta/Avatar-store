@@ -54,28 +54,39 @@ export default function Login() {
         setLoading(true);
         setError('');
         try {
-            const { signInWithRedirect, signInWithPopup, getRedirectResult } = await import('firebase/auth');
+            const { signInWithRedirect, signInWithPopup } = await import('firebase/auth');
 
-            // Simple mobile detection
-            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            // Try popup first
+            try {
+                await signInWithPopup(auth, googleProvider);
+                router.push('/admin');
+            } catch (popupError: any) {
+                console.error("Popup failed, trying redirect:", popupError);
 
-            if (isMobile) {
-                await signInWithRedirect(auth, googleProvider);
-                // Redirect happens, no code after this runs effectively until return
-                return;
+                if (popupError.code === 'auth/popup-closed-by-user') {
+                    setLoading(false);
+                    return;
+                }
+
+                // Fallback to redirect for mobile or blocked popups
+                try {
+                    await signInWithRedirect(auth, googleProvider);
+                    return; // Redirecting...
+                } catch (redirectError: any) {
+                    console.error("Redirect failed:", redirectError);
+                    setError(`Sign in failed: ${redirectError.message}`);
+                }
             }
-
-            await signInWithPopup(auth, googleProvider);
-            router.push('/admin');
         } catch (err: any) {
-            if (err.code === 'auth/popup-closed-by-user') {
-                // User closed the popup, no need to show an error
-                setLoading(false);
-                return;
-            }
             console.error(err);
-            setError('Failed to sign in with Google.');
+            setError(`System error: ${err.message}`);
         } finally {
+            // Only stop loading if we didn't initiate a fallback redirect (if we returned early, we returned)
+            // But if we are here and redirecting, we want to keep loading state? 
+            // Actually, if signInWithRedirect succeeded, we "return" inside the try block above.
+            // If we are here, either everything finished (popup success) -> router push -> component unmount likely.
+            // Or both failed. Or popup closed. 
+            // So setting false here is safe for the "failure" or "popup closed" cases.
             setLoading(false);
         }
     };
