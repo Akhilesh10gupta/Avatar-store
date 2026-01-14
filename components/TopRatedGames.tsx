@@ -97,7 +97,7 @@ export default function TopRatedGames({ games }: TopRatedGamesProps) {
                     className="flex gap-4 overflow-x-auto pb-4 -mx-4 px-4 md:mx-0 md:px-0 scrollbar-hide snap-x snap-mandatory scroll-smooth"
                 >
                     {sortedGames.map((game, index) => (
-                        <div key={game.id} className="min-w-[240px] md:min-w-[280px] snap-start relative">
+                        <div key={game.id} className="min-w-[calc(50%-8px)] md:min-w-[calc(25%-12px)] snap-start relative">
                             {/* Rank Badge */}
                             <div className="absolute top-2 left-2 z-10 bg-yellow-500/90 text-black font-bold w-8 h-8 flex items-center justify-center rounded-full shadow-lg text-sm border-2 border-white/20">
                                 #{index + 1}
