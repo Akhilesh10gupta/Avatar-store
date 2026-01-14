@@ -67,16 +67,30 @@ export default function CommentSection({ postId, onCommentAdded, onCommentsLoade
         e.preventDefault();
         const content = parentId ? replyContent : newComment;
 
-        if (!user || !content.trim()) return;
+        if (!user) {
+            alert("You must be logged in to comment.");
+            router.push('/login');
+            return;
+        }
+
+        if (!content.trim()) return;
+
+        if (!postId) {
+            console.error("No post ID found for comment");
+            alert("Error: Cannot post comment because Post ID is missing.");
+            return;
+        }
 
         setSubmitting(true);
         try {
+            console.log("Submitting comment...", { postId, userId: user.uid, content });
+
             const commentData: any = {
                 postId,
                 userId: user.uid,
                 userName: user.displayName || 'Anonymous',
                 content: content.trim(),
-                parentId,
+                parentId: parentId || null, // Ensure explicit null if undefined
                 createdAt: new Date().toISOString()
             };
 
@@ -85,6 +99,7 @@ export default function CommentSection({ postId, onCommentAdded, onCommentsLoade
             }
 
             await addComment(commentData);
+            console.log("Comment submitted successfully");
 
             if (parentId) {
                 setReplyContent('');
@@ -97,6 +112,7 @@ export default function CommentSection({ postId, onCommentAdded, onCommentsLoade
             await loadComments();
         } catch (error) {
             console.error("Failed to post comment:", error);
+            alert(`Failed to post comment. Please try again. Error: ${error}`);
         } finally {
             setSubmitting(false);
         }
@@ -167,14 +183,15 @@ export default function CommentSection({ postId, onCommentAdded, onCommentsLoade
                                     onChange={(e) => setReplyContent(e.target.value)}
                                     autoFocus
                                     placeholder={`Reply to ${comment.userName}...`}
-                                    className="w-full bg-white/5 border border-white/10 rounded-full px-4 py-1.5 text-sm text-white placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 focus:bg-white/10 pr-10 transition-all"
+                                    className="w-full bg-white/5 border border-white/10 rounded-full px-4 py-2 text-base md:text-sm text-white placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 focus:bg-white/10 pr-11 transition-all"
                                 />
                                 <button
                                     type="submit"
                                     disabled={!replyContent.trim() || submitting}
-                                    className="absolute right-1.5 top-1/2 -translate-y-1/2 p-1.5 bg-primary text-white hover:bg-primary/90 rounded-full transition-colors disabled:opacity-50"
+                                    className="absolute right-1.5 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center bg-primary text-white hover:bg-primary/90 rounded-full transition-colors disabled:opacity-50 z-10"
+                                    onClick={(e) => e.stopPropagation()} // Prevent bubbling if needed
                                 >
-                                    <Send className="w-3 h-3" />
+                                    <Send className="w-3.5 h-3.5" />
                                 </button>
                             </div>
                         </form>
@@ -207,12 +224,12 @@ export default function CommentSection({ postId, onCommentAdded, onCommentsLoade
                             if (!user) router.push('/login');
                         }}
                         placeholder={user ? "Write a comment..." : "Log in to comment..."}
-                        className="w-full bg-white/5 border border-white/10 rounded-full px-4 py-2 text-sm text-white placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 focus:bg-white/10 pr-12 transition-all cursor-text"
+                        className="w-full bg-white/5 border border-white/10 rounded-full px-4 py-2.5 text-base md:text-sm text-white placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 focus:bg-white/10 pr-12 transition-all cursor-text"
                     />
                     <button
                         type="submit"
                         disabled={!user || !newComment.trim() || submitting}
-                        className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-primary text-white hover:bg-primary/90 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="absolute right-1.5 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center bg-primary text-white hover:bg-primary/90 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed z-10"
                     >
                         <Send className="w-3.5 h-3.5" />
                     </button>
