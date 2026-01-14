@@ -8,6 +8,8 @@ import { useAuth } from '@/components/AuthProvider';
 
 const Navbar = () => {
     const [searchQuery, setSearchQuery] = useState('');
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const router = useRouter();
     const { user, loading } = useAuth();
 
     // Determine profile link based on auth state
