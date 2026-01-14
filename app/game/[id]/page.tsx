@@ -1,5 +1,6 @@
 import { getGameById } from "@/lib/firestore";
 import StarRating from "@/components/StarRating";
+import ReviewSection from "@/components/ReviewSection";
 import DownloadButton from "@/components/DownloadButton";
 import { Button } from "@/components/ui/Button";
 import { Monitor, Cpu, HardDrive, MemoryStick, Image as ImageIcon, ArrowLeft, Smartphone } from "lucide-react";
@@ -224,6 +225,11 @@ export default async function GameDetails({ params }: { params: Promise<{ id: st
                     </section>
                 )
             }
-        </div >
+
+            {/* User Reviews */}
+            <section className="bg-card rounded-2xl p-8 border border-border/50">
+                <ReviewSection gameId={game.id!} />
+            </section>
+        </div>
     );
 }

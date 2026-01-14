@@ -1,9 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Star } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { rateGame } from '@/lib/firestore'; // We need to export this next
+import { submitRating, getUserRating } from '@/lib/firestore';
+import { onAuthStateChanged, User } from 'firebase/auth';
+import { auth } from '@/lib/firebase';
+import { useRouter, usePathname } from 'next/navigation';
 
 interface StarRatingProps {
     gameId: string;
@@ -18,28 +21,61 @@ export default function StarRating({ gameId, initialRating = 0, initialRatingCou
     const [count, setCount] = useState(initialRatingCount);
     const [hasRated, setHasRated] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [user, setUser] = useState<User | null>(null);
+    const [userRatingVal, setUserRatingVal] = useState<number | null>(null);
+
+    const router = useRouter();
+    const pathname = usePathname();
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+            setUser(currentUser);
+            if (currentUser) {
+                console.log(`Checking existing rating for game: ${gameId}, user: ${currentUser.uid}`);
+                try {
+                    const existingRating = await getUserRating(gameId, currentUser.uid);
+                    console.log(`Existing rating result: ${existingRating}`);
+                    if (existingRating !== null) {
+                        setUserRatingVal(existingRating);
+                        setHasRated(true);
+                    }
+                } catch (err) {
+                    console.error("Error in StarRating auth check:", err);
+                }
+            }
+        });
+        return () => unsubscribe();
+    }, [gameId]);
 
     const handleRate = async (value: number) => {
         if (hasRated || isSubmitting) return;
 
+        if (!user) {
+            router.push(`/login?redirect=${encodeURIComponent(pathname)}`);
+            return;
+        }
+
         setIsSubmitting(true);
         try {
-            // Optimistic update
+            // Optimistic update (show the new average temporarily, but locked)
+            // Actually, usually we'd show the user's rating as "Your rating"
+            // For now, we update the average logic as before for visual feedback
             const newCount = count + 1;
-            // Weighted average formula: ((oldRating * oldCount) + newValue) / newCount
             const newAverage = ((rating * count) + value) / newCount;
 
             setRating(newAverage);
             setCount(newCount);
             setHasRated(true);
+            setUserRatingVal(value);
 
-            await rateGame(gameId, value);
+            await submitRating(gameId, user.uid, value);
 
             if (onRate) onRate(newAverage);
         } catch (error) {
             console.error("Failed to rate game:", error);
-            // Revert on error (simplified)
+            // Revert on error
             setHasRated(false);
+            setUserRatingVal(null);
             setRating(initialRating);
             setCount(initialRatingCount);
         } finally {
@@ -78,7 +114,9 @@ export default function StarRating({ gameId, initialRating = 0, initialRatingCou
                 {rating.toFixed(1)} ({count} {count === 1 ? 'review' : 'reviews'})
             </div>
             {hasRated && (
-                <span className="text-xs text-green-500 animate-in fade-in">Thanks for rating!</span>
+                <span className="text-xs text-green-500 animate-in fade-in">
+                    {userRatingVal ? `You rated: ${userRatingVal} ★` : "Thanks for rating!"}
+                </span>
             )}
         </div>
     );

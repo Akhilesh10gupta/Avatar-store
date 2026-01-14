@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
 import { auth, googleProvider } from '@/lib/firebase';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { ShieldCheck, AlertCircle } from 'lucide-react';
@@ -15,6 +15,8 @@ export default function Login() {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const redirectPath = searchParams.get('redirect') || '/admin';
 
     const [isResetting, setIsResetting] = useState(false);
     const [resetEmail, setResetEmail] = useState('');
@@ -27,7 +29,7 @@ export default function Login() {
 
         try {
             await signInWithEmailAndPassword(auth, email, password);
-            router.push('/admin');
+            router.push(redirectPath);
         } catch (err: any) {
             console.error(err);
             setError('Invalid email or password. Please try again.');
@@ -41,7 +43,7 @@ export default function Login() {
         import('firebase/auth').then(({ getRedirectResult }) => {
             getRedirectResult(auth).then((result) => {
                 if (result) {
-                    router.push('/admin');
+                    router.push(redirectPath);
                 }
             }).catch((err) => {
                 console.error(err);
@@ -59,7 +61,7 @@ export default function Login() {
             // Try popup first
             try {
                 await signInWithPopup(auth, googleProvider);
-                router.push('/admin');
+                router.push(redirectPath);
             } catch (popupError: any) {
                 console.error("Popup failed, trying redirect:", popupError);
 
@@ -265,7 +267,10 @@ export default function Login() {
 
                     <div className="text-center text-sm text-muted-foreground pt-4">
                         Need an admin account?{' '}
-                        <Link href="/signup" className="text-violet-400 hover:text-violet-300 hover:underline">
+                        <Link
+                            href={redirectPath !== '/admin' ? `/signup?redirect=${encodeURIComponent(redirectPath)}` : "/signup"}
+                            className="text-violet-400 hover:text-violet-300 hover:underline"
+                        >
                             Create one
                         </Link>
                     </div>

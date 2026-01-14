@@ -11,8 +11,83 @@ import {
     getDoc,
     limit,
     where,
-    increment
+    increment,
+    runTransaction
 } from "firebase/firestore";
+
+// ... (Interfaces omitted, assuming they match file) ...
+
+// ... (Other functions omitted) ...
+
+const RATINGS_COLLECTION = "ratings";
+
+export const getUserRating = async (gameId: string, userId: string) => {
+    try {
+        console.log(`Checking rating for game: ${gameId}, user: ${userId}`);
+        const ratingDocRef = doc(db, RATINGS_COLLECTION, `${gameId}_${userId}`);
+        const ratingSnap = await getDoc(ratingDocRef);
+        if (ratingSnap.exists()) {
+            const val = ratingSnap.data().rating as number;
+            console.log(`Found existing rating: ${val}`);
+            return val;
+        }
+        console.log("No existing rating found.");
+        return null;
+    } catch (e) {
+        console.error("Error fetching user rating:", e);
+        return null;
+    }
+};
+
+export const submitRating = async (gameId: string, userId: string, rating: number) => {
+    try {
+        console.log(`Submitting rating for game: ${gameId}, user: ${userId}, value: ${rating}`);
+        const ratingDocId = `${gameId}_${userId}`;
+        const ratingDocRef = doc(db, RATINGS_COLLECTION, ratingDocId);
+
+        // Check if already rated (Double check)
+        const ratingSnap = await getDoc(ratingDocRef);
+        if (ratingSnap.exists()) {
+            console.warn("User already rated (checked in submitRating)");
+            throw new Error("User has already rated this game.");
+        }
+
+        const gameRef = doc(db, GAMES_COLLECTION, gameId);
+
+        await runTransaction(db, async (transaction) => {
+            const gameDoc = await transaction.get(gameRef);
+            if (!gameDoc.exists()) {
+                throw new Error("Game does not exist!");
+            }
+
+            const data = gameDoc.data();
+            const currentRating = data.rating || 0;
+            const currentCount = data.ratingCount || 0;
+
+            const newCount = currentCount + 1;
+            const newAverage = ((currentRating * currentCount) + rating) / newCount;
+
+            // Create rating doc
+            transaction.set(ratingDocRef, {
+                gameId,
+                userId,
+                rating,
+                createdAt: new Date().toISOString()
+            });
+
+            // Update game doc
+            transaction.update(gameRef, {
+                rating: newAverage,
+                ratingCount: newCount
+            });
+        });
+        console.log("Rating transaction completed successfully.");
+
+    } catch (e) {
+        console.error("Error rating game:", e);
+        throw e;
+    }
+};
 
 // Define the interface for a Game
 export interface Game {
@@ -57,7 +132,18 @@ export interface Game {
     ratingCount?: number; // Number of ratings
 }
 
+export interface Review {
+    id?: string;
+    gameId: string;
+    userId: string;
+    userName: string;
+    userAvatar?: string;
+    content: string;
+    createdAt: string;
+}
+
 const GAMES_COLLECTION = "games";
+const REVIEWS_COLLECTION = "reviews";
 
 const docToGame = (doc: any): Game => {
     const data = doc.data();
@@ -158,35 +244,37 @@ export const incrementDownload = async (gameId: string) => {
     });
 };
 
-export const rateGame = async (gameId: string, rating: number) => {
-    // This is a simplified rating logic. In a real app, you'd store individual ratings in a subcollection
-    // to prevent users from rating multiple times (conceptually) and to calculate true average.
-    // For this demo, we will use a weighted average approximation stored on the document.
 
-    // Note: To do this purely atomically without reading first is hard for average.
-    // We will do a transaction or just read-then-update for simplicity here, 
-    // assuming low concurrency for this specific user request context.
 
-    // Actually, let's just use the current state from client or fetch fresh.
+export const addReview = async (review: Omit<Review, "id">) => {
     try {
-        const gameRef = doc(db, GAMES_COLLECTION, gameId);
-        const gameSnap = await getDoc(gameRef);
-
-        if (gameSnap.exists()) {
-            const data = gameSnap.data();
-            const currentRating = data.rating || 0;
-            const currentCount = data.ratingCount || 0;
-
-            const newCount = currentCount + 1;
-            const newRating = ((currentRating * currentCount) + rating) / newCount;
-
-            await updateDoc(gameRef, {
-                rating: newRating,
-                ratingCount: newCount
-            });
-        }
+        const docRef = await addDoc(collection(db, REVIEWS_COLLECTION), {
+            ...review,
+            createdAt: new Date().toISOString()
+        });
+        return docRef.id;
     } catch (e) {
-        console.error("Error rating game:", e);
+        console.error("Error adding review: ", e);
         throw e;
+    }
+};
+
+export const getGameReviews = async (gameId: string) => {
+    try {
+        // Query without orderBy to avoid needing a composite index
+        const q = query(
+            collection(db, REVIEWS_COLLECTION),
+            where("gameId", "==", gameId)
+        );
+        const querySnapshot = await getDocs(q);
+        const reviews = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Review));
+
+        // Sort client-side
+        return reviews.sort((a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+    } catch (e) {
+        console.error("Error fetching reviews:", e);
+        return [];
     }
 };

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { createUserWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
 import { auth, googleProvider } from '@/lib/firebase';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { ShieldCheck, AlertCircle } from 'lucide-react';
@@ -15,7 +15,10 @@ export default function Signup() {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const redirectPath = searchParams.get('redirect') || '/admin';
 
     const handleSignup = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -36,7 +39,7 @@ export default function Signup() {
 
         try {
             await createUserWithEmailAndPassword(auth, email, password);
-            router.push('/admin');
+            router.push(redirectPath);
         } catch (err: any) {
             console.error(err);
             if (err.code === 'auth/email-already-in-use') {
@@ -54,7 +57,7 @@ export default function Signup() {
         import('firebase/auth').then(({ getRedirectResult }) => {
             getRedirectResult(auth).then((result) => {
                 if (result) {
-                    router.push('/admin');
+                    router.push(redirectPath);
                 }
             }).catch((err) => {
                 console.error(err);
@@ -72,7 +75,7 @@ export default function Signup() {
             // Try popup first
             try {
                 await signInWithPopup(auth, googleProvider);
-                router.push('/admin');
+                router.push(redirectPath);
             } catch (popupError: any) {
                 console.error("Popup failed, trying redirect:", popupError);
 
@@ -195,7 +198,10 @@ export default function Signup() {
 
                     <div className="text-center text-sm text-muted-foreground pt-4">
                         Already have an account?{' '}
-                        <Link href="/login" className="text-violet-400 hover:text-violet-300 hover:underline">
+                        <Link
+                            href={redirectPath !== '/admin' ? `/login?redirect=${encodeURIComponent(redirectPath)}` : "/login"}
+                            className="text-violet-400 hover:text-violet-300 hover:underline"
+                        >
                             Log in
                         </Link>
                     </div>
