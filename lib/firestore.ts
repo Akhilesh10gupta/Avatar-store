@@ -38,6 +38,12 @@ export interface Game {
         graphics: string;
         storage: string;
     };
+    systemRequirementsAndroid?: {
+        os: string;
+        processor: string;
+        memory: string;
+        storage: string;
+    };
     featured?: boolean;
     createdAt?: any;
 }

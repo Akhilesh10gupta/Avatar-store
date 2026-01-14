@@ -100,38 +100,77 @@ export default async function GameDetails({ params }: { params: Promise<{ id: st
             )}
 
             {/* System Requirements */}
-            <section className="bg-card rounded-2xl p-8 border border-border/50">
-                <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
-                    <Monitor className="text-primary" />
-                    System Requirements
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <div className="space-y-2">
-                        <span className="flex items-center gap-2 text-muted-foreground text-sm font-medium">
-                            <Monitor className="w-4 h-4" /> OS
-                        </span>
-                        <p className="font-semibold">{game.systemRequirements.os || 'Windows 10/11'}</p>
+            {/* PC System Requirements */}
+            {(game.platform === 'PC' || game.platform === 'Both') && (
+                <section className="bg-card rounded-2xl p-8 border border-border/50">
+                    <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
+                        <Monitor className="text-primary" />
+                        PC System Requirements
+                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div className="space-y-2">
+                            <span className="flex items-center gap-2 text-muted-foreground text-sm font-medium">
+                                <Monitor className="w-4 h-4" /> OS
+                            </span>
+                            <p className="font-semibold">{game.systemRequirements.os || 'Windows 10/11'}</p>
+                        </div>
+                        <div className="space-y-2">
+                            <span className="flex items-center gap-2 text-muted-foreground text-sm font-medium">
+                                <Cpu className="w-4 h-4" /> Processor
+                            </span>
+                            <p className="font-semibold">{game.systemRequirements.processor || 'Intel Core i5 / AMD Ryzen 5'}</p>
+                        </div>
+                        <div className="space-y-2">
+                            <span className="flex items-center gap-2 text-muted-foreground text-sm font-medium">
+                                <MemoryStick className="w-4 h-4" /> Memory
+                            </span>
+                            <p className="font-semibold">{game.systemRequirements.memory || '8 GB RAM'}</p>
+                        </div>
+                        <div className="space-y-2">
+                            <span className="flex items-center gap-2 text-muted-foreground text-sm font-medium">
+                                <HardDrive className="w-4 h-4" /> Graphics
+                            </span>
+                            <p className="font-semibold">{game.systemRequirements.graphics || 'NVIDIA GTX 1060 / AMD RX 580'}</p>
+                        </div>
                     </div>
-                    <div className="space-y-2">
-                        <span className="flex items-center gap-2 text-muted-foreground text-sm font-medium">
-                            <Cpu className="w-4 h-4" /> Processor
-                        </span>
-                        <p className="font-semibold">{game.systemRequirements.processor || 'Intel Core i5 / AMD Ryzen 5'}</p>
+                </section>
+            )}
+
+            {/* Android System Requirements */}
+            {(game.platform === 'Android' || game.platform === 'Both') && (
+                <section className="bg-card rounded-2xl p-8 border border-border/50">
+                    <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
+                        <Smartphone className="text-green-500" />
+                        Android System Requirements
+                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div className="space-y-2">
+                            <span className="flex items-center gap-2 text-muted-foreground text-sm font-medium">
+                                <Smartphone className="w-4 h-4" /> Android Version
+                            </span>
+                            <p className="font-semibold">{game.systemRequirementsAndroid?.os || 'Android 10+'}</p>
+                        </div>
+                        <div className="space-y-2">
+                            <span className="flex items-center gap-2 text-muted-foreground text-sm font-medium">
+                                <Cpu className="w-4 h-4" /> Chipset
+                            </span>
+                            <p className="font-semibold">{game.systemRequirementsAndroid?.processor || 'Snapdragon 8 Gen 2'}</p>
+                        </div>
+                        <div className="space-y-2">
+                            <span className="flex items-center gap-2 text-muted-foreground text-sm font-medium">
+                                <MemoryStick className="w-4 h-4" /> RAM
+                            </span>
+                            <p className="font-semibold">{game.systemRequirementsAndroid?.memory || '8 GB'}</p>
+                        </div>
+                        <div className="space-y-2">
+                            <span className="flex items-center gap-2 text-muted-foreground text-sm font-medium">
+                                <HardDrive className="w-4 h-4" /> Storage
+                            </span>
+                            <p className="font-semibold">{game.systemRequirementsAndroid?.storage || '4 GB Available'}</p>
+                        </div>
                     </div>
-                    <div className="space-y-2">
-                        <span className="flex items-center gap-2 text-muted-foreground text-sm font-medium">
-                            <MemoryStick className="w-4 h-4" /> Memory
-                        </span>
-                        <p className="font-semibold">{game.systemRequirements.memory || '8 GB RAM'}</p>
-                    </div>
-                    <div className="space-y-2">
-                        <span className="flex items-center gap-2 text-muted-foreground text-sm font-medium">
-                            <HardDrive className="w-4 h-4" /> Graphics
-                        </span>
-                        <p className="font-semibold">{game.systemRequirements.graphics || 'NVIDIA GTX 1060 / AMD RX 580'}</p>
-                    </div>
-                </div>
-            </section>
+                </section>
+            )}
         </div>
     );
 }

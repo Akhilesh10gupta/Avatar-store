@@ -16,28 +16,32 @@ interface GameFormProps {
 export default function GameForm({ initialData }: GameFormProps) {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
-    const [formData, setFormData] = useState<Partial<Game>>(
-        initialData || {
-            title: '',
-            description: '',
-            genre: '',
-            developer: '',
-            releaseDate: '',
-            platform: 'PC', // Default
-            downloadLinkPC: '',
-            downloadLinkAndroid: '',
-            coverImage: '',
-            icon: '',
-            screenshots: [],
-            systemRequirements: {
-                os: 'Windows 10',
-                processor: '',
-                memory: '',
-                graphics: '',
-                storage: '',
-            },
-        }
-    );
+    const [formData, setFormData] = useState<Partial<Game>>({
+        title: initialData?.title || '',
+        description: initialData?.description || '',
+        genre: initialData?.genre || '',
+        developer: initialData?.developer || '',
+        releaseDate: initialData?.releaseDate || '',
+        platform: initialData?.platform || 'PC', // Default to PC if missing
+        downloadLinkPC: initialData?.downloadLinkPC || initialData?.downloadLink || '', // Fallback to legacy link
+        downloadLinkAndroid: initialData?.downloadLinkAndroid || '',
+        coverImage: initialData?.coverImage || '',
+        icon: initialData?.icon || '',
+        screenshots: initialData?.screenshots || [],
+        systemRequirements: initialData?.systemRequirements || {
+            os: 'Windows 10',
+            processor: '',
+            memory: '',
+            graphics: '',
+            storage: '',
+        },
+        systemRequirementsAndroid: initialData?.systemRequirementsAndroid || {
+            os: '',
+            processor: '',
+            memory: '',
+            storage: '',
+        },
+    });
 
     const [coverFile, setCoverFile] = useState<File | null>(null);
     const [iconFile, setIconFile] = useState<File | null>(null);
@@ -51,6 +55,19 @@ export default function GameForm({ initialData }: GameFormProps) {
                 ...prev,
                 systemRequirements: {
                     ...prev.systemRequirements!,
+                    [field]: value
+                }
+            }));
+        } else if (name.startsWith('android_')) {
+            const field = name.replace('android_', '');
+            setFormData(prev => ({
+                ...prev,
+                systemRequirementsAndroid: {
+                    ...prev.systemRequirementsAndroid!,
+                    os: prev.systemRequirementsAndroid?.os || '',
+                    processor: prev.systemRequirementsAndroid?.processor || '',
+                    memory: prev.systemRequirementsAndroid?.memory || '',
+                    storage: prev.systemRequirementsAndroid?.storage || '',
                     [field]: value
                 }
             }));
@@ -275,32 +292,65 @@ export default function GameForm({ initialData }: GameFormProps) {
                 )}
             </div>
 
-            {/* System Requirements */}
-            <div className="space-y-4">
-                <h3 className="text-lg font-semibold border-b border-border/50 pb-2">System Requirements</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium">OS</label>
-                        <Input name="sys_os" value={formData.systemRequirements?.os} onChange={handleChange} placeholder="Windows 10 / Android 12" />
-                    </div>
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium">Processor</label>
-                        <Input name="sys_processor" value={formData.systemRequirements?.processor} onChange={handleChange} placeholder="Intel i5 / Snapdragon 8 Gen 2" />
-                    </div>
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium">Memory</label>
-                        <Input name="sys_memory" value={formData.systemRequirements?.memory} onChange={handleChange} placeholder="8 GB RAM / 8 GB RAM" />
-                    </div>
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium">Graphics</label>
-                        <Input name="sys_graphics" value={formData.systemRequirements?.graphics} onChange={handleChange} placeholder="GTX 1060 / Adreno 740" />
-                    </div>
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium">Storage</label>
-                        <Input name="sys_storage" value={formData.systemRequirements?.storage} onChange={handleChange} placeholder="50 GB available space" />
+            {/* PC System Requirements */}
+            {(formData.platform === 'PC' || formData.platform === 'Both') && (
+                <div className="space-y-4">
+                    <h3 className="text-lg font-semibold border-b border-border/50 pb-2 flex items-center gap-2">
+                        <Monitor className="w-5 h-5 text-primary" />
+                        PC System Requirements
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium">OS</label>
+                            <Input name="sys_os" value={formData.systemRequirements?.os} onChange={handleChange} placeholder="Windows 10 64-bit" />
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium">Processor</label>
+                            <Input name="sys_processor" value={formData.systemRequirements?.processor} onChange={handleChange} placeholder="Intel Core i5..." />
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium">Memory</label>
+                            <Input name="sys_memory" value={formData.systemRequirements?.memory} onChange={handleChange} placeholder="8 GB RAM" />
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium">Graphics</label>
+                            <Input name="sys_graphics" value={formData.systemRequirements?.graphics} onChange={handleChange} placeholder="NVIDIA GeForce GTX..." />
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium">Storage</label>
+                            <Input name="sys_storage" value={formData.systemRequirements?.storage} onChange={handleChange} placeholder="50 GB available space" />
+                        </div>
                     </div>
                 </div>
-            </div>
+            )}
+
+            {/* Android System Requirements */}
+            {(formData.platform === 'Android' || formData.platform === 'Both') && (
+                <div className="space-y-4">
+                    <h3 className="text-lg font-semibold border-b border-border/50 pb-2 flex items-center gap-2">
+                        <Smartphone className="w-5 h-5 text-green-500" />
+                        Android System Requirements
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium">Android Version (OS)</label>
+                            <Input name="android_os" value={formData.systemRequirementsAndroid?.os || ''} onChange={handleChange} placeholder="Android 10+" />
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium">Processor (Chipset)</label>
+                            <Input name="android_processor" value={formData.systemRequirementsAndroid?.processor || ''} onChange={handleChange} placeholder="Snapdragon 8 Gen 2 / MediaTek..." />
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium">Memory (RAM)</label>
+                            <Input name="android_memory" value={formData.systemRequirementsAndroid?.memory || ''} onChange={handleChange} placeholder="8 GB RAM" />
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium">Storage Space</label>
+                            <Input name="android_storage" value={formData.systemRequirementsAndroid?.storage || ''} onChange={handleChange} placeholder="4 GB available space" />
+                        </div>
+                    </div>
+                </div>
+            )}
 
             <div className="flex justify-end pt-6">
                 <Button type="submit" size="lg" isLoading={loading}>
