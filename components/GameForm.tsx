@@ -280,7 +280,7 @@ export default function GameForm({ initialData }: GameFormProps) {
                             </div>
                             <div className="flex items-center gap-2">
                                 <span className="text-xs text-muted-foreground">OR</span>
-                                <Input name="gameplayVideo" value={formData.gameplayVideo} onChange={handleChange} placeholder="Paste Video URL here" className="text-xs h-8" />
+                                <Input name="gameplayVideo" value={formData.gameplayVideo} onChange={handleChange} placeholder="Paste Video or YouTube URL here" className="text-xs h-8" />
                             </div>
                         </div>
                     </div>
