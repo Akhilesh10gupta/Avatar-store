@@ -1,15 +1,39 @@
+
 const CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
-const UPLOAD_PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
+const API_KEY = process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY;
 
 export const uploadFile = async (file: File, folder: string = 'general') => {
-    if (!CLOUD_NAME || !UPLOAD_PRESET) {
-        throw new Error("Cloudinary configuration is missing. Check .env.local");
+    if (!CLOUD_NAME || !API_KEY) {
+        throw new Error("Cloudinary configuration is missing.");
     }
 
+    // 1. Prepare parameters for signature
+    const timestamp = Math.round((new Date).getTime() / 1000);
+    const paramsToSign = {
+        folder: folder,
+        timestamp: timestamp,
+    };
+
+    // 2. Get Signature from our backend
+    const signResponse = await fetch('/api/cloudinary-sign', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ paramsToSign }),
+    });
+
+    if (!signResponse.ok) {
+        throw new Error("Failed to sign upload request");
+    }
+
+    const { signature } = await signResponse.json();
+
+    // 3. Upload to Cloudinary using the signature
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('upload_preset', UPLOAD_PRESET);
-    formData.append('folder', folder); // Cloudinary supports folders via preset or direct param if allowed
+    formData.append('api_key', API_KEY);
+    formData.append('timestamp', timestamp.toString());
+    formData.append('signature', signature);
+    formData.append('folder', folder);
 
     try {
         const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
@@ -23,7 +47,7 @@ export const uploadFile = async (file: File, folder: string = 'general') => {
         }
 
         const data = await response.json();
-        return data.secure_url; // Returns the HTTPS URL of the uploaded image
+        return data.secure_url;
     } catch (error) {
         console.error("Cloudinary Upload Error:", error);
         throw error;
