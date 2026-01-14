@@ -2,6 +2,7 @@ import Hero from "@/components/Hero";
 import { getGames } from "@/lib/firestore";
 import { Game } from "@/lib/firestore";
 import FeaturedGames from "@/components/FeaturedGames";
+import TopRatedGames from "@/components/TopRatedGames";
 
 // Dummy data for initial render if DB is empty
 const dummyGames: Game[] = [
@@ -84,6 +85,9 @@ export default async function Home() {
 
       {/* Featured Games Section */}
       <FeaturedGames games={displayGames} />
+
+      {/* Top Rated Games Section */}
+      <TopRatedGames games={displayGames} />
     </div>
   );
 }
