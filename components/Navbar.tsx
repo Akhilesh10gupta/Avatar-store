@@ -6,7 +6,7 @@ import { Gamepad2, Search, User, Menu, X } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/components/AuthProvider';
 import { UserAvatar } from '@/components/UserAvatar';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, Variants } from 'framer-motion';
 
 const Navbar = () => {
     const [searchQuery, setSearchQuery] = useState('');
@@ -38,7 +38,7 @@ const Navbar = () => {
         }
     }, [isMobileMenuOpen]);
 
-    const menuVariants = {
+    const menuVariants: Variants = {
         closed: {
             opacity: 0,
             y: "-100%",
@@ -63,7 +63,7 @@ const Navbar = () => {
         }
     };
 
-    const itemVariants = {
+    const itemVariants: Variants = {
         closed: { opacity: 0, y: -20 },
         open: { opacity: 1, y: 0 }
     };
