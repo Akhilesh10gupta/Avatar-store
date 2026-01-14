@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/Button';
 import Link from 'next/link';
 import { Plus, Pencil, Trash2, ExternalLink } from 'lucide-react';
 import Image from 'next/image';
+import ProfileManager from '@/components/ProfileManager';
 
 export default function AdminDashboard() {
     const [games, setGames] = useState<Game[]>([]);
@@ -48,7 +49,9 @@ export default function AdminDashboard() {
 
     return (
         <div>
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+            <ProfileManager />
+
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8 pt-8 border-t border-border">
                 <p className="text-muted-foreground text-sm md:text-base">Manage your game library, edit details, and add new titles.</p>
                 <div className="flex gap-2 w-full md:w-auto">
                     <Button variant="outline" onClick={async () => {
