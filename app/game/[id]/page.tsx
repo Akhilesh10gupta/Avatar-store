@@ -3,7 +3,7 @@ import StarRating from "@/components/StarRating";
 import ReviewSection from "@/components/ReviewSection";
 import DownloadButton from "@/components/DownloadButton";
 import { Button } from "@/components/ui/Button";
-import { Monitor, Cpu, HardDrive, MemoryStick, Image as ImageIcon, ArrowLeft, Smartphone } from "lucide-react";
+import { Monitor, Cpu, HardDrive, MemoryStick, Image as ImageIcon, ArrowLeft, Smartphone, Download } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -48,13 +48,17 @@ export default async function GameDetails({ params }: { params: Promise<{ id: st
                 <div className="flex flex-col justify-between space-y-6">
                     <div>
                         <h1 className="text-4xl md:text-5xl font-bold mb-2">{game.title}</h1>
-                        <div className="flex items-center gap-4 text-muted-foreground mb-6">
+                        <div className="flex items-center gap-4 text-muted-foreground mb-6 flex-wrap">
                             <span className="bg-secondary px-3 py-1 rounded-full text-sm font-medium text-secondary-foreground flex items-center gap-2">
                                 {game.platform === 'Android' ? <Smartphone className="w-3 h-3" /> : <Monitor className="w-3 h-3" />}
                                 {game.genre}
                             </span>
                             <span>{game.developer}</span>
                             <span>{game.releaseDate}</span>
+                            <span className="flex items-center gap-1.5 text-emerald-400 font-semibold bg-emerald-400/10 px-3 py-1 rounded-full border border-emerald-400/20">
+                                <Download className="w-4 h-4" />
+                                {(game.downloadCount || 0).toLocaleString()} Downloads
+                            </span>
                         </div>
                         <p className="text-lg text-muted-foreground leading-relaxed max-w-2xl">
                             {game.description}
