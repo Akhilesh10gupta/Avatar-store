@@ -189,90 +189,88 @@ export default function ProfileManager() {
                     </div>
                 </form>
             </div>
-        </form>
-            </div >
 
-        {/* Password Change Section (Only for Email/Pass users) */ }
-    {
-        isEmailProvider && (
-            <div className="mt-8 pt-8 border-t border-white/10">
-                <h3 className="text-lg font-bold mb-6 flex items-center gap-2">
-                    <Lock className="w-5 h-5 text-primary" />
-                    Change Password
-                </h3>
+            {/* Password Change Section (Only for Email/Pass users) */}
+            {
+                isEmailProvider && (
+                    <div className="mt-8 pt-8 border-t border-white/10">
+                        <h3 className="text-lg font-bold mb-6 flex items-center gap-2">
+                            <Lock className="w-5 h-5 text-primary" />
+                            Change Password
+                        </h3>
 
-                <form onSubmit={handleChangePassword} className="space-y-4 max-w-lg md:ml-[176px]">
-                    <div className="space-y-4 p-4 bg-secondary/20 rounded-xl border border-white/5">
-                        <div className="space-y-2">
-                            <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground ml-1">Current Password</label>
-                            <div className="relative">
-                                <KeyRound className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                                <Input
-                                    type="password"
-                                    value={currentPassword}
-                                    onChange={(e) => setCurrentPassword(e.target.value)}
-                                    placeholder="Enter current password"
-                                    className="pl-10 bg-secondary/50 border-white/10"
-                                    required
-                                />
-                            </div>
-                        </div>
+                        <form onSubmit={handleChangePassword} className="space-y-4 max-w-lg md:ml-[176px]">
+                            <div className="space-y-4 p-4 bg-secondary/20 rounded-xl border border-white/5">
+                                <div className="space-y-2">
+                                    <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground ml-1">Current Password</label>
+                                    <div className="relative">
+                                        <KeyRound className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                                        <Input
+                                            type="password"
+                                            value={currentPassword}
+                                            onChange={(e) => setCurrentPassword(e.target.value)}
+                                            placeholder="Enter current password"
+                                            className="pl-10 bg-secondary/50 border-white/10"
+                                            required
+                                        />
+                                    </div>
+                                </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground ml-1">New Password</label>
-                                <Input
-                                    type="password"
-                                    value={newPassword}
-                                    onChange={(e) => setNewPassword(e.target.value)}
-                                    placeholder="Min 6 chars"
-                                    className="bg-secondary/50 border-white/10"
-                                    required
-                                />
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground ml-1">New Password</label>
+                                        <Input
+                                            type="password"
+                                            value={newPassword}
+                                            onChange={(e) => setNewPassword(e.target.value)}
+                                            placeholder="Min 6 chars"
+                                            className="bg-secondary/50 border-white/10"
+                                            required
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground ml-1">Confirm New</label>
+                                        <Input
+                                            type="password"
+                                            value={confirmPassword}
+                                            onChange={(e) => setConfirmPassword(e.target.value)}
+                                            placeholder="Retype new"
+                                            className="bg-secondary/50 border-white/10"
+                                            required
+                                        />
+                                    </div>
+                                </div>
                             </div>
-                            <div className="space-y-2">
-                                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground ml-1">Confirm New</label>
-                                <Input
-                                    type="password"
-                                    value={confirmPassword}
-                                    onChange={(e) => setConfirmPassword(e.target.value)}
-                                    placeholder="Retype new"
-                                    className="bg-secondary/50 border-white/10"
-                                    required
-                                />
+
+                            <div className="flex flex-col gap-2">
+                                <Button
+                                    type="submit"
+                                    isLoading={passwordLoading}
+                                    className="w-full h-11"
+                                    variant="outline"
+                                >
+                                    Update Password
+                                </Button>
+
+                                {passwordError && (
+                                    <p className="text-sm text-red-500 bg-red-500/10 p-2 rounded text-center">{passwordError}</p>
+                                )}
+                                {passwordSuccess && (
+                                    <p className="text-sm text-green-500 bg-green-500/10 p-2 rounded text-center">{passwordSuccess}</p>
+                                )}
                             </div>
+                        </form>
+                    </div>
+                )
+            }
+
+            {
+                !isEmailProvider && (
+                    <div className="mt-8 pt-8 border-t border-white/10 text-center md:text-left md:ml-[176px]">
+                        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 text-blue-400 text-sm border border-blue-500/20">
+                            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12.48 10.92v3.28h-1.28v-3.28h1.28zm-4.517 7.608c0 1.956 1.708 3.472 3.879 3.472 2.169 0 3.879-1.516 3.879-3.472v-1.127H7.965v1.127zm6.38-2.616H7.962v-1.115h6.383v1.115zm.609-2.193H7.35v-1.077h7.604v1.077zm-.38-2.003H7.728V10.64h6.848v1.074z" /></svg>
+                            <span>Password managed via Google Account</span>
                         </div>
                     </div>
-
-                    <div className="flex flex-col gap-2">
-                        <Button
-                            type="submit"
-                            isLoading={passwordLoading}
-                            className="w-full h-11"
-                            variant="outline"
-                        >
-                            Update Password
-                        </Button>
-
-                        {passwordError && (
-                            <p className="text-sm text-red-500 bg-red-500/10 p-2 rounded text-center">{passwordError}</p>
-                        )}
-                        {passwordSuccess && (
-                            <p className="text-sm text-green-500 bg-green-500/10 p-2 rounded text-center">{passwordSuccess}</p>
-                        )}
-                    </div>
-                </form>
-            </div>
-        )
-    }
-
-    {
-        !isEmailProvider && (
-            <div className="mt-8 pt-8 border-t border-white/10 text-center md:text-left md:ml-[176px]">
-                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 text-blue-400 text-sm border border-blue-500/20">
-                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12.48 10.92v3.28h-1.28v-3.28h1.28zm-4.517 7.608c0 1.956 1.708 3.472 3.879 3.472 2.169 0 3.879-1.516 3.879-3.472v-1.127H7.965v1.127zm6.38-2.616H7.962v-1.115h6.383v1.115zm.609-2.193H7.35v-1.077h7.604v1.077zm-.38-2.003H7.728V10.64h6.848v1.074z" /></svg>
-                    <span>Password managed via Google Account</span>
-                </div>
-            </div>
-        )
-    }
+                )
+            }
