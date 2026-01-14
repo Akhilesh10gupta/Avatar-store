@@ -12,7 +12,8 @@ import {
     limit,
     where,
     increment,
-    runTransaction
+    runTransaction,
+    writeBatch
 } from "firebase/firestore";
 
 // ... (Interfaces omitted, assuming they match file) ...
@@ -290,5 +291,194 @@ export const getGameReviews = async (gameId: string) => {
     } catch (e) {
         console.error("Error fetching reviews:", e);
         return [];
+    }
+};
+
+// --- Community Features ---
+
+export interface Post {
+    id?: string;
+    userId: string;
+    userName: string;
+    userAvatar?: string;
+    content: string;
+    imageUrl?: string;
+    likes: string[]; // User IDs who liked
+    commentCount?: number;
+    createdAt: string;
+}
+
+export interface Comment {
+    id?: string;
+    postId: string;
+    userId: string;
+    userName: string;
+    userAvatar?: string;
+    content: string;
+    createdAt: string;
+}
+
+const POSTS_COLLECTION = "posts";
+const COMMENTS_COLLECTION = "comments";
+
+export const addPost = async (post: Omit<Post, "id" | "likes" | "commentCount">) => {
+    try {
+        const docRef = await addDoc(collection(db, POSTS_COLLECTION), {
+            ...post,
+            likes: [],
+            commentCount: 0,
+            createdAt: new Date().toISOString()
+        });
+        return docRef.id;
+    } catch (e) {
+        console.error("Error adding post:", e);
+        throw e;
+    }
+};
+
+export const getPosts = async () => {
+    try {
+        const q = query(collection(db, POSTS_COLLECTION), orderBy("createdAt", "desc"));
+        const querySnapshot = await getDocs(q);
+        return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Post));
+    } catch (e) {
+        console.error("Error fetching posts:", e);
+        return [];
+    }
+};
+
+export const addComment = async (comment: Omit<Comment, "id">) => {
+    try {
+        await runTransaction(db, async (transaction) => {
+            // Create reference for new comment
+            const commentRef = doc(collection(db, COMMENTS_COLLECTION));
+
+            // Get post reference
+            const postRef = doc(db, POSTS_COLLECTION, comment.postId);
+            const postDoc = await transaction.get(postRef);
+
+            if (!postDoc.exists()) {
+                throw new Error("Post does not exist!");
+            }
+
+            // Set comment data
+            transaction.set(commentRef, {
+                ...comment,
+                createdAt: new Date().toISOString()
+            });
+
+            // Update post comment count
+            transaction.update(postRef, {
+                commentCount: increment(1)
+            });
+        });
+    } catch (e) {
+        console.error("Error adding comment:", e);
+        throw e;
+    }
+};
+
+export const getPostComments = async (postId: string) => {
+    try {
+        const q = query(
+            collection(db, COMMENTS_COLLECTION),
+            where("postId", "==", postId)
+        );
+        const querySnapshot = await getDocs(q);
+        const comments = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Comment));
+
+        return comments.sort((a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+    } catch (e) {
+        console.error("Error fetching comments:", e);
+        return [];
+    }
+};
+
+export const toggleLikePost = async (postId: string, userId: string) => {
+    const postRef = doc(db, POSTS_COLLECTION, postId);
+    await runTransaction(db, async (transaction) => {
+        const postDoc = await transaction.get(postRef);
+        if (!postDoc.exists()) throw new Error("Post does not exist");
+
+        const likes = postDoc.data().likes || [];
+        const newLikes = likes.includes(userId)
+            ? likes.filter((id: string) => id !== userId) // Unlike
+            : [...likes, userId]; // Like
+
+        transaction.update(postRef, { likes: newLikes });
+    });
+};
+
+export const syncUserProfile = async (userId: string, updates: { userName?: string, userAvatar?: string }) => {
+    try {
+        const batch = writeBatch(db);
+        let operationCount = 0;
+
+        // 1. Update Reviews
+        const reviewsQ = query(collection(db, REVIEWS_COLLECTION), where("userId", "==", userId));
+        const reviewsSnapshot = await getDocs(reviewsQ);
+        reviewsSnapshot.docs.forEach(doc => {
+            batch.update(doc.ref, updates);
+            operationCount++;
+        });
+
+        // 2. Update Posts
+        const postsQ = query(collection(db, POSTS_COLLECTION), where("userId", "==", userId));
+        const postsSnapshot = await getDocs(postsQ);
+        postsSnapshot.docs.forEach(doc => {
+            batch.update(doc.ref, updates);
+            operationCount++;
+        });
+
+        // 3. Update Comments
+        const commentsQ = query(collection(db, COMMENTS_COLLECTION), where("userId", "==", userId));
+        const commentsSnapshot = await getDocs(commentsQ);
+        commentsSnapshot.docs.forEach(doc => {
+            batch.update(doc.ref, updates);
+            operationCount++;
+        });
+
+        // Commit if there are updates
+        if (operationCount > 0) {
+            await batch.commit();
+        }
+
+    } catch (e) {
+        console.error("Error syncing profile updates:", e);
+        throw e;
+    }
+};
+
+export const recalculateCommentCounts = async () => {
+    try {
+        const posts = await getPosts();
+        const batch = writeBatch(db);
+        let operationCount = 0;
+
+        for (const post of posts) {
+            if (!post.id) continue;
+
+            // Get actual count
+            const q = query(collection(db, COMMENTS_COLLECTION), where("postId", "==", post.id));
+            const snapshot = await getDocs(q);
+            const count = snapshot.size;
+
+            if (post.commentCount !== count) {
+                const postRef = doc(db, POSTS_COLLECTION, post.id);
+                batch.update(postRef, { commentCount: count });
+                operationCount++;
+            }
+        }
+
+        if (operationCount > 0) {
+            await batch.commit();
+            console.log(`Updated counts for ${operationCount} posts`);
+        } else {
+            console.log("No count updates needed");
+        }
+    } catch (e) {
+        console.error("Error calculating counts:", e);
     }
 };

@@ -1,0 +1,145 @@
+'use client';
+
+import { useState } from 'react';
+import { Post, toggleLikePost } from '@/lib/firestore';
+import { User, onAuthStateChanged } from 'firebase/auth';
+import { auth } from '@/lib/firebase';
+import { useEffect } from 'react';
+import { Heart, MessageCircle, UserCircle, Share2, MoreHorizontal } from 'lucide-react';
+import { formatDistanceToNow } from 'date-fns';
+import CommentSection from './CommentSection';
+import { motion, AnimatePresence } from 'framer-motion';
+
+interface PostCardProps {
+    post: Post;
+}
+
+export default function PostCard({ post }: PostCardProps) {
+    const [user, setUser] = useState<User | null>(null);
+    const [isLiked, setIsLiked] = useState(false);
+    const [likeCount, setLikeCount] = useState(post.likes.length);
+    const [commentCount, setCommentCount] = useState(post.commentCount || 0);
+    const [showComments, setShowComments] = useState(false);
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+            setUser(currentUser);
+            if (currentUser) {
+                setIsLiked(post.likes.includes(currentUser.uid));
+            }
+        });
+        return () => unsubscribe();
+    }, [post.likes]);
+
+    // Sync local state with prop when it updates (e.g. after repair)
+    useEffect(() => {
+        setCommentCount(post.commentCount || 0);
+    }, [post.commentCount]);
+
+    // Sync local state with prop when it updates (e.g. after repair)
+    useEffect(() => {
+        setCommentCount(post.commentCount || 0);
+    }, [post.commentCount]);
+
+    const handleLike = async () => {
+        if (!user) return; // Add login prompt logic if needed
+
+        // Optimistic update
+        const newIsLiked = !isLiked;
+        setIsLiked(newIsLiked);
+        setLikeCount(prev => newIsLiked ? prev + 1 : prev - 1);
+
+        try {
+            await toggleLikePost(post.id!, user.uid);
+        } catch (error) {
+            console.error("Error toggling like:", error);
+            // Revert on error
+            setIsLiked(!newIsLiked);
+            setLikeCount(prev => !newIsLiked ? prev + 1 : prev - 1);
+        }
+    };
+
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-[#121212] border border-white/5 rounded-2xl overflow-hidden hover:border-white/10 transition-all"
+        >
+            <div className="p-4 md:p-6">
+                {/* Header */}
+                <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center overflow-hidden">
+                            {post.userAvatar ? (
+                                <img src={post.userAvatar} alt={post.userName} className="w-full h-full object-cover" />
+                            ) : (
+                                <UserCircle className="w-6 h-6 text-muted-foreground" />
+                            )}
+                        </div>
+                        <div>
+                            <h3 className="font-semibold text-white">{post.userName}</h3>
+                            <p className="text-xs text-muted-foreground">
+                                {formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Content */}
+                <div className="mb-4 space-y-4">
+                    <p className="text-white/90 whitespace-pre-wrap leading-relaxed">
+                        {post.content}
+                    </p>
+                    {post.imageUrl && (
+                        <div className="rounded-xl overflow-hidden border border-white/5">
+                            <img src={post.imageUrl} alt="Post content" className="w-full h-auto" />
+                        </div>
+                    )}
+                </div>
+
+                {/* Actions */}
+                <div className="flex items-center gap-6 pt-4 border-t border-white/5">
+                    <button
+                        onClick={handleLike}
+                        className={`flex items-center gap-2 text-sm transition-colors ${isLiked ? 'text-red-500' : 'text-muted-foreground hover:text-white'
+                            }`}
+                    >
+                        <Heart className={`w-5 h-5 ${isLiked ? 'fill-current' : ''}`} />
+                        <span>{likeCount}</span>
+                    </button>
+
+                    <button
+                        onClick={() => setShowComments(!showComments)}
+                        className={`flex items-center gap-2 text-sm transition-colors ${showComments ? 'text-white' : 'text-muted-foreground hover:text-white'
+                            }`}
+                    >
+                        <MessageCircle className="w-5 h-5" />
+                        <span>{commentCount > 0 ? commentCount : 'Comments'}</span>
+                    </button>
+
+                    <button className="flex items-center gap-2 text-sm text-muted-foreground hover:text-white transition-colors ml-auto">
+                        <Share2 className="w-5 h-5" />
+                    </button>
+                </div>
+            </div>
+
+            {/* Comments Section */}
+            <AnimatePresence>
+                {showComments && (
+                    <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        className="overflow-hidden"
+                    >
+                        <CommentSection
+                            postId={post.id!}
+                            onCommentAdded={() => setCommentCount(prev => prev + 1)}
+                            onCommentsLoaded={(count: number) => setCommentCount(count)}
+                        />
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </motion.div>
+    );
+}

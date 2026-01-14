@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Loader2, Camera, Save, User as UserIcon, Lock, KeyRound } from 'lucide-react';
 import { uploadFile } from '@/lib/storage';
+import { syncUserProfile } from '@/lib/firestore';
 import { UserAvatar } from '@/components/UserAvatar';
 
 export default function ProfileManager() {
@@ -38,6 +39,7 @@ export default function ProfileManager() {
 
         try {
             await updateProfile(user, { displayName });
+            await syncUserProfile(user.uid, { userName: displayName });
             setMessage('Profile updated successfully!');
             setTimeout(() => setMessage(''), 3000);
         } catch (error) {
@@ -56,6 +58,7 @@ export default function ProfileManager() {
         try {
             const photoURL = await uploadFile(file, 'avatars');
             await updateProfile(user, { photoURL });
+            await syncUserProfile(user.uid, { userAvatar: photoURL });
             window.location.reload(); // Reload to reflect new avatar across app
         } catch (error) {
             console.error('Error uploading avatar:', error);

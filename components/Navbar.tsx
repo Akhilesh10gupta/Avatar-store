@@ -84,6 +84,7 @@ const Navbar = () => {
                 <div className="hidden md:flex items-center gap-8 text-sm font-medium text-white/70">
                     <Link href="/" className="hover:text-white transition-colors">Store</Link>
                     <Link href="/browse" className="hover:text-white transition-colors">Browse</Link>
+                    <Link href="/community" className="hover:text-white transition-colors">Community</Link>
                     <Link href="/about" className="hover:text-white transition-colors">About</Link>
                 </div>
 
@@ -174,6 +175,7 @@ const Navbar = () => {
                                 {[
                                     { label: 'Store', href: '/' },
                                     { label: 'Browse Games', href: '/browse' },
+                                    { label: 'Community', href: '/community' },
                                     { label: 'About Us', href: '/about' },
                                 ].map((link, idx) => (
                                     <motion.div key={idx} variants={itemVariants}>
