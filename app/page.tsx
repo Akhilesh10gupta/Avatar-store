@@ -2,7 +2,9 @@ import Hero from "@/components/Hero";
 import GameCard from "@/components/GameCard";
 import { getGames } from "@/lib/firestore";
 import { Game } from "@/lib/firestore";
-import { Gamepad2 } from "lucide-react";
+import { ArrowRight, Gamepad2 } from "lucide-react";
+import Link from "next/link";
+import { Button } from "@/components/ui/Button";
 
 // Dummy data for initial render if DB is empty
 const dummyGames: Game[] = [
@@ -84,13 +86,20 @@ export default async function Home() {
       <Hero games={displayGames} />
 
       {/* Featured Games Section */}
-      <section>
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold flex items-center gap-2">
-            <Gamepad2 className="text-primary" />
+      <section className="space-y-6">
+        <div className="flex items-center justify-between">
+          <h2 className="text-3xl font-bold flex items-center gap-3">
+            <div className="p-2 bg-primary/10 rounded-lg">
+              <Gamepad2 className="w-6 h-6 text-primary" />
+            </div>
             Featured Games
           </h2>
-          <a href="#" className="text-primary text-sm font-medium hover:underline">View All</a>
+          <Link href="/browse">
+            <Button variant="ghost" className="group text-primary hover:text-primary hover:bg-primary/10">
+              View All
+              <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+            </Button>
+          </Link>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {displayGames.map((game) => (
