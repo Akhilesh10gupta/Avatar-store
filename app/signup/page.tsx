@@ -57,6 +57,11 @@ export default function Signup() {
             router.push('/admin');
         } catch (err: any) {
             console.error(err);
+            if (err.code === 'auth/popup-closed-by-user') {
+                // User closed the popup, no need to show an error
+                setLoading(false);
+                return;
+            }
             setError('Failed to sign up with Google.');
         } finally {
             setLoading(false);
