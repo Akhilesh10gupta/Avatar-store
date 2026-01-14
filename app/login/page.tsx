@@ -43,12 +43,12 @@ export default function Login() {
             await signInWithPopup(auth, googleProvider);
             router.push('/admin');
         } catch (err: any) {
-            console.error(err);
             if (err.code === 'auth/popup-closed-by-user') {
                 // User closed the popup, no need to show an error
                 setLoading(false);
                 return;
             }
+            console.error(err);
             setError('Failed to sign in with Google.');
         } finally {
             setLoading(false);
