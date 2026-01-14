@@ -56,8 +56,8 @@ export default function Footer() {
                                 { label: 'New Arrivals', href: '/browse?sort=newest' },
                             ].map((link, idx) => (
                                 <li key={idx}>
-                                    <Link href={link.href} className="hover:text-primary transition-colors flex items-center gap-2 group">
-                                        <span className="w-1.5 h-1.5 rounded-full bg-white/10 group-hover:bg-primary transition-colors"></span>
+                                    <Link href={link.href} className="hover:text-white transition-all duration-300 flex items-center gap-2 group hover:translate-x-1">
+                                        <span className="w-1.5 h-1.5 rounded-full bg-white/10 group-hover:bg-primary group-hover:shadow-[0_0_10px_currentColor] transition-all"></span>
                                         {link.label}
                                     </Link>
                                 </li>
@@ -76,8 +76,8 @@ export default function Footer() {
                                 { label: 'Cookie Policy', href: '#' },
                             ].map((link, idx) => (
                                 <li key={idx}>
-                                    <Link href={link.href} className="hover:text-primary transition-colors flex items-center gap-2 group">
-                                        <span className="w-1.5 h-1.5 rounded-full bg-white/10 group-hover:bg-primary transition-colors"></span>
+                                    <Link href={link.href} className="hover:text-white transition-all duration-300 flex items-center gap-2 group hover:translate-x-1">
+                                        <span className="w-1.5 h-1.5 rounded-full bg-white/10 group-hover:bg-primary group-hover:shadow-[0_0_10px_currentColor] transition-all"></span>
                                         {link.label}
                                     </Link>
                                 </li>
