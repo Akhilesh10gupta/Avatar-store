@@ -35,10 +35,10 @@ export default function AdminDashboard() {
 
     return (
         <div>
-            <div className="flex justify-between items-center mb-8">
-                <p className="text-muted-foreground">Manage your game library, edit details, and add new titles.</p>
-                <Link href="/admin/add">
-                    <Button>
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+                <p className="text-muted-foreground text-sm md:text-base">Manage your game library, edit details, and add new titles.</p>
+                <Link href="/admin/add" className="w-full md:w-auto">
+                    <Button className="w-full md:w-auto">
                         <Plus className="w-4 h-4 mr-2" />
                         Add New Game
                     </Button>
