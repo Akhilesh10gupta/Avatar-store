@@ -69,24 +69,30 @@ export default function Signup() {
         try {
             const { signInWithRedirect, signInWithPopup } = await import('firebase/auth');
 
-            // Simple mobile detection
-            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            // Try popup first
+            try {
+                await signInWithPopup(auth, googleProvider);
+                router.push('/admin');
+            } catch (popupError: any) {
+                console.error("Popup failed, trying redirect:", popupError);
 
-            if (isMobile) {
-                await signInWithRedirect(auth, googleProvider);
-                return;
+                if (popupError.code === 'auth/popup-closed-by-user') {
+                    setLoading(false);
+                    return;
+                }
+
+                // Fallback to redirect
+                try {
+                    await signInWithRedirect(auth, googleProvider);
+                    return;
+                } catch (redirectError: any) {
+                    console.error("Redirect failed:", redirectError);
+                    setError(`Sign up failed: ${redirectError.message}`);
+                }
             }
-
-            await signInWithPopup(auth, googleProvider);
-            router.push('/admin');
         } catch (err: any) {
-            if (err.code === 'auth/popup-closed-by-user') {
-                // User closed the popup, no need to show an error
-                setLoading(false);
-                return;
-            }
             console.error(err);
-            setError('Failed to sign up with Google.');
+            setError(`System error: ${err.message}`);
         } finally {
             setLoading(false);
         }
