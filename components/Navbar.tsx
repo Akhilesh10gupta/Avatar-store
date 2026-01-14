@@ -24,7 +24,7 @@ const Navbar = () => {
                     <div className="bg-primary p-1.5 rounded-lg">
                         <Gamepad2 className="w-5 h-5 text-white" />
                     </div>
-                    <span>Avatar<span className="text-primary">Game Store</span></span>
+                    <span>Avatar<span className="text-primary"> Store</span></span>
                 </Link>
 
                 {/* Navigation Links (Desktop) */}

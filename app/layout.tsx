@@ -6,7 +6,7 @@ import Navbar from '@/components/Navbar'
 const outfit = Outfit({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: "Avatar Game Store",
+  title: "Avatar Store",
   description: "Your ultimate destination for games",
 }
 
@@ -26,7 +26,7 @@ export default function RootLayout({
             {children}
           </main>
           <footer className="py-6 text-center text-muted-foreground text-sm border-t border-border">
-            © {new Date().getFullYear()} Avatar Game Store. All rights reserved.
+            © {new Date().getFullYear()} Avatar Store. All rights reserved.
           </footer>
         </AuthProvider>
       </body>
