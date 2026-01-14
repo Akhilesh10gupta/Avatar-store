@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { getPosts, addPost, Post, recalculateCommentCounts } from '@/lib/firestore';
+import { getPosts, addPost, Post } from '@/lib/firestore';
 import PostCard from './PostCard';
 import { Plus, UserCircle, Image as ImageIcon, Loader2, Link as LinkIcon, X } from 'lucide-react';
 import { User, onAuthStateChanged } from 'firebase/auth';
@@ -95,20 +95,7 @@ export default function CommunityFeed() {
 
     return (
         <div className="max-w-2xl mx-auto space-y-8">
-            <div className="flex justify-end">
-                <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={async () => {
-                        await recalculateCommentCounts();
-                        await loadPosts();
-                        alert("Counts repaired!");
-                    }}
-                    className="text-muted-foreground hover:text-white text-xs"
-                >
-                    <Loader2 className="w-3 h-3 mr-1" /> Repair Counts
-                </Button>
-            </div>
+
 
             {/* Create Post Widget */}
             <div className="bg-[#121212] border border-white/5 rounded-2xl p-6 shadow-xl">
