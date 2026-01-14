@@ -119,3 +119,28 @@ export const updateGame = async (id: string, game: Partial<Game>) => {
 export const deleteGame = async (id: string) => {
     await deleteDoc(doc(db, GAMES_COLLECTION, id));
 };
+
+// Batch update to assign all games without a userId to the current user
+export const claimOrphanedGames = async (userId: string) => {
+    // Fetch all games (we can't easily filter by "missing field" in basic queries without composite indexes perfectly, 
+    // but we can fetch all and filter client side for this one-time migration, or use a specific query if possible)
+    // Firestore doesn't support 'where("userId", "==", undefined)' directly in all SDK versions efficiently without setup.
+    // Simplest approach for migration: Get all games, check if userId is missing, update.
+
+    const q = query(collection(db, GAMES_COLLECTION));
+    const querySnapshot = await getDocs(q);
+
+    const batchPromises = querySnapshot.docs.map(async (docSnap) => {
+        const data = docSnap.data();
+        if (!data.userId) {
+            await updateDoc(doc(db, GAMES_COLLECTION, docSnap.id), {
+                userId: userId
+            });
+            return 1; // Count updated
+        }
+        return 0;
+    });
+
+    const results = await Promise.all(batchPromises);
+    return results.reduce((a: number, b: number) => a + b, 0); // Return count of updated games
+};

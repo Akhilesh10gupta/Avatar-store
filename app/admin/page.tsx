@@ -50,12 +50,36 @@ export default function AdminDashboard() {
         <div>
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
                 <p className="text-muted-foreground text-sm md:text-base">Manage your game library, edit details, and add new titles.</p>
-                <Link href="/admin/add" className="w-full md:w-auto">
-                    <Button className="w-full md:w-auto">
-                        <Plus className="w-4 h-4 mr-2" />
-                        Add New Game
+                <div className="flex gap-2 w-full md:w-auto">
+                    <Button variant="outline" onClick={async () => {
+                        if (confirm("This will assign ALL games without an owner to your account. Continue?")) {
+                            setLoading(true);
+                            try {
+                                const { auth } = await import('@/lib/firebase');
+                                const user = auth.currentUser;
+                                if (user) {
+                                    const { claimOrphanedGames } = await import('@/lib/firestore');
+                                    const count = await claimOrphanedGames(user.uid);
+                                    alert(`Successfully claimed ${count} legacy games!`);
+                                    window.location.reload();
+                                }
+                            } catch (e) {
+                                console.error(e);
+                                alert("Error claiming games.");
+                            } finally {
+                                setLoading(false);
+                            }
+                        }
+                    }}>
+                        Claim Legacy Games
                     </Button>
-                </Link>
+                    <Link href="/admin/add" className="w-full md:w-auto">
+                        <Button className="w-full md:w-auto">
+                            <Plus className="w-4 h-4 mr-2" />
+                            Add New Game
+                        </Button>
+                    </Link>
+                </div>
             </div>
 
             {/* Desktop Table View */}
