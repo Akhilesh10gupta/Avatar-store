@@ -5,7 +5,7 @@ export const getYouTubeEmbedUrl = (url: string): string | null => {
     // Check if it's strictly a YouTube URL
     if (!url.includes('youtube.com') && !url.includes('youtu.be')) return null;
 
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|shorts\/)([^#&?]*).*/;
     const match = url.match(regExp);
 
     if (match && match[2].length === 11) {
