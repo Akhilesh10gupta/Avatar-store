@@ -59,6 +59,25 @@ export default function PostCard({ post }: PostCardProps) {
         }
     };
 
+    const handleShare = async () => {
+        const shareData = {
+            title: 'Avatar Store Community',
+            text: `Check out ${post.userName}'s post: "${post.content.slice(0, 50)}${post.content.length > 50 ? '...' : ''}"`,
+            url: window.location.href
+        };
+
+        try {
+            if (navigator.share) {
+                await navigator.share(shareData);
+            } else {
+                await navigator.clipboard.writeText(`${shareData.text}\n${shareData.url}`);
+                alert("Link copied to clipboard!");
+            }
+        } catch (err) {
+            console.error("Error sharing:", err);
+        }
+    };
+
     return (
         <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -117,7 +136,10 @@ export default function PostCard({ post }: PostCardProps) {
                         <span>{commentCount > 0 ? commentCount : 'Comments'}</span>
                     </button>
 
-                    <button className="flex items-center gap-2 text-sm text-muted-foreground hover:text-white transition-colors ml-auto">
+                    <button
+                        onClick={handleShare}
+                        className="flex items-center gap-2 text-sm text-muted-foreground hover:text-white transition-colors ml-auto"
+                    >
                         <Share2 className="w-5 h-5" />
                     </button>
                 </div>
