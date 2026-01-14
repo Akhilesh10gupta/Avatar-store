@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Loader2, Camera, Save, User as UserIcon } from 'lucide-react';
 import { uploadFile } from '@/lib/storage';
+import { UserAvatar } from '@/components/UserAvatar';
 
 export default function ProfileManager() {
     const { user } = useAuth();

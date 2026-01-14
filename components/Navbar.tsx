@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Gamepad2, Search, User, Menu, X } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/components/AuthProvider';
+import { UserAvatar } from '@/components/UserAvatar';
 
 const Navbar = () => {
     const [searchQuery, setSearchQuery] = useState('');
@@ -59,14 +60,10 @@ const Navbar = () => {
                         />
                     </div>
                     <Link href={profileLink}>
-                        <button className="rounded-full bg-white/5 hover:bg-white/10 text-white/80 hover:text-white transition-all border border-white/5 relative overflow-hidden w-10 h-10 flex items-center justify-center" title={user ? "Go to Profile" : "Login"}>
-                            {user?.photoURL ? (
-                                <img src={user.photoURL} alt="Profile" className="w-full h-full object-cover" />
-                            ) : (
-                                <User className="w-5 h-5" />
-                            )}
+                        <button className="rounded-full bg-white/5 hover:bg-white/10 transition-all relative overflow-hidden w-10 h-10 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-primary/50" title={user ? "Go to Profile" : "Login"}>
+                            <UserAvatar user={user} className="w-full h-full" />
                             {user && !user.photoURL && (
-                                <span className="absolute top-0 right-0 w-2.5 h-2.5 bg-green-500 border-2 border-[#0a0a0a] rounded-full mr-2 mt-2"></span>
+                                <span className="absolute top-0 right-0 w-2.5 h-2.5 bg-green-500 border-2 border-[#0a0a0a] rounded-full mr-0.5 mt-0.5 z-10"></span>
                             )}
                         </button>
                     </Link>
@@ -111,11 +108,7 @@ const Navbar = () => {
                             />
                         </div>
                         <Link href={profileLink} onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-2 px-4 py-2 hover:bg-secondary rounded-md text-sm font-medium text-primary">
-                            {user?.photoURL ? (
-                                <img src={user.photoURL} alt="Profile" className="w-6 h-6 rounded-full object-cover border border-border" />
-                            ) : (
-                                <User className="w-5 h-5" />
-                            )}
+                            <UserAvatar user={user} className="w-6 h-6 text-xs" />
                             <span>{user ? 'My Profile' : 'Admin Login'}</span>
                         </Link>
                     </div>
