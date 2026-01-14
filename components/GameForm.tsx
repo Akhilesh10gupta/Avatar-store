@@ -6,7 +6,7 @@ import { Game, addGame, updateGame } from '@/lib/firestore';
 import { uploadFile, uploadMultipleFiles } from '@/lib/storage';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { Loader2, Upload, X, Image as ImageIcon } from 'lucide-react';
+import { Loader2, Upload, X, Image as ImageIcon, Monitor, Smartphone, Layers } from 'lucide-react';
 import Image from 'next/image';
 
 interface GameFormProps {
@@ -23,7 +23,9 @@ export default function GameForm({ initialData }: GameFormProps) {
             genre: '',
             developer: '',
             releaseDate: '',
-            downloadLink: '',
+            platform: 'PC', // Default
+            downloadLinkPC: '',
+            downloadLinkAndroid: '',
             coverImage: '',
             icon: '',
             screenshots: [],
@@ -41,7 +43,7 @@ export default function GameForm({ initialData }: GameFormProps) {
     const [iconFile, setIconFile] = useState<File | null>(null);
     const [screenshotFiles, setScreenshotFiles] = useState<File[]>([]);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         if (name.startsWith('sys_')) {
             const field = name.replace('sys_', '');
@@ -90,7 +92,9 @@ export default function GameForm({ initialData }: GameFormProps) {
                 coverImage: coverUrl,
                 icon: iconUrl,
                 screenshots: screenshotUrls,
-            } as Game; // Cast to Game (ignoring id optionality for now)
+                // Ensure legacy field is filled if needed, or rely on new fields
+                downloadLink: formData.downloadLinkPC || formData.downloadLinkAndroid || '',
+            } as Game;
 
             if (initialData?.id) {
                 await updateGame(initialData.id, gameData);
@@ -99,7 +103,7 @@ export default function GameForm({ initialData }: GameFormProps) {
             }
 
             router.push('/admin');
-            router.refresh(); // Refresh server components
+            router.refresh();
         } catch (error) {
             console.error("Error saving game:", error);
             alert("Failed to save game. Check console for details.");
@@ -125,10 +129,28 @@ export default function GameForm({ initialData }: GameFormProps) {
                         <label className="text-sm font-medium">Developer</label>
                         <Input name="developer" value={formData.developer} onChange={handleChange} required />
                     </div>
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium">Release Date</label>
-                        <Input name="releaseDate" value={formData.releaseDate} onChange={handleChange} required placeholder="YYYY or YYYY-MM-DD" />
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium">Release Date</label>
+                            <Input name="releaseDate" value={formData.releaseDate} onChange={handleChange} required placeholder="YYYY" />
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium">Platform</label>
+                            <div className="relative">
+                                <select
+                                    name="platform"
+                                    value={formData.platform || 'PC'}
+                                    onChange={handleChange}
+                                    className="flex h-10 w-full rounded-md border border-input bg-secondary/50 px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                                >
+                                    <option value="PC">PC (Windows)</option>
+                                    <option value="Android">Android</option>
+                                    <option value="Both">Both (PC & Android)</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
+
                     <div className="space-y-2">
                         <label className="text-sm font-medium">Description</label>
                         <textarea
@@ -145,7 +167,7 @@ export default function GameForm({ initialData }: GameFormProps) {
                 <div className="space-y-4">
                     <h3 className="text-lg font-semibold border-b border-border/50 pb-2">Assets & Links</h3>
 
-                    {/* Icon Upload */}
+                    {/* Icon Upload ... (Kept same logic, just minor style check) */}
                     <div className="space-y-2">
                         <label className="text-sm font-medium">Game Icon</label>
                         <div className="flex flex-col gap-2">
@@ -183,10 +205,39 @@ export default function GameForm({ initialData }: GameFormProps) {
                         </div>
                     </div>
 
-                    {/* Download Link */}
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium">Google Drive Download Link</label>
-                        <Input name="downloadLink" value={formData.downloadLink} onChange={handleChange} required placeholder="https://drive.google.com/..." />
+                    {/* Dynamic Download Links */}
+                    <div className="p-4 bg-secondary/20 rounded-lg border border-border/50 space-y-4">
+                        {(formData.platform === 'PC' || formData.platform === 'Both') && (
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium flex items-center gap-2">
+                                    <Monitor className="w-4 h-4 text-primary" />
+                                    PC Download Link
+                                </label>
+                                <Input
+                                    name="downloadLinkPC"
+                                    value={formData.downloadLinkPC}
+                                    onChange={handleChange}
+                                    required={formData.platform === 'PC'}
+                                    placeholder="https://drive.google.com/.../game.exe"
+                                />
+                            </div>
+                        )}
+
+                        {(formData.platform === 'Android' || formData.platform === 'Both') && (
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium flex items-center gap-2">
+                                    <Smartphone className="w-4 h-4 text-green-500" />
+                                    Android Download Link
+                                </label>
+                                <Input
+                                    name="downloadLinkAndroid"
+                                    value={formData.downloadLinkAndroid}
+                                    onChange={handleChange}
+                                    required={formData.platform === 'Android'}
+                                    placeholder="https://drive.google.com/.../game.apk"
+                                />
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
@@ -230,19 +281,19 @@ export default function GameForm({ initialData }: GameFormProps) {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                         <label className="text-sm font-medium">OS</label>
-                        <Input name="sys_os" value={formData.systemRequirements?.os} onChange={handleChange} placeholder="Windows 10 64-bit" />
+                        <Input name="sys_os" value={formData.systemRequirements?.os} onChange={handleChange} placeholder="Windows 10 / Android 12" />
                     </div>
                     <div className="space-y-2">
                         <label className="text-sm font-medium">Processor</label>
-                        <Input name="sys_processor" value={formData.systemRequirements?.processor} onChange={handleChange} placeholder="Intel Core i5..." />
+                        <Input name="sys_processor" value={formData.systemRequirements?.processor} onChange={handleChange} placeholder="Intel i5 / Snapdragon 8 Gen 2" />
                     </div>
                     <div className="space-y-2">
                         <label className="text-sm font-medium">Memory</label>
-                        <Input name="sys_memory" value={formData.systemRequirements?.memory} onChange={handleChange} placeholder="8 GB RAM" />
+                        <Input name="sys_memory" value={formData.systemRequirements?.memory} onChange={handleChange} placeholder="8 GB RAM / 8 GB RAM" />
                     </div>
                     <div className="space-y-2">
                         <label className="text-sm font-medium">Graphics</label>
-                        <Input name="sys_graphics" value={formData.systemRequirements?.graphics} onChange={handleChange} placeholder="NVIDIA GeForce GTX..." />
+                        <Input name="sys_graphics" value={formData.systemRequirements?.graphics} onChange={handleChange} placeholder="GTX 1060 / Adreno 740" />
                     </div>
                     <div className="space-y-2">
                         <label className="text-sm font-medium">Storage</label>

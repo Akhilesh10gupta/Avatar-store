@@ -22,7 +22,14 @@ export interface Game {
     genre: string;
     releaseDate: string;
     developer: string;
-    downloadLink: string; // Google Drive link
+
+    // Platform Support
+    platform: 'PC' | 'Android' | 'Both';
+    downloadLinkPC?: string;      // For PC/Both
+    downloadLinkAndroid?: string; // For Android/Both
+
+    downloadLink?: string; // @deprecated - keeping for backward compatibility
+
     icon: string; // URL for the game icon
     systemRequirements: {
         os: string;

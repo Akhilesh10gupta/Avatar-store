@@ -16,6 +16,7 @@ const dummyGames: Game[] = [
     releaseDate: '2025',
     developer: 'CD Project Red',
     downloadLink: '#',
+    platform: 'PC',
     icon: '',
     systemRequirements: { os: '', processor: '', memory: '', graphics: '', storage: '' }
   },
@@ -29,6 +30,7 @@ const dummyGames: Game[] = [
     releaseDate: '2024',
     developer: 'Star Systems',
     downloadLink: '#',
+    platform: 'PC',
     icon: '',
     systemRequirements: { os: '', processor: '', memory: '', graphics: '', storage: '' }
   },
@@ -42,6 +44,7 @@ const dummyGames: Game[] = [
     releaseDate: '2023',
     developer: 'Mythos Games',
     downloadLink: '#',
+    platform: 'PC',
     icon: '',
     systemRequirements: { os: '', processor: '', memory: '', graphics: '', storage: '' }
   },
@@ -55,6 +58,7 @@ const dummyGames: Game[] = [
     releaseDate: '2024',
     developer: 'Turbo Arts',
     downloadLink: '#',
+    platform: 'PC',
     icon: '',
     systemRequirements: { os: '', processor: '', memory: '', graphics: '', storage: '' }
   }

@@ -1,6 +1,6 @@
 import { getGameById } from "@/lib/firestore";
 import { Button } from "@/components/ui/Button";
-import { Download, Monitor, Cpu, HardDrive, MemoryStick, Image as ImageIcon, ArrowLeft } from "lucide-react";
+import { Download, Monitor, Cpu, HardDrive, MemoryStick, Image as ImageIcon, ArrowLeft, Smartphone } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -41,7 +41,8 @@ export default async function GameDetails({ params }: { params: Promise<{ id: st
                     <div>
                         <h1 className="text-4xl md:text-5xl font-bold mb-2">{game.title}</h1>
                         <div className="flex items-center gap-4 text-muted-foreground mb-6">
-                            <span className="bg-secondary px-3 py-1 rounded-full text-sm font-medium text-secondary-foreground">
+                            <span className="bg-secondary px-3 py-1 rounded-full text-sm font-medium text-secondary-foreground flex items-center gap-2">
+                                {game.platform === 'Android' ? <Smartphone className="w-3 h-3" /> : <Monitor className="w-3 h-3" />}
                                 {game.genre}
                             </span>
                             <span>{game.developer}</span>
@@ -53,12 +54,25 @@ export default async function GameDetails({ params }: { params: Promise<{ id: st
                     </div>
 
                     <div className="flex flex-wrap gap-4">
-                        <Link href={game.downloadLink} target="_blank" rel="noopener noreferrer">
-                            <Button size="lg" className="px-8 shadow-lg shadow-primary/20">
-                                <Download className="w-5 h-5 mr-2" />
-                                Download Now
-                            </Button>
-                        </Link>
+                        {/* PC Download Button */}
+                        {(game.platform === 'PC' || game.platform === 'Both') && (game.downloadLinkPC || game.downloadLink) && (
+                            <Link href={game.downloadLinkPC || game.downloadLink || '#'} target="_blank" rel="noopener noreferrer">
+                                <Button size="lg" className="px-8 shadow-lg shadow-primary/20">
+                                    <Monitor className="w-5 h-5 mr-2" />
+                                    Download for PC
+                                </Button>
+                            </Link>
+                        )}
+
+                        {/* Android Download Button */}
+                        {(game.platform === 'Android' || game.platform === 'Both') && (game.downloadLinkAndroid || game.downloadLink) && (
+                            <Link href={game.downloadLinkAndroid || game.downloadLink || '#'} target="_blank" rel="noopener noreferrer">
+                                <Button size="lg" className="px-8 shadow-lg shadow-green-500/20 bg-green-600 hover:bg-green-700 text-white border-none">
+                                    <Smartphone className="w-5 h-5 mr-2" />
+                                    Download for Android
+                                </Button>
+                            </Link>
+                        )}
                     </div>
                 </div>
             </div>

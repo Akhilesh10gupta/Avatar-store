@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { Download, MonitorSmartphone } from 'lucide-react';
+import { Download, Monitor, Smartphone, Layers } from 'lucide-react';
 import { Game } from '@/lib/firestore'; // Assuming types are exported from here or a types file
 import { Button } from './ui/Button';
 
@@ -35,8 +35,22 @@ const GameCard = ({ game }: GameCardProps) => {
                 <div className="flex items-center justify-between text-xs text-muted-foreground">
                     <span className="bg-secondary px-2 py-0.5 rounded text-secondary-foreground">{game.genre}</span>
                     <div className="flex items-center gap-1">
-                        <MonitorSmartphone className="w-3 h-3" />
-                        <span>PC</span>
+                        {game.platform === 'Android' ? (
+                            <>
+                                <Smartphone className="w-3 h-3" />
+                                <span>Android</span>
+                            </>
+                        ) : game.platform === 'Both' ? (
+                            <>
+                                <Layers className="w-3 h-3" />
+                                <span>PC + Android</span>
+                            </>
+                        ) : (
+                            <>
+                                <Monitor className="w-3 h-3" />
+                                <span>PC</span>
+                            </>
+                        )}
                     </div>
                 </div>
             </div>
