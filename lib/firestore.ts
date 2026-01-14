@@ -10,7 +10,8 @@ import {
     orderBy,
     getDoc,
     limit,
-    where
+    where,
+    increment
 } from "firebase/firestore";
 
 // Define the interface for a Game
@@ -49,6 +50,11 @@ export interface Game {
     featured?: boolean;
     createdAt?: string;
     userId?: string; // Owner of the game
+
+    // Stats
+    downloadCount?: number;
+    rating?: number; // Average rating (0-5)
+    ratingCount?: number; // Number of ratings
 }
 
 const GAMES_COLLECTION = "games";
@@ -143,4 +149,44 @@ export const claimOrphanedGames = async (userId: string) => {
 
     const results = await Promise.all(batchPromises);
     return results.reduce((a: number, b: number) => a + b, 0); // Return count of updated games
+};
+
+export const incrementDownload = async (gameId: string) => {
+    const gameRef = doc(db, GAMES_COLLECTION, gameId);
+    await updateDoc(gameRef, {
+        downloadCount: increment(1)
+    });
+};
+
+export const rateGame = async (gameId: string, rating: number) => {
+    // This is a simplified rating logic. In a real app, you'd store individual ratings in a subcollection
+    // to prevent users from rating multiple times (conceptually) and to calculate true average.
+    // For this demo, we will use a weighted average approximation stored on the document.
+
+    // Note: To do this purely atomically without reading first is hard for average.
+    // We will do a transaction or just read-then-update for simplicity here, 
+    // assuming low concurrency for this specific user request context.
+
+    // Actually, let's just use the current state from client or fetch fresh.
+    try {
+        const gameRef = doc(db, GAMES_COLLECTION, gameId);
+        const gameSnap = await getDoc(gameRef);
+
+        if (gameSnap.exists()) {
+            const data = gameSnap.data();
+            const currentRating = data.rating || 0;
+            const currentCount = data.ratingCount || 0;
+
+            const newCount = currentCount + 1;
+            const newRating = ((currentRating * currentCount) + rating) / newCount;
+
+            await updateDoc(gameRef, {
+                rating: newRating,
+                ratingCount: newCount
+            });
+        }
+    } catch (e) {
+        console.error("Error rating game:", e);
+        throw e;
+    }
 };
