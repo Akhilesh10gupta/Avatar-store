@@ -18,7 +18,8 @@ const dummyGames: Game[] = [
     downloadLink: '#',
     platform: 'PC',
     icon: '',
-    systemRequirements: { os: '', processor: '', memory: '', graphics: '', storage: '' }
+    systemRequirements: { os: '', processor: '', memory: '', graphics: '', storage: '' },
+    createdAt: new Date().toISOString()
   },
   {
     id: '2',
@@ -32,7 +33,8 @@ const dummyGames: Game[] = [
     downloadLink: '#',
     platform: 'PC',
     icon: '',
-    systemRequirements: { os: '', processor: '', memory: '', graphics: '', storage: '' }
+    systemRequirements: { os: '', processor: '', memory: '', graphics: '', storage: '' },
+    createdAt: new Date().toISOString()
   },
   {
     id: '3',
@@ -46,7 +48,8 @@ const dummyGames: Game[] = [
     downloadLink: '#',
     platform: 'PC',
     icon: '',
-    systemRequirements: { os: '', processor: '', memory: '', graphics: '', storage: '' }
+    systemRequirements: { os: '', processor: '', memory: '', graphics: '', storage: '' },
+    createdAt: new Date().toISOString()
   },
   {
     id: '4',
@@ -60,7 +63,8 @@ const dummyGames: Game[] = [
     downloadLink: '#',
     platform: 'PC',
     icon: '',
-    systemRequirements: { os: '', processor: '', memory: '', graphics: '', storage: '' }
+    systemRequirements: { os: '', processor: '', memory: '', graphics: '', storage: '' },
+    createdAt: new Date().toISOString()
   }
 ];
 

@@ -46,22 +46,31 @@ export interface Game {
     };
     gameplayVideo?: string; // URL for gameplay video
     featured?: boolean;
-    createdAt?: any;
+    createdAt?: string;
 }
 
 const GAMES_COLLECTION = "games";
 
+const docToGame = (doc: any): Game => {
+    const data = doc.data();
+    return {
+        id: doc.id,
+        ...data,
+        createdAt: data.createdAt?.toDate ? data.createdAt.toDate().toISOString() : data.createdAt,
+    } as Game;
+};
+
 export const getGames = async () => {
     const q = query(collection(db, GAMES_COLLECTION), orderBy("createdAt", "desc"));
     const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Game));
+    return querySnapshot.docs.map(docToGame);
 };
 
 export const getFeaturedGames = async () => {
     // Simplified for now, real implementation would filter by featured
     const q = query(collection(db, GAMES_COLLECTION), orderBy("createdAt", "desc"), limit(5));
     const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Game));
+    return querySnapshot.docs.map(docToGame);
 };
 
 
@@ -69,7 +78,7 @@ export const getGameById = async (id: string) => {
     const docRef = doc(db, GAMES_COLLECTION, id);
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
-        return { id: docSnap.id, ...docSnap.data() } as Game;
+        return docToGame(docSnap);
     } else {
         return null;
     }
