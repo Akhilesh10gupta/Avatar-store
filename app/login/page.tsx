@@ -50,7 +50,7 @@ export default function Login() {
                         <label className="text-sm font-medium">Email</label>
                         <Input
                             type="email"
-                            placeholder="admin@nexusgames.com"
+                            placeholder="admin@avatargamestore.com"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
