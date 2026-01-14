@@ -272,5 +272,6 @@ export default function ProfileManager() {
                     )}
                 </div>
             </div>
-            );
+        </div>
+    );
 }
