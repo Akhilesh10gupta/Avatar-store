@@ -53,8 +53,8 @@ export default function AdminDashboard() {
 
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8 pt-8 border-t border-border">
                 <p className="text-muted-foreground text-sm md:text-base">Manage your game library, edit details, and add new titles.</p>
-                <div className="flex gap-2 w-full md:w-auto">
-                    <Button variant="outline" onClick={async () => {
+                <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
+                    <Button variant="outline" className="w-full md:w-auto" onClick={async () => {
                         if (confirm("This will assign ALL games without an owner to your account. Continue?")) {
                             setLoading(true);
                             try {
