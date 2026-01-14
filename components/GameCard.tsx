@@ -14,7 +14,7 @@ const GameCard = ({ game }: GameCardProps) => {
 
     return (
         <Link href={`/game/${game.id}`} className="group block h-full">
-            <div className="relative overflow-hidden rounded-xl bg-card border border-border/50 hover:border-primary/50 transition-colors h-full flex flex-col cursor-pointer">
+            <div className="relative overflow-hidden rounded-xl bg-card border border-border/50 hover:border-violet-500/50 hover:shadow-[0_0_25px_-5px_rgba(139,92,246,0.3)] transition-all duration-300 h-full flex flex-col cursor-pointer">
                 {/* Image Container */}
                 <div className="aspect-[3/4] relative overflow-hidden">
                     <Image
@@ -23,16 +23,16 @@ const GameCard = ({ game }: GameCardProps) => {
                         fill
                         className="object-cover transition-transform duration-500 group-hover:scale-110"
                     />
-                    {/* Hover Overlay - Soft gradient only, no button */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-background/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    {/* Hover Overlay - Soft brightness boost instead of shadow */}
+                    <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 </div>
 
                 {/* Content */}
                 <div className="p-4 space-y-2 flex-grow flex flex-col justify-end">
-                    <h3 className="font-bold text-lg leading-tight truncate text-foreground group-hover:text-primary transition-colors">
+                    <h3 className="font-bold text-lg leading-tight truncate text-foreground group-hover:text-violet-400 transition-colors">
                         {game.title}
                     </h3>
-                    <div className="flex items-center justify-between text-xs text-muted-foreground">
+                    <div className="flex items-center justify-between text-xs text-muted-foreground group-hover:text-muted-foreground/80">
                         <span className="bg-secondary px-2 py-0.5 rounded text-secondary-foreground">{game.genre}</span>
                         <div className="flex items-center gap-1">
                             {game.platform === 'Android' ? (
