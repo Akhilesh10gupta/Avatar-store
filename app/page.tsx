@@ -101,10 +101,20 @@ export default async function Home() {
             </Button>
           </Link>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {displayGames.map((game) => (
-            <GameCard key={game.id} game={game} />
-          ))}
+
+        {/* Horizontal Scroll Container */}
+        <div className="relative group/scroll">
+          <div className="flex gap-6 overflow-x-auto pb-6 -mx-4 px-4 md:mx-0 md:px-0 scrollbar-hide snap-x snap-mandatory">
+            {displayGames.map((game) => (
+              <div key={game.id} className="min-w-[280px] md:min-w-[320px] snap-center">
+                <GameCard game={game} />
+              </div>
+            ))}
+          </div>
+
+          {/* Optional gradient hints for scrolling */}
+          <div className="absolute top-0 bottom-6 left-0 w-12 bg-gradient-to-r from-background to-transparent pointer-events-none md:hidden" />
+          <div className="absolute top-0 bottom-6 right-0 w-12 bg-gradient-to-l from-background to-transparent pointer-events-none md:hidden" />
         </div>
       </section>
     </div>
