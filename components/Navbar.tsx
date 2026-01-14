@@ -18,7 +18,7 @@ const Navbar = () => {
     };
 
     return (
-        <nav className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/80 backdrop-blur-xl">
+        <nav className="sticky top-0 z-50 w-full border-b border-white/10 bg-black/80 backdrop-blur-md supports-[backdrop-filter]:bg-black/60">
             <div className="container mx-auto px-4 h-16 flex items-center justify-between">
 
                 {/* Logo */}
@@ -26,14 +26,14 @@ const Navbar = () => {
                     <div className="bg-primary p-1.5 rounded-lg">
                         <Gamepad2 className="w-5 h-5 text-white" />
                     </div>
-                    <span>Avatar<span className="text-primary"> Store</span></span>
+                    <span className="text-white">Avatar<span className="text-primary"> Store</span></span>
                 </Link>
 
                 {/* Desktop Navigation */}
-                <div className="hidden md:flex items-center gap-8 text-sm font-medium text-muted-foreground">
+                <div className="hidden md:flex items-center gap-8 text-sm font-medium text-white/80">
                     <Link href="/" className="hover:text-primary transition-colors">Store</Link>
                     <Link href="/browse" className="hover:text-primary transition-colors">Browse</Link>
-                    <Link href="/admin" className="hover:text-primary transition-colors text-xs bg-secondary/50 px-2 py-1 rounded border border-border">Admin Panel</Link>
+                    <Link href="/admin" className="hover:text-primary transition-colors text-xs bg-white/10 px-2 py-1 rounded border border-white/10">Admin Panel</Link>
                 </div>
 
                 {/* Right Actions (Desktop) */}
