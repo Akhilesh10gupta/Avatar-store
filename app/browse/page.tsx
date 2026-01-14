@@ -1,8 +1,10 @@
+'use client';
+
 import { useEffect, useState, useMemo } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { getGames, Game } from '@/lib/firestore';
 import GameCard from '@/components/GameCard';
-import { Loader2, Search, X, Filter } from 'lucide-react';
+import { Loader2, Search, X, Filter, SearchX } from 'lucide-react';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 
@@ -136,7 +138,7 @@ export default function BrowsePage() {
                         {selectedCategory !== 'All' && ` in ${selectedCategory}`}.
                     </p>
                     <Button
-                        variant="link"
+                        variant="ghost"
                         onClick={() => { setSearchQuery(''); setSelectedCategory('All'); }}
                         className="mt-4 text-primary"
                     >
