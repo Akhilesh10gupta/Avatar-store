@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
 import { auth, googleProvider } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
@@ -36,10 +36,35 @@ export default function Login() {
         }
     };
 
+    useEffect(() => {
+        // Handle redirect result
+        import('firebase/auth').then(({ getRedirectResult }) => {
+            getRedirectResult(auth).then((result) => {
+                if (result) {
+                    router.push('/admin');
+                }
+            }).catch((err) => {
+                console.error(err);
+                setError('Failed to sign in with Google.');
+            });
+        });
+    }, [router]);
+
     const handleGoogleLogin = async () => {
         setLoading(true);
         setError('');
         try {
+            const { signInWithRedirect, signInWithPopup, getRedirectResult } = await import('firebase/auth');
+
+            // Simple mobile detection
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+            if (isMobile) {
+                await signInWithRedirect(auth, googleProvider);
+                // Redirect happens, no code after this runs effectively until return
+                return;
+            }
+
             await signInWithPopup(auth, googleProvider);
             router.push('/admin');
         } catch (err: any) {
