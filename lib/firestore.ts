@@ -140,6 +140,7 @@ export interface Review {
     userAvatar?: string;
     content: string;
     createdAt: string;
+    updatedAt?: string;
 }
 
 const GAMES_COLLECTION = "games";
@@ -255,6 +256,19 @@ export const addReview = async (review: Omit<Review, "id">) => {
         return docRef.id;
     } catch (e) {
         console.error("Error adding review: ", e);
+        throw e;
+    }
+};
+
+export const updateReview = async (reviewId: string, content: string) => {
+    try {
+        const reviewRef = doc(db, REVIEWS_COLLECTION, reviewId);
+        await updateDoc(reviewRef, {
+            content,
+            updatedAt: new Date().toISOString()
+        });
+    } catch (e) {
+        console.error("Error updating review:", e);
         throw e;
     }
 };
