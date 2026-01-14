@@ -1,0 +1,15 @@
+
+export const toggleLikeComment = async (commentId: string, userId: string) => {
+    const commentRef = doc(db, COMMENTS_COLLECTION, commentId);
+    await runTransaction(db, async (transaction) => {
+        const commentDoc = await transaction.get(commentRef);
+        if (!commentDoc.exists()) throw new Error("Comment does not exist");
+
+        const likes = commentDoc.data().likes || [];
+        const newLikes = likes.includes(userId)
+            ? likes.filter((id: string) => id !== userId) // Unlike
+            : [...likes, userId]; // Like
+
+        transaction.update(commentRef, { likes: newLikes });
+    });
+};

@@ -316,6 +316,8 @@ export interface Comment {
     userAvatar?: string;
     content: string;
     createdAt: string;
+    likes: string[]; // User IDs who liked
+    parentId?: string; // ID of parent comment if this is a reply
 }
 
 const POSTS_COLLECTION = "posts";
@@ -364,6 +366,7 @@ export const addComment = async (comment: Omit<Comment, "id">) => {
             // Set comment data
             transaction.set(commentRef, {
                 ...comment,
+                likes: [],
                 createdAt: new Date().toISOString()
             });
 
@@ -394,6 +397,21 @@ export const getPostComments = async (postId: string) => {
         console.error("Error fetching comments:", e);
         return [];
     }
+};
+
+export const toggleLikeComment = async (commentId: string, userId: string) => {
+    const commentRef = doc(db, COMMENTS_COLLECTION, commentId);
+    await runTransaction(db, async (transaction) => {
+        const commentDoc = await transaction.get(commentRef);
+        if (!commentDoc.exists()) throw new Error("Comment does not exist");
+
+        const likes = commentDoc.data().likes || [];
+        const newLikes = likes.includes(userId)
+            ? likes.filter((id: string) => id !== userId) // Unlike
+            : [...likes, userId]; // Like
+
+        transaction.update(commentRef, { likes: newLikes });
+    });
 };
 
 export const toggleLikePost = async (postId: string, userId: string) => {
