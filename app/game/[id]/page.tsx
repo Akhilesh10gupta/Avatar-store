@@ -1,0 +1,123 @@
+import { getGameById } from "@/lib/firestore";
+import { Button } from "@/components/ui/Button";
+import { Download, Monitor, Cpu, HardDrive, MemoryStick, Image as ImageIcon, ArrowLeft } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+
+// Force dynamic rendering since we are fetching data
+export const dynamic = 'force-dynamic';
+
+export default async function GameDetails({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
+    const game = await getGameById(id);
+
+    if (!game) {
+        return notFound();
+    }
+
+    return (
+        <div className="space-y-8 animate-in fade-in duration-500">
+            {/* Back Button */}
+            <Link href="/" className="inline-flex items-center text-muted-foreground hover:text-primary transition-colors">
+                <ArrowLeft className="w-4 h-4 mr-2" /> Back to Store
+            </Link>
+
+            {/* Header Section */}
+            <div className="grid md:grid-cols-[300px_1fr] gap-8">
+                {/* Cover Image */}
+                <div className="relative aspect-[3/4] rounded-xl overflow-hidden shadow-2xl border border-border/50">
+                    <Image
+                        src={game.coverImage || 'https://images.unsplash.com/photo-1552820728-8b83bb6b773f?q=80&w=2070&auto=format&fit=crop'}
+                        alt={game.title}
+                        fill
+                        className="object-cover"
+                        priority
+                    />
+                </div>
+
+                {/* Info */}
+                <div className="flex flex-col justify-between space-y-6">
+                    <div>
+                        <h1 className="text-4xl md:text-5xl font-bold mb-2">{game.title}</h1>
+                        <div className="flex items-center gap-4 text-muted-foreground mb-6">
+                            <span className="bg-secondary px-3 py-1 rounded-full text-sm font-medium text-secondary-foreground">
+                                {game.genre}
+                            </span>
+                            <span>{game.developer}</span>
+                            <span>{game.releaseDate}</span>
+                        </div>
+                        <p className="text-lg text-muted-foreground leading-relaxed max-w-2xl">
+                            {game.description}
+                        </p>
+                    </div>
+
+                    <div className="flex flex-wrap gap-4">
+                        <Link href={game.downloadLink} target="_blank" rel="noopener noreferrer">
+                            <Button size="lg" className="px-8 shadow-lg shadow-primary/20">
+                                <Download className="w-5 h-5 mr-2" />
+                                Download Now
+                            </Button>
+                        </Link>
+                    </div>
+                </div>
+            </div>
+
+            {/* Screenshots */}
+            {game.screenshots && game.screenshots.length > 0 && (
+                <section>
+                    <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
+                        <ImageIcon className="text-primary" />
+                        Screenshots
+                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {game.screenshots.map((shot, idx) => (
+                            <div key={idx} className="relative aspect-video rounded-lg overflow-hidden border border-border/50 hover:border-primary/50 transition-colors group">
+                                <Image
+                                    src={shot}
+                                    alt={`${game.title} screenshot ${idx + 1}`}
+                                    fill
+                                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                                />
+                            </div>
+                        ))}
+                    </div>
+                </section>
+            )}
+
+            {/* System Requirements */}
+            <section className="bg-card rounded-2xl p-8 border border-border/50">
+                <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
+                    <Monitor className="text-primary" />
+                    System Requirements
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div className="space-y-2">
+                        <span className="flex items-center gap-2 text-muted-foreground text-sm font-medium">
+                            <Monitor className="w-4 h-4" /> OS
+                        </span>
+                        <p className="font-semibold">{game.systemRequirements.os || 'Windows 10/11'}</p>
+                    </div>
+                    <div className="space-y-2">
+                        <span className="flex items-center gap-2 text-muted-foreground text-sm font-medium">
+                            <Cpu className="w-4 h-4" /> Processor
+                        </span>
+                        <p className="font-semibold">{game.systemRequirements.processor || 'Intel Core i5 / AMD Ryzen 5'}</p>
+                    </div>
+                    <div className="space-y-2">
+                        <span className="flex items-center gap-2 text-muted-foreground text-sm font-medium">
+                            <MemoryStick className="w-4 h-4" /> Memory
+                        </span>
+                        <p className="font-semibold">{game.systemRequirements.memory || '8 GB RAM'}</p>
+                    </div>
+                    <div className="space-y-2">
+                        <span className="flex items-center gap-2 text-muted-foreground text-sm font-medium">
+                            <HardDrive className="w-4 h-4" /> Graphics
+                        </span>
+                        <p className="font-semibold">{game.systemRequirements.graphics || 'NVIDIA GTX 1060 / AMD RX 580'}</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    );
+}
