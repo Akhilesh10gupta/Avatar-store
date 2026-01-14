@@ -2,7 +2,7 @@
 const CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
 const API_KEY = process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY;
 
-export const uploadFile = async (file: File, folder: string = 'general') => {
+export const uploadFile = async (file: File, folder: string = 'general', resourceType: 'image' | 'video' | 'auto' = 'image') => {
     if (!CLOUD_NAME || !API_KEY) {
         throw new Error("Cloudinary configuration is missing.");
     }
@@ -36,7 +36,7 @@ export const uploadFile = async (file: File, folder: string = 'general') => {
     formData.append('folder', folder);
 
     try {
-        const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
+        const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/${resourceType}/upload`, {
             method: 'POST',
             body: formData,
         });

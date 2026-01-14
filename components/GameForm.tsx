@@ -27,6 +27,7 @@ export default function GameForm({ initialData }: GameFormProps) {
         downloadLinkAndroid: initialData?.downloadLinkAndroid || '',
         coverImage: initialData?.coverImage || '',
         icon: initialData?.icon || '',
+        gameplayVideo: initialData?.gameplayVideo || '',
         screenshots: initialData?.screenshots || [],
         systemRequirements: initialData?.systemRequirements || {
             os: 'Windows 10',
@@ -46,6 +47,7 @@ export default function GameForm({ initialData }: GameFormProps) {
     const [coverFile, setCoverFile] = useState<File | null>(null);
     const [iconFile, setIconFile] = useState<File | null>(null);
     const [screenshotFiles, setScreenshotFiles] = useState<File[]>([]);
+    const [videoFile, setVideoFile] = useState<File | null>(null);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
@@ -76,10 +78,11 @@ export default function GameForm({ initialData }: GameFormProps) {
         }
     };
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'cover' | 'icon' | 'screenshots') => {
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'cover' | 'icon' | 'screenshots' | 'video') => {
         if (e.target.files && e.target.files.length > 0) {
             if (type === 'cover') setCoverFile(e.target.files[0]);
             if (type === 'icon') setIconFile(e.target.files[0]);
+            if (type === 'video') setVideoFile(e.target.files[0]);
             if (type === 'screenshots') setScreenshotFiles(Array.from(e.target.files));
         }
     };
@@ -91,6 +94,7 @@ export default function GameForm({ initialData }: GameFormProps) {
         try {
             let coverUrl = formData.coverImage;
             let iconUrl = formData.icon;
+            let gameplayVideoUrl = formData.gameplayVideo;
             let screenshotUrls = formData.screenshots || [];
 
             if (coverFile) {
@@ -98,6 +102,10 @@ export default function GameForm({ initialData }: GameFormProps) {
             }
             if (iconFile) {
                 iconUrl = await uploadFile(iconFile, 'icons');
+            }
+            if (videoFile) {
+                // Upload video with resourceType 'video'
+                gameplayVideoUrl = await uploadFile(videoFile, 'videos', 'video');
             }
             if (screenshotFiles.length > 0) {
                 const newScreenshots = await uploadMultipleFiles(screenshotFiles, 'screenshots');
@@ -108,6 +116,7 @@ export default function GameForm({ initialData }: GameFormProps) {
                 ...formData,
                 coverImage: coverUrl,
                 icon: iconUrl,
+                gameplayVideo: gameplayVideoUrl,
                 screenshots: screenshotUrls,
                 // Ensure legacy field is filled if needed, or rely on new fields
                 downloadLink: formData.downloadLinkPC || formData.downloadLinkAndroid || '',
@@ -255,6 +264,25 @@ export default function GameForm({ initialData }: GameFormProps) {
                                 />
                             </div>
                         )}
+                    </div>
+
+                    {/* Gameplay Video Upload */}
+                    <div className="space-y-2">
+                        <label className="text-sm font-medium">Gameplay Video</label>
+                        <div className="flex flex-col gap-2">
+                            <div className="flex items-center gap-4">
+                                {formData.gameplayVideo && !videoFile && (
+                                    <div className="relative w-full max-w-[200px] aspect-video rounded bg-black overflow-hidden shrink-0 flex items-center justify-center">
+                                        <video src={formData.gameplayVideo} className="w-full h-full object-cover" muted />
+                                    </div>
+                                )}
+                                <input type="file" accept="video/*" onChange={(e) => handleFileChange(e, 'video')} className="text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-primary/20 file:text-primary hover:file:bg-primary/30 w-full" />
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <span className="text-xs text-muted-foreground">OR</span>
+                                <Input name="gameplayVideo" value={formData.gameplayVideo} onChange={handleChange} placeholder="Paste Video URL here" className="text-xs h-8" />
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

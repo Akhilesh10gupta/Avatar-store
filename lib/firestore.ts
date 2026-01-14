@@ -44,6 +44,7 @@ export interface Game {
         memory: string;
         storage: string;
     };
+    gameplayVideo?: string; // URL for gameplay video
     featured?: boolean;
     createdAt?: any;
 }
