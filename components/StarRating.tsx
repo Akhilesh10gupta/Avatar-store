@@ -16,13 +16,16 @@ interface StarRatingProps {
 }
 
 export default function StarRating({ gameId, initialRating = 0, initialRatingCount = 0, onRate }: StarRatingProps) {
-    const [rating, setRating] = useState(initialRating);
-    const [hoverRating, setHoverRating] = useState(0);
-    const [count, setCount] = useState(initialRatingCount);
+    const [averageRating, setAverageRating] = useState(initialRating);
+    const [ratingCount, setRatingCount] = useState(initialRatingCount);
+
+    // User's personal rating state
+    const [userRating, setUserRating] = useState<number>(0);
     const [hasRated, setHasRated] = useState(false);
+
+    const [hoverRating, setHoverRating] = useState(0);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [user, setUser] = useState<User | null>(null);
-    const [userRatingVal, setUserRatingVal] = useState<number | null>(null);
 
     const router = useRouter();
     const pathname = usePathname();
@@ -31,16 +34,14 @@ export default function StarRating({ gameId, initialRating = 0, initialRatingCou
         const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
             setUser(currentUser);
             if (currentUser) {
-                console.log(`Checking existing rating for game: ${gameId}, user: ${currentUser.uid}`);
                 try {
                     const existingRating = await getUserRating(gameId, currentUser.uid);
-                    console.log(`Existing rating result: ${existingRating}`);
                     if (existingRating !== null) {
-                        setUserRatingVal(existingRating);
+                        setUserRating(existingRating);
                         setHasRated(true);
                     }
                 } catch (err) {
-                    console.error("Error in StarRating auth check:", err);
+                    console.error("Error checking rating:", err);
                 }
             }
         });
@@ -57,31 +58,34 @@ export default function StarRating({ gameId, initialRating = 0, initialRatingCou
 
         setIsSubmitting(true);
         try {
-            // Optimistic update (show the new average temporarily, but locked)
-            // Actually, usually we'd show the user's rating as "Your rating"
-            // For now, we update the average logic as before for visual feedback
-            const newCount = count + 1;
-            const newAverage = ((rating * count) + value) / newCount;
+            // Calculate new average optimistically
+            const totalScore = averageRating * ratingCount;
+            const newCount = ratingCount + 1;
+            const newAverage = (totalScore + value) / newCount;
 
-            setRating(newAverage);
-            setCount(newCount);
+            setAverageRating(newAverage);
+            setRatingCount(newCount);
+
+            setUserRating(value);
             setHasRated(true);
-            setUserRatingVal(value);
 
             await submitRating(gameId, user.uid, value);
 
             if (onRate) onRate(newAverage);
         } catch (error) {
             console.error("Failed to rate game:", error);
-            // Revert on error
+            // Revert
             setHasRated(false);
-            setUserRatingVal(null);
-            setRating(initialRating);
-            setCount(initialRatingCount);
+            setUserRating(0);
+            setAverageRating(initialRating);
+            setRatingCount(initialRatingCount);
         } finally {
             setIsSubmitting(false);
         }
     };
+
+    // Determine what to show on stars: Hover -> User Rating (if rated) -> 0 (Empty)
+    const displayRating = hoverRating || (hasRated ? userRating : 0);
 
     return (
         <div className="flex flex-col items-center gap-2">
@@ -102,7 +106,7 @@ export default function StarRating({ gameId, initialRating = 0, initialRatingCou
                         <Star
                             className={cn(
                                 "w-6 h-6",
-                                (hoverRating ? star <= hoverRating : star <= Math.round(rating))
+                                star <= displayRating
                                     ? "fill-yellow-400 text-yellow-400"
                                     : "fill-transparent text-muted-foreground"
                             )}
@@ -110,12 +114,13 @@ export default function StarRating({ gameId, initialRating = 0, initialRatingCou
                     </button>
                 ))}
             </div>
+            {/* Always show actual global stats in text */}
             <div className="text-sm text-muted-foreground">
-                {rating.toFixed(1)} ({count} {count === 1 ? 'review' : 'reviews'})
+                {averageRating.toFixed(1)} ({ratingCount} {ratingCount === 1 ? 'review' : 'reviews'})
             </div>
             {hasRated && (
                 <span className="text-xs text-green-500 animate-in fade-in">
-                    {userRatingVal ? `You rated: ${userRatingVal} ★` : "Thanks for rating!"}
+                    {userRating ? `You rated: ${userRating} ★` : "Thanks for rating!"}
                 </span>
             )}
         </div>
