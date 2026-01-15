@@ -6,7 +6,7 @@ import Navbar from '@/components/Navbar'
 const outfit = Outfit({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://avatar-play.vercel.app'),
+  metadataBase: new URL('https://avatarplay.in'),
   title: {
     default: "Avatar Play - Premium Game Distribution Platform",
     template: "%s | Avatar Play"
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://avatar-play.vercel.app",
+    url: "https://avatarplay.in",
     title: "Avatar Play - Premium Game Distribution Platform",
     description: "Your ultimate destination for curated games, avatars, and gaming community.",
     siteName: "Avatar Play",
@@ -79,10 +79,10 @@ export default function RootLayout({
               "@context": "https://schema.org",
               "@type": "WebSite",
               "name": "Avatar Play",
-              "url": "https://avatar-play.vercel.app",
+              "url": "https://avatarplay.in",
               "potentialAction": {
                 "@type": "SearchAction",
-                "target": "https://avatar-play.vercel.app/browse?query={search_term_string}",
+                "target": "https://avatarplay.in/browse?query={search_term_string}",
                 "query-input": "required name=search_term_string"
               }
             })

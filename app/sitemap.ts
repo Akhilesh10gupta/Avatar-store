@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next'
 
 export default function sitemap(): MetadataRoute.Sitemap {
-    const baseUrl = 'https://avatar-play.vercel.app'
+    const baseUrl = 'https://avatarplay.in'
     const currentDate = new Date()
 
     return [
