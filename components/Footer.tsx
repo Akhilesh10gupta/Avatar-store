@@ -26,7 +26,7 @@ export default function Footer() {
                             <div className="bg-primary p-1.5 rounded-lg">
                                 <Gamepad2 className="w-5 h-5 text-white" />
                             </div>
-                            <span className="text-white">Avatar<span className="text-primary"> Store</span></span>
+                            <span className="text-white">Avatar<span className="text-primary"> Play</span></span>
                         </Link>
                         <p className="text-muted-foreground leading-relaxed text-sm">
                             Your ultimate destination for curated gaming experiences.
@@ -116,7 +116,7 @@ export default function Footer() {
 
                 <div className="border-t border-white/5 pt-8 text-center md:text-left flex flex-col md:flex-row items-center justify-between gap-4">
                     <p className="text-sm text-muted-foreground">
-                        © {new Date().getFullYear()} Avatar Store. All rights reserved.
+                        © {new Date().getFullYear()} Avatar Play. All rights reserved.
                     </p>
                     <div className="flex items-center gap-6 text-sm text-muted-foreground">
                         <Link href="#" className="hover:text-white transition-colors">Privacy</Link>

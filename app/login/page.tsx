@@ -198,7 +198,7 @@ export default function Login() {
                         <label className="text-sm font-medium">Email</label>
                         <Input
                             type="email"
-                            placeholder="admin@avatarstore.com"
+                            placeholder="admin@avatarplay.com"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required

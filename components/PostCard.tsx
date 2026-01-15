@@ -152,7 +152,7 @@ export default function PostCard({ post }: PostCardProps) {
 
     const handleShare = async () => {
         const shareData = {
-            title: 'Avatar Store Community',
+            title: 'Avatar Play Community',
             text: `Check out ${post.userName}'s post: "${post.content.slice(0, 50)}${post.content.length > 50 ? '...' : ''}"`,
             url: window.location.href
         };

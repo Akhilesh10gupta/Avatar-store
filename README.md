@@ -1,8 +1,8 @@
-# Avatar Store
+# Avatar Play
 
 A premium, modern game distribution platform built with **Next.js 14**, **Tailwind CSS**, and **Firebase**.
 
-![Avatar Store Hero](https://images.unsplash.com/photo-1552820728-8b83bb6b773f?q=80&w=2070&auto=format&fit=crop)
+![Avatar Play Hero](https://images.unsplash.com/photo-1552820728-8b83bb6b773f?q=80&w=2070&auto=format&fit=crop)
 
 ## 🚀 Features
 

@@ -6,7 +6,7 @@ import Navbar from '@/components/Navbar'
 const outfit = Outfit({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: "Avatar Store",
+  title: "Avatar Play",
   description: "Your ultimate destination for games",
 }
 

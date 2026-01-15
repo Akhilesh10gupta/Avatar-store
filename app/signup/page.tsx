@@ -112,7 +112,7 @@ export default function Signup() {
                     </div>
                     <h1 className="text-2xl font-bold">Create Admin Account</h1>
                     <p className="text-muted-foreground text-sm text-center">
-                        Create a new administrator account for Avatar Store.
+                        Create a new administrator account for Avatar Play.
                     </p>
                 </div>
 
