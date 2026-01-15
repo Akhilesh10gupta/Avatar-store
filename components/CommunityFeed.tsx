@@ -7,6 +7,7 @@ import { Plus, UserCircle, Image as ImageIcon, Loader2, Link as LinkIcon, X } fr
 import { useAuth } from '@/components/AuthProvider';
 import { Button } from './ui/Button';
 import Link from 'next/link';
+import { uploadFile } from '@/lib/storage';
 import GameLoader from './GameLoader';
 
 export default function CommunityFeed() {
