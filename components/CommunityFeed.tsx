@@ -15,9 +15,9 @@ export default function CommunityFeed() {
     const [posts, setPosts] = useState<Post[]>([]);
     const [loading, setLoading] = useState(true);
     const [newPostContent, setNewPostContent] = useState('');
-    const [imageUrl, setImageUrl] = useState('');
-    const [selectedFile, setSelectedFile] = useState<File | null>(null);
-    const [previewUrl, setPreviewUrl] = useState('');
+    const [imageUrls, setImageUrls] = useState<string[]>([]); // For manually added URLs
+    const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+    const [previewUrls, setPreviewUrls] = useState<string[]>([]);
     const [isPosting, setIsPosting] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -32,39 +32,49 @@ export default function CommunityFeed() {
     };
 
     const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            setSelectedFile(file);
-            setPreviewUrl(URL.createObjectURL(file));
-            setImageUrl(''); // Clear URL if file is selected
+        if (e.target.files) {
+            const files = Array.from(e.target.files);
+            setSelectedFiles(prev => [...prev, ...files]);
+
+            const newPreviews = files.map(file => URL.createObjectURL(file));
+            setPreviewUrls(prev => [...prev, ...newPreviews]);
         }
     };
 
+    const removeMedia = (index: number) => {
+        setSelectedFiles(prev => prev.filter((_, i) => i !== index));
+        setPreviewUrls(prev => {
+            const newPreviews = prev.filter((_, i) => i !== index);
+            return newPreviews;
+        });
+    };
+
     const clearMedia = () => {
-        setSelectedFile(null);
-        setPreviewUrl('');
-        setImageUrl('');
+        setSelectedFiles([]);
+        setPreviewUrls([]);
+        setImageUrls([]);
         if (fileInputRef.current) fileInputRef.current.value = '';
     };
 
     const handleCreatePost = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!user || (!newPostContent.trim() && !selectedFile && !imageUrl)) return;
+        if (!user || (!newPostContent.trim() && selectedFiles.length === 0 && imageUrls.length === 0)) return;
 
         setIsPosting(true);
         try {
-            let finalImageUrl = imageUrl;
+            const uploadedUrls = await Promise.all(
+                selectedFiles.map(file => uploadFile(file, 'community_posts'))
+            );
 
-            if (selectedFile) {
-                finalImageUrl = await uploadFile(selectedFile, 'community_posts');
-            }
+            const finalImageUrls = [...imageUrls, ...uploadedUrls];
 
             await addPost({
                 userId: user.uid,
                 userName: user.displayName || 'Anonymous',
                 userAvatar: user.photoURL || undefined,
                 content: newPostContent.trim(),
-                imageUrl: finalImageUrl || undefined,
+                imageUrls: finalImageUrls.length > 0 ? finalImageUrls : undefined,
+                imageUrl: finalImageUrls[0], // Backward compatibility
                 createdAt: new Date().toISOString()
             });
 
@@ -111,17 +121,21 @@ export default function CommunityFeed() {
                                     className="w-full bg-transparent border-none text-white text-lg placeholder:text-muted-foreground focus:ring-0 resize-none min-h-[80px]"
                                 />
 
-                                {/* Media Preview */}
-                                {(previewUrl || imageUrl) && (
-                                    <div className="relative rounded-xl overflow-hidden group border border-white/10">
-                                        <img src={previewUrl || imageUrl} alt="Preview" className="w-full max-h-64 object-cover" />
-                                        <button
-                                            type="button"
-                                            onClick={clearMedia}
-                                            className="absolute top-2 right-2 bg-black/70 p-1.5 rounded-full text-white hover:bg-red-500/80 transition-colors"
-                                        >
-                                            <X className="w-4 h-4" />
-                                        </button>
+                                {/* Media Preview Grid */}
+                                {previewUrls.length > 0 && (
+                                    <div className="grid grid-cols-2 gap-2 mt-2">
+                                        {previewUrls.map((url, index) => (
+                                            <div key={index} className="relative rounded-xl overflow-hidden group border border-white/10 aspect-video">
+                                                <img src={url} alt={`Preview ${index}`} className="w-full h-full object-cover" />
+                                                <button
+                                                    type="button"
+                                                    onClick={() => removeMedia(index)}
+                                                    className="absolute top-2 right-2 bg-black/70 p-1.5 rounded-full text-white hover:bg-red-500/80 transition-colors"
+                                                >
+                                                    <X className="w-4 h-4" />
+                                                </button>
+                                            </div>
+                                        ))}
                                     </div>
                                 )}
                             </div>
@@ -134,6 +148,7 @@ export default function CommunityFeed() {
                                     ref={fileInputRef}
                                     onChange={handleFileSelect}
                                     accept="image/*"
+                                    multiple // Enable multiple files
                                     className="hidden"
                                 />
                                 {/* Image Upload Button */}
@@ -155,9 +170,7 @@ export default function CommunityFeed() {
                                     onClick={() => {
                                         const url = prompt('Enter image URL:');
                                         if (url) {
-                                            setImageUrl(url);
-                                            setPreviewUrl('');
-                                            setSelectedFile(null);
+                                            setImageUrls(prev => [...prev, url]);
                                         }
                                     }}
                                     className="text-muted-foreground hover:text-primary hover:bg-white/5"
@@ -166,7 +179,7 @@ export default function CommunityFeed() {
                                     Link
                                 </Button>
                             </div>
-                            <Button type="submit" disabled={(!newPostContent.trim() && !selectedFile && !imageUrl) || isPosting} className="px-6 rounded-full">
+                            <Button type="submit" disabled={(!newPostContent.trim() && selectedFiles.length === 0 && imageUrls.length === 0) || isPosting} className="px-6 rounded-full">
                                 {isPosting ? 'Posting...' : 'Post'}
                             </Button>
                         </div>

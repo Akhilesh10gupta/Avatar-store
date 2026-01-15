@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Post, toggleLikePost, deletePost, updatePost } from '@/lib/firestore';
 import { useAuth } from '@/components/AuthProvider';
-import { Heart, MessageCircle, UserCircle, Share2, MoreHorizontal, Pencil, Trash2, X, Check, Maximize2 } from 'lucide-react';
+import { Heart, MessageCircle, UserCircle, Share2, MoreHorizontal, Pencil, Trash2, X, Check, Maximize2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import CommentSection from './CommentSection';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -18,6 +18,10 @@ export default function PostCard({ post }: PostCardProps) {
     const [commentCount, setCommentCount] = useState(post.commentCount || 0);
     const [showComments, setShowComments] = useState(false);
     const [showFullImage, setShowFullImage] = useState(false);
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+    // Helper to get all images
+    const images = post.imageUrls || (post.imageUrl ? [post.imageUrl] : []);
 
     // Edit/Delete State
     const [isEditing, setIsEditing] = useState(false);
@@ -30,6 +34,20 @@ export default function PostCard({ post }: PostCardProps) {
     const [isSaving, setIsSaving] = useState(false);
     const [isDeleted, setIsDeleted] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
+
+    const nextImage = (e?: React.MouseEvent) => {
+        e?.stopPropagation();
+        if (currentImageIndex < images.length - 1) {
+            setCurrentImageIndex(prev => prev + 1);
+        }
+    };
+
+    const prevImage = (e?: React.MouseEvent) => {
+        e?.stopPropagation();
+        if (currentImageIndex > 0) {
+            setCurrentImageIndex(prev => prev - 1);
+        }
+    };
 
     useEffect(() => {
         if (user) {
@@ -234,16 +252,46 @@ export default function PostCard({ post }: PostCardProps) {
                         </div>
                     )}
 
-                    {post.imageUrl && (
+                    {images.length > 0 && (
                         <div
                             className="rounded-xl overflow-hidden border border-white/5 aspect-video bg-secondary/20 relative group cursor-pointer"
                             onClick={() => setShowFullImage(true)}
                         >
                             <img
-                                src={post.imageUrl}
-                                alt="Post content"
+                                src={images[currentImageIndex]}
+                                alt={`Post content ${currentImageIndex + 1}`}
                                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                             />
+
+                            {/* Carousel Controls (Card) */}
+                            {images.length > 1 && (
+                                <>
+                                    {currentImageIndex > 0 && (
+                                        <button
+                                            onClick={prevImage}
+                                            className="absolute left-2 top-1/2 -translate-y-1/2 p-1.5 bg-black/50 hover:bg-black/70 rounded-full text-white backdrop-blur-sm z-10 transition-colors opacity-0 group-hover:opacity-100"
+                                        >
+                                            <ChevronLeft className="w-5 h-5" />
+                                        </button>
+                                    )}
+                                    {currentImageIndex < images.length - 1 && (
+                                        <button
+                                            onClick={nextImage}
+                                            className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-black/50 hover:bg-black/70 rounded-full text-white backdrop-blur-sm z-10 transition-colors opacity-0 group-hover:opacity-100"
+                                        >
+                                            <ChevronRight className="w-5 h-5" />
+                                        </button>
+                                    )}
+                                    <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
+                                        {images.map((_, idx) => (
+                                            <div
+                                                key={idx}
+                                                className={`w-1.5 h-1.5 rounded-full transition-colors ${idx === currentImageIndex ? 'bg-white' : 'bg-white/40'}`}
+                                            />
+                                        ))}
+                                    </div>
+                                </>
+                            )}
                         </div>
                     )}
                 </div>
@@ -260,15 +308,40 @@ export default function PostCard({ post }: PostCardProps) {
                         >
                             <button
                                 onClick={() => setShowFullImage(false)}
-                                className="absolute top-4 right-4 p-2 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors z-50"
+                                className="absolute top-5 right-5 md:top-8 md:right-8 p-3 bg-black/50 hover:bg-black/70 rounded-full text-white transition-colors z-[60] backdrop-blur-md"
                             >
                                 <X className="w-6 h-6" />
                             </button>
+
+                            {/* Lightbox Navigation */}
+                            {images.length > 1 && (
+                                <>
+                                    {currentImageIndex > 0 && (
+                                        <button
+                                            onClick={prevImage}
+                                            className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 p-3 bg-white/10 hover:bg-white/20 rounded-full text-white backdrop-blur-md z-[60] transition-colors"
+                                        >
+                                            <ChevronLeft className="w-8 h-8" />
+                                        </button>
+                                    )}
+                                    {currentImageIndex < images.length - 1 && (
+                                        <button
+                                            onClick={nextImage}
+                                            className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 p-3 bg-white/10 hover:bg-white/20 rounded-full text-white backdrop-blur-md z-[60] transition-colors"
+                                        >
+                                            <ChevronRight className="w-8 h-8" />
+                                        </button>
+                                    )}
+                                </>
+                            )}
+
                             <motion.img
-                                initial={{ scale: 0.9 }}
-                                animate={{ scale: 1 }}
-                                exit={{ scale: 0.9 }}
-                                src={post.imageUrl}
+                                key={currentImageIndex} // Key forces re-render for animation on slide
+                                initial={{ opacity: 0, x: 20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: -20 }}
+                                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                                src={images[currentImageIndex]}
                                 alt="Full screen"
                                 className="max-w-full max-h-screen object-contain rounded-lg shadow-2xl cursor-default"
                                 onClick={(e) => e.stopPropagation()}

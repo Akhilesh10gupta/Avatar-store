@@ -307,6 +307,7 @@ export interface Post {
     userAvatar?: string;
     content: string;
     imageUrl?: string;
+    imageUrls?: string[]; // Multiple images support
     likes: string[]; // User IDs who liked
     commentCount?: number;
     createdAt: string;
