@@ -162,7 +162,7 @@ const docToGame = (doc: any): Game => {
 
 // Fetch all games (public view)
 export const getGames = async () => {
-    const q = query(collection(db, GAMES_COLLECTION), orderBy("createdAt", "desc"));
+    const q = query(collection(db, GAMES_COLLECTION), orderBy("createdAt", "desc"), limit(20));
     const querySnapshot = await getDocs(q);
     return querySnapshot.docs.map(docToGame);
 };
