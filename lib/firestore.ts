@@ -429,6 +429,28 @@ export const toggleLikePost = async (postId: string, userId: string) => {
     });
 };
 
+export const deletePost = async (postId: string) => {
+    try {
+        await deleteDoc(doc(db, POSTS_COLLECTION, postId));
+    } catch (e) {
+        console.error("Error deleting post:", e);
+        throw e;
+    }
+};
+
+export const updatePost = async (postId: string, content: string) => {
+    try {
+        const postRef = doc(db, POSTS_COLLECTION, postId);
+        await updateDoc(postRef, {
+            content,
+            updatedAt: new Date().toISOString()
+        });
+    } catch (e) {
+        console.error("Error updating post:", e);
+        throw e;
+    }
+};
+
 export const syncUserProfile = async (userId: string, updates: { userName?: string, userAvatar?: string }) => {
     try {
         const batch = writeBatch(db);
