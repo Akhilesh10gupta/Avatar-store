@@ -69,9 +69,9 @@ export default function Footer() {
                         <ul className="space-y-4 text-sm text-muted-foreground">
                             {[
                                 { label: 'Help Center', href: '#' },
-                                { label: 'Terms of Service', href: '#' },
-                                { label: 'Privacy Policy', href: '#' },
-                                { label: 'Cookie Policy', href: '#' },
+                                { label: 'Terms of Service', href: '/legal/terms' },
+                                { label: 'Privacy Policy', href: '/legal/privacy' },
+                                { label: 'Cookie Policy', href: '/legal/cookies' },
                             ].map((link, idx) => (
                                 <li key={idx}>
                                     <Link href={link.href} className="hover:text-white transition-all duration-300 flex items-center gap-2 group hover:translate-x-1">
@@ -117,9 +117,9 @@ export default function Footer() {
                         © {new Date().getFullYear()} Avatar Play. All rights reserved.
                     </p>
                     <div className="flex items-center gap-6 text-sm text-muted-foreground">
-                        <Link href="#" className="hover:text-white transition-colors">Privacy</Link>
-                        <Link href="#" className="hover:text-white transition-colors">Terms</Link>
-                        <Link href="#" className="hover:text-white transition-colors">Cookies</Link>
+                        <Link href="/legal/privacy" className="hover:text-white transition-colors">Privacy</Link>
+                        <Link href="/legal/terms" className="hover:text-white transition-colors">Terms</Link>
+                        <Link href="/legal/cookies" className="hover:text-white transition-colors">Cookies</Link>
                     </div>
                 </div>
             </div>

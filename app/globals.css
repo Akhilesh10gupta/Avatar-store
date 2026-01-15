@@ -46,6 +46,7 @@
   }
 }
 
+
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
@@ -61,9 +62,138 @@
 
 /* Hide scrollbar utility */
 .scrollbar-hide::-webkit-scrollbar {
-    display: none;
+  display: none;
 }
+
 .scrollbar-hide {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* CRT Effects */
+@keyframes scanline {
+  0% {
+    transform: translateY(-100%);
+  }
+
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+.crt::before {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: linear-gradient(to bottom,
+      rgba(18, 16, 16, 0) 50%,
+      rgba(0, 0, 0, 0.25) 50%);
+  background-size: 100% 4px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.crt::after {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: rgba(18, 16, 16, 0.1);
+  opacity: 0;
+  z-index: 2;
+  pointer-events: none;
+  animation: flicker 0.15s infinite;
+}
+
+@keyframes flicker {
+  0% {
+    opacity: 0.0279517256021501
+  }
+
+  5% {
+    opacity: 0.04561066343542247
+  }
+
+  10% {
+    opacity: 0.025067258414436664
+  }
+
+  15% {
+    opacity: 0.08866160172502697
+  }
+
+  20% {
+    opacity: 0.009406087989912068
+  }
+
+  25% {
+    opacity: 0.08535315809569736
+  }
+
+  30% {
+    opacity: 0.09172283083788755
+  }
+
+  35% {
+    opacity: 0.012543323049581552
+  }
+
+  40% {
+    opacity: 0.09633836761031731
+  }
+
+  45% {
+    opacity: 0.016335198896024194
+  }
+
+  50% {
+    opacity: 0.08226490656461993
+  }
+
+  55% {
+    opacity: 0.04416104446543666
+  }
+
+  60% {
+    opacity: 0.0544522851860012
+  }
+
+  65% {
+    opacity: 0.09340939527633633
+  }
+
+  70% {
+    opacity: 0.012759881829679808
+  }
+
+  75% {
+    opacity: 0.014234053744319455
+  }
+
+  80% {
+    opacity: 0.04022802069008272
+  }
+
+  85% {
+    opacity: 0.038440050478160844
+  }
+
+  90% {
+    opacity: 0.03130761615783359
+  }
+
+  95% {
+    opacity: 0.027050965045058774
+  }
+
+  100% {
+    opacity: 0.06316278772033626
+  }
 }
