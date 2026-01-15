@@ -3,7 +3,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
-import { Loader2 } from 'lucide-react';
+import GameLoader from './GameLoader';
 
 interface AuthContextType {
     user: User | null;
@@ -33,9 +33,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return (
         <AuthContext.Provider value={{ user, loading }}>
             {loading ? (
-                <div className="h-screen w-screen flex items-center justify-center bg-background">
-                    <Loader2 className="w-8 h-8 animate-spin text-primary" />
-                </div>
+                <GameLoader fullScreen />
             ) : (
                 children
             )}

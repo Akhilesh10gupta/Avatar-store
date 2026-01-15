@@ -7,7 +7,7 @@ import { Plus, UserCircle, Image as ImageIcon, Loader2, Link as LinkIcon, X } fr
 import { useAuth } from '@/components/AuthProvider';
 import { Button } from './ui/Button';
 import Link from 'next/link';
-import { uploadFile } from '@/lib/storage';
+import GameLoader from './GameLoader';
 
 export default function CommunityFeed() {
     const { user } = useAuth();
@@ -80,8 +80,8 @@ export default function CommunityFeed() {
 
     if (loading) {
         return (
-            <div className="flex justify-center py-12">
-                <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            <div className="py-12">
+                <GameLoader />
             </div>
         );
     }

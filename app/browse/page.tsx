@@ -4,7 +4,8 @@ import { useEffect, useState, useMemo } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { getGames, Game } from '@/lib/firestore';
 import GameCard from '@/components/GameCard';
-import { Loader2, Search, X, Filter, SearchX } from 'lucide-react';
+import GameLoader from '@/components/GameLoader';
+import { Search, X, Filter, SearchX } from 'lucide-react';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 
@@ -118,8 +119,8 @@ export default function BrowsePage() {
             </div>
 
             {loading ? (
-                <div className="flex justify-center py-20">
-                    <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                <div className="py-20">
+                    <GameLoader text="Loading Games..." />
                 </div>
             ) : filteredGames.length > 0 ? (
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 animate-in fade-in duration-500">

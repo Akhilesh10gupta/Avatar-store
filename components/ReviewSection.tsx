@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/Input';
 import { useRouter, usePathname } from 'next/navigation';
 import { MessageSquare, UserCircle, Pencil, X, Check } from 'lucide-react';
 import Link from 'next/link';
+import GameLoader from './GameLoader';
 
 export default function ReviewSection({ gameId }: { gameId: string }) {
     const [user, setUser] = useState<User | null>(null);
@@ -66,7 +67,12 @@ export default function ReviewSection({ gameId }: { gameId: string }) {
     };
 
     if (loading) {
-        return <div className="text-center py-8 text-muted-foreground">Loading reviews...</div>;
+
+        // ...
+
+        if (loading) {
+            return <div className="py-8"><GameLoader text="Loading Reviews..." /></div>;
+        }
     }
 
     return (

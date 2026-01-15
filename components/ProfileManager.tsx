@@ -5,7 +5,7 @@ import { updateProfile, updatePassword, reauthenticateWithCredential, EmailAuthP
 import { useAuth } from '@/components/AuthProvider';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { Loader2, Camera, Save, User as UserIcon, Lock, KeyRound } from 'lucide-react';
+import { Camera, Save, User as UserIcon, Lock, KeyRound, Gamepad2 } from 'lucide-react';
 import { uploadFile } from '@/lib/storage';
 import { syncUserProfile } from '@/lib/firestore';
 import { UserAvatar } from '@/components/UserAvatar';
@@ -142,7 +142,7 @@ export default function ProfileManager() {
                             {/* Overlay for upload */}
                             <label className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
                                 {isUploading ? (
-                                    <Loader2 className="w-8 h-8 text-white animate-spin" />
+                                    <Gamepad2 className="w-8 h-8 text-white animate-spin" />
                                 ) : (
                                     <>
                                         <Camera className="w-8 h-8 text-white mb-1" />

@@ -1,5 +1,5 @@
 import { ButtonHTMLAttributes, forwardRef } from 'react';
-import { Loader2 } from 'lucide-react';
+import { Gamepad2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -30,7 +30,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
                 disabled={isLoading || props.disabled}
                 {...props}
             >
-                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {isLoading && <Gamepad2 className="mr-2 h-4 w-4 animate-spin text-current" />}
                 {children}
             </button>
         );
