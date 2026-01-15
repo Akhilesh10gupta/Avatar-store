@@ -14,7 +14,7 @@ import { cn } from '@/lib/utils';
 export default function CommentSection({ postId, postOwnerId, postOwnerAvatar, onCommentAdded, onCommentsLoaded }: {
     postId: string,
     postOwnerId: string,
-    postOwnerAvatar?: string,
+    postOwnerAvatar?: string | null,
     onCommentAdded?: () => void,
     onCommentsLoaded?: (count: number) => void
 }) {
