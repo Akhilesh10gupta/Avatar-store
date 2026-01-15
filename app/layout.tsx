@@ -13,6 +13,7 @@ export const metadata: Metadata = {
 import { AuthProvider } from '@/components/AuthProvider'
 
 import Footer from '@/components/Footer'
+import BottomNav from '@/components/BottomNav'
 
 export default function RootLayout({
   children,
@@ -21,13 +22,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${outfit.className} bg-background text-foreground antialiased min-h-screen flex flex-col`}>
+      <body className={`${outfit.className} bg-background text-foreground antialiased min-h-screen flex flex-col pb-16 md:pb-0`}>
         <AuthProvider>
           <Navbar />
           <main className="flex-grow container mx-auto px-4 py-8">
             {children}
           </main>
           <Footer />
+          <BottomNav />
         </AuthProvider>
       </body>
     </html>

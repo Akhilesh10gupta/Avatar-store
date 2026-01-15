@@ -111,9 +111,9 @@ const Navbar = () => {
                     </Link>
                 </div>
 
-                {/* Mobile Menu Toggle */}
+                {/* Mobile Menu Toggle - Hidden since we use BottomNav */}
                 <button
-                    className="md:hidden p-2 text-white hover:bg-white/10 rounded-full transition-colors relative z-50"
+                    className="hidden p-2 text-white hover:bg-white/10 rounded-full transition-colors relative z-50"
                     onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 >
                     <AnimatePresence mode="wait">
