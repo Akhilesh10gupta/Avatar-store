@@ -282,8 +282,11 @@ export default function PostCard({ post }: PostCardProps) {
 
                     {images.length > 0 && (
                         <div
-                            className="rounded-xl overflow-hidden border border-white/5 aspect-video bg-secondary/20 relative group cursor-pointer"
+                            className="rounded-xl overflow-hidden border border-white/5 aspect-video bg-secondary/20 relative group cursor-pointer touch-pan-y"
                             onClick={() => setShowFullImage(true)}
+                            onTouchStart={onTouchStart}
+                            onTouchMove={onTouchMove}
+                            onTouchEnd={onTouchEnd}
                         >
                             <img
                                 src={images[currentImageIndex]}
@@ -297,7 +300,7 @@ export default function PostCard({ post }: PostCardProps) {
                                     {currentImageIndex > 0 && (
                                         <button
                                             onClick={prevImage}
-                                            className="absolute left-2 top-1/2 -translate-y-1/2 p-1.5 bg-black/50 hover:bg-black/70 rounded-full text-white backdrop-blur-sm z-10 transition-colors opacity-0 group-hover:opacity-100"
+                                            className="absolute left-2 top-1/2 -translate-y-1/2 p-1.5 bg-black/50 hover:bg-black/70 rounded-full text-white backdrop-blur-sm z-10 transition-colors opacity-100 md:opacity-0 md:group-hover:opacity-100"
                                         >
                                             <ChevronLeft className="w-5 h-5" />
                                         </button>
@@ -305,7 +308,7 @@ export default function PostCard({ post }: PostCardProps) {
                                     {currentImageIndex < images.length - 1 && (
                                         <button
                                             onClick={nextImage}
-                                            className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-black/50 hover:bg-black/70 rounded-full text-white backdrop-blur-sm z-10 transition-colors opacity-0 group-hover:opacity-100"
+                                            className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-black/50 hover:bg-black/70 rounded-full text-white backdrop-blur-sm z-10 transition-colors opacity-100 md:opacity-0 md:group-hover:opacity-100"
                                         >
                                             <ChevronRight className="w-5 h-5" />
                                         </button>
