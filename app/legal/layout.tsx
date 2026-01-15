@@ -23,7 +23,7 @@ export default function LegalLayout({
         <div className="container mx-auto px-4 py-12 max-w-6xl min-h-screen">
             <div className="mb-8">
                 <Link href="/">
-                    <Button variant="ghost" className="gap-2 text-muted-foreground hover:text-primary pl-0">
+                    <Button variant="outline" className="gap-2 bg-card hover:bg-secondary text-foreground border-border/50">
                         <ArrowLeft className="w-4 h-4" /> Back to Store
                     </Button>
                 </Link>
