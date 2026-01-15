@@ -423,11 +423,13 @@ export const deleteComment = async (commentId: string, postId: string) => {
             const commentRef = doc(db, COMMENTS_COLLECTION, commentId);
             const postRef = doc(db, POSTS_COLLECTION, postId);
 
+            // Read post logic first
+            const postDoc = await transaction.get(postRef);
+
             // Delete comment
             transaction.delete(commentRef);
 
-            // Update post count
-            const postDoc = await transaction.get(postRef);
+            // Update post count if post exists
             if (postDoc.exists()) {
                 transaction.update(postRef, {
                     commentCount: increment(-1)
