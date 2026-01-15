@@ -25,10 +25,28 @@ const Hero = ({ games }: HeroProps) => {
     const handleMobileScroll = (e: React.UIEvent<HTMLDivElement>) => {
         const container = e.currentTarget;
         const scrollPosition = container.scrollLeft;
-        const width = container.offsetWidth;
-        // Calculate index based on scroll position + half width for better centering detection
-        const index = Math.round(scrollPosition / width);
-        setActiveMobileIndex(index);
+        const containerWidth = container.offsetWidth;
+        const containerCenter = scrollPosition + containerWidth / 2;
+
+        const children = Array.from(container.children) as HTMLElement[];
+
+        let closestIndex = 0;
+        let minDistance = Infinity;
+
+        children.forEach((child, index) => {
+            const childStart = child.offsetLeft;
+            const childWidth = child.offsetWidth;
+            const childCenter = childStart + childWidth / 2;
+
+            const distance = Math.abs(containerCenter - childCenter);
+
+            if (distance < minDistance) {
+                minDistance = distance;
+                closestIndex = index;
+            }
+        });
+
+        setActiveMobileIndex(closestIndex);
     };
 
     useEffect(() => {
@@ -66,7 +84,7 @@ const Hero = ({ games }: HeroProps) => {
                     {heroGames.map((game, index) => (
                         <div
                             key={game.id}
-                            className="relative min-w-[85vw] h-[55vh] snap-center rounded-[32px] overflow-hidden shrink-0 shadow-xl border border-white/5"
+                            className="relative min-w-[75vw] h-[55vh] snap-center rounded-[32px] overflow-hidden shrink-0 shadow-xl border border-white/5"
                         >
                             <Link href={`/game/${game.id}`} className="block w-full h-full">
                                 <Image
