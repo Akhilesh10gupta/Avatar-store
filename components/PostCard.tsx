@@ -35,6 +35,34 @@ export default function PostCard({ post }: PostCardProps) {
     const [isDeleted, setIsDeleted] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
 
+    const [touchStart, setTouchStart] = useState<number | null>(null);
+    const [touchEnd, setTouchEnd] = useState<number | null>(null);
+
+    const minSwipeDistance = 50;
+
+    const onTouchStart = (e: React.TouchEvent) => {
+        setTouchEnd(null);
+        setTouchStart(e.targetTouches[0].clientX);
+    };
+
+    const onTouchMove = (e: React.TouchEvent) => {
+        setTouchEnd(e.targetTouches[0].clientX);
+    };
+
+    const onTouchEnd = () => {
+        if (!touchStart || !touchEnd) return;
+        const distance = touchStart - touchEnd;
+        const isLeftSwipe = distance > minSwipeDistance;
+        const isRightSwipe = distance < -minSwipeDistance;
+
+        if (isLeftSwipe && currentImageIndex < images.length - 1) {
+            setCurrentImageIndex(prev => prev + 1);
+        }
+        if (isRightSwipe && currentImageIndex > 0) {
+            setCurrentImageIndex(prev => prev - 1);
+        }
+    };
+
     const nextImage = (e?: React.MouseEvent) => {
         e?.stopPropagation();
         if (currentImageIndex < images.length - 1) {
