@@ -20,7 +20,24 @@ const Hero = ({ games }: HeroProps) => {
     const [isAutoPlaying, setIsAutoPlaying] = useState(true);
 
     // Filter games to ensure we have content, or use a fallback if empty
-    const heroGames = games.length > 0 ? games.slice(0, 5) : [];
+    // Logic: Show 3 Latest + 3 Top Rated
+    const logicGames = (() => {
+        if (games.length === 0) return [];
+
+        // 1. Get 3 Latest (Assumed sorted by createdAt desc from parent)
+        const latest = games.slice(0, 3);
+
+        // 2. Get 3 Top Rated (Filter out games already in latest to avoid dups)
+        // Clone and sort by rating
+        const rated = [...games]
+            .filter(g => !latest.some(l => l.id === g.id))
+            .sort((a, b) => (b.rating || 0) - (a.rating || 0))
+            .slice(0, 3);
+
+        return [...latest, ...rated];
+    })();
+
+    const heroGames = logicGames;
 
     const handleMobileScroll = (e: React.UIEvent<HTMLDivElement>) => {
         const container = e.currentTarget;
