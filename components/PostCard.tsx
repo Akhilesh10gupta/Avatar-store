@@ -19,9 +19,34 @@ export default function PostCard({ post }: PostCardProps) {
     const [showComments, setShowComments] = useState(false);
     const [showFullImage, setShowFullImage] = useState(false);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const [direction, setDirection] = useState(0);
+    const isSwiping = useRef(false);
 
     // Helper to get all images
     const images = post.imageUrls || (post.imageUrl ? [post.imageUrl] : []);
+
+    const variants = {
+        enter: (direction: number) => ({
+            x: direction > 0 ? '100%' : '-100%',
+            opacity: 0,
+            zIndex: 0
+        }),
+        center: {
+            zIndex: 1,
+            x: 0,
+            opacity: 1
+        },
+        exit: (direction: number) => ({
+            zIndex: 0,
+            x: direction < 0 ? '100%' : '-100%',
+            opacity: 0
+        })
+    };
+
+    const paginate = (newDirection: number) => {
+        setDirection(newDirection);
+        setCurrentImageIndex(prev => prev + newDirection);
+    };
 
     // Edit/Delete State
     const [isEditing, setIsEditing] = useState(false);
@@ -43,10 +68,12 @@ export default function PostCard({ post }: PostCardProps) {
     const onTouchStart = (e: React.TouchEvent) => {
         setTouchEnd(null);
         setTouchStart(e.targetTouches[0].clientX);
+        isSwiping.current = false;
     };
 
     const onTouchMove = (e: React.TouchEvent) => {
         setTouchEnd(e.targetTouches[0].clientX);
+        isSwiping.current = true;
     };
 
     const onTouchEnd = () => {
@@ -56,24 +83,28 @@ export default function PostCard({ post }: PostCardProps) {
         const isRightSwipe = distance < -minSwipeDistance;
 
         if (isLeftSwipe && currentImageIndex < images.length - 1) {
-            setCurrentImageIndex(prev => prev + 1);
+            paginate(1);
         }
         if (isRightSwipe && currentImageIndex > 0) {
-            setCurrentImageIndex(prev => prev - 1);
+            paginate(-1);
         }
+        // Reset swiping flag after a short delay to allow click handler to be blocked
+        setTimeout(() => {
+            isSwiping.current = false;
+        }, 100);
     };
 
     const nextImage = (e?: React.MouseEvent) => {
         e?.stopPropagation();
         if (currentImageIndex < images.length - 1) {
-            setCurrentImageIndex(prev => prev + 1);
+            paginate(1);
         }
     };
 
     const prevImage = (e?: React.MouseEvent) => {
         e?.stopPropagation();
         if (currentImageIndex > 0) {
-            setCurrentImageIndex(prev => prev - 1);
+            paginate(-1);
         }
     };
 
@@ -283,16 +314,31 @@ export default function PostCard({ post }: PostCardProps) {
                     {images.length > 0 && (
                         <div
                             className="rounded-xl overflow-hidden border border-white/5 aspect-video bg-secondary/20 relative group cursor-pointer touch-pan-y"
-                            onClick={() => setShowFullImage(true)}
+                            onClick={(e) => {
+                                if (isSwiping.current || (touchStart && touchEnd && Math.abs(touchStart - touchEnd) > 10)) return;
+                                setShowFullImage(true);
+                            }}
                             onTouchStart={onTouchStart}
                             onTouchMove={onTouchMove}
                             onTouchEnd={onTouchEnd}
                         >
-                            <img
-                                src={images[currentImageIndex]}
-                                alt={`Post content ${currentImageIndex + 1}`}
-                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                            />
+                            <AnimatePresence initial={false} custom={direction} mode="popLayout">
+                                <motion.img
+                                    key={currentImageIndex}
+                                    custom={direction}
+                                    variants={variants}
+                                    initial="enter"
+                                    animate="center"
+                                    exit="exit"
+                                    transition={{
+                                        x: { type: "spring", stiffness: 300, damping: 30 },
+                                        opacity: { duration: 0.2 }
+                                    }}
+                                    src={images[currentImageIndex]}
+                                    alt={`Post content ${currentImageIndex + 1}`}
+                                    className="absolute inset-0 w-full h-full object-cover select-none"
+                                />
+                            </AnimatePresence>
 
                             {/* Carousel Controls (Card) */}
                             {images.length > 1 && (
