@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
 import { Post, toggleLikePost, deletePost, updatePost } from '@/lib/firestore';
 import { useAuth } from '@/components/AuthProvider';
-import { Heart, MessageCircle, UserCircle, Share2, MoreHorizontal, Pencil, Trash2, X, Check } from 'lucide-react';
+import { Heart, MessageCircle, UserCircle, Share2, MoreHorizontal, Pencil, Trash2, X, Check, Maximize2 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import CommentSection from './CommentSection';
 import { motion, AnimatePresence } from 'framer-motion';
+import { cn } from '@/lib/utils';
 
 interface PostCardProps {
     post: Post;
@@ -16,6 +17,7 @@ export default function PostCard({ post }: PostCardProps) {
     const [likeCount, setLikeCount] = useState(post.likes.length);
     const [commentCount, setCommentCount] = useState(post.commentCount || 0);
     const [showComments, setShowComments] = useState(false);
+    const [showFullImage, setShowFullImage] = useState(false);
 
     // Edit/Delete State
     const [isEditing, setIsEditing] = useState(false);
@@ -23,6 +25,7 @@ export default function PostCard({ post }: PostCardProps) {
     const [editedContentDisplay, setEditedContentDisplay] = useState(post.content); // Display updated content after save
     const [updatedAtDisplay, setUpdatedAtDisplay] = useState(post.updatedAt);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isExpanded, setIsExpanded] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [isDeleted, setIsDeleted] = useState(false);
@@ -216,17 +219,63 @@ export default function PostCard({ post }: PostCardProps) {
                             </div>
                         </div>
                     ) : (
-                        <p className="text-white/90 whitespace-pre-wrap leading-relaxed">
-                            {editedContentDisplay}
-                        </p>
+                        <div className="relative">
+                            <p className={cn("text-white/90 whitespace-pre-wrap leading-relaxed transition-all", !isExpanded && "line-clamp-3")}>
+                                {editedContentDisplay}
+                            </p>
+                            {editedContentDisplay.length > 150 && (
+                                <button
+                                    onClick={() => setIsExpanded(!isExpanded)}
+                                    className="text-xs text-muted-foreground hover:text-white mt-1 font-medium"
+                                >
+                                    {isExpanded ? "Show less" : "Read more"}
+                                </button>
+                            )}
+                        </div>
                     )}
 
                     {post.imageUrl && (
-                        <div className="rounded-xl overflow-hidden border border-white/5">
-                            <img src={post.imageUrl} alt="Post content" className="w-full h-auto" />
+                        <div
+                            className="rounded-xl overflow-hidden border border-white/5 aspect-video bg-secondary/20 relative group cursor-pointer"
+                            onClick={() => setShowFullImage(true)}
+                        >
+                            <img
+                                src={post.imageUrl}
+                                alt="Post content"
+                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                            />
                         </div>
                     )}
                 </div>
+
+                {/* Full Screen Image Modal */}
+                <AnimatePresence>
+                    {showFullImage && (
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4 backdrop-blur-sm"
+                            onClick={() => setShowFullImage(false)}
+                        >
+                            <button
+                                onClick={() => setShowFullImage(false)}
+                                className="absolute top-4 right-4 p-2 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors z-50"
+                            >
+                                <X className="w-6 h-6" />
+                            </button>
+                            <motion.img
+                                initial={{ scale: 0.9 }}
+                                animate={{ scale: 1 }}
+                                exit={{ scale: 0.9 }}
+                                src={post.imageUrl}
+                                alt="Full screen"
+                                className="max-w-full max-h-screen object-contain rounded-lg shadow-2xl cursor-default"
+                                onClick={(e) => e.stopPropagation()}
+                            />
+                        </motion.div>
+                    )}
+                </AnimatePresence>
 
                 {/* Actions */}
                 <div className="flex items-center gap-6 pt-4 border-t border-white/5">
