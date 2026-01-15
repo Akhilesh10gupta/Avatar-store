@@ -400,7 +400,7 @@ export default function CommentSection({ postId, postOwnerId, postOwnerAvatar, o
             </form>
 
             {/* List */}
-            <div className="space-y-6 max-h-[60vh] overflow-y-auto pr-2 scrollbar-hide">
+            <div className="space-y-6 max-h-[40vh] overflow-y-auto pr-2 scrollbar-hide">
                 {rootComments.map((comment) => {
                     const replies = getReplies(comment.id!);
                     const isExpanded = expandedComments.has(comment.id!);
