@@ -66,7 +66,7 @@ const Hero = ({ games }: HeroProps) => {
                     {heroGames.map((game, index) => (
                         <div
                             key={game.id}
-                            className="relative min-w-[85vw] h-[65vh] snap-center rounded-[32px] overflow-hidden shrink-0 shadow-xl border border-white/5"
+                            className="relative min-w-[85vw] h-[55vh] snap-center rounded-[32px] overflow-hidden shrink-0 shadow-xl border border-white/5"
                         >
                             <Link href={`/game/${game.id}`} className="block w-full h-full">
                                 <Image
