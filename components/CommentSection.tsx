@@ -104,14 +104,34 @@ export default function CommentSection({ postId, postOwnerId, postOwnerAvatar, o
 
         setSubmitting(true);
         try {
-            console.log("Submitting comment...", { postId, userId: user.uid, content });
+            // Logic to flatten replies:
+            // If replying to a reply (nested), set parentId to the Root Comment ID
+            // and prepend @username to the content if not already there.
+            let finalParentId = parentId || null;
+            let finalContent = content.trim();
+
+            if (parentId) {
+                const parentComment = comments.find(c => c.id === parentId);
+                if (parentComment && parentComment.parentId) {
+                    // It is a reply to a reply -> Flatten to Root
+                    finalParentId = parentComment.parentId;
+
+                    // Add mention if not present
+                    const mention = `@${parentComment.userName} `;
+                    if (!finalContent.startsWith(mention)) {
+                        finalContent = `${mention}${finalContent}`;
+                    }
+                }
+            }
+
+            console.log("Submitting comment...", { postId, userId: user.uid, content: finalContent, parentId: finalParentId });
 
             const commentData: any = {
                 postId,
                 userId: user.uid,
                 userName: user.displayName || 'Anonymous',
-                content: content.trim(),
-                parentId: parentId || null, // Ensure explicit null if undefined
+                content: finalContent,
+                parentId: finalParentId,
                 createdAt: new Date().toISOString()
             };
 
@@ -365,7 +385,12 @@ export default function CommentSection({ postId, postOwnerId, postOwnerAvatar, o
     };
 
     const rootComments = comments.filter(c => !c.parentId);
-    const getReplies = (parentId: string) => comments.filter(c => c.parentId === parentId);
+
+    // Sort replies chronologically (Oldest -> Newest) so conversation flow makes sense
+    const getReplies = (parentId: string) =>
+        comments
+            .filter(c => c.parentId === parentId)
+            .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
 
     return (
         <div className="bg-[#0a0a0a] border-t border-white/5 p-4 md:p-6">
