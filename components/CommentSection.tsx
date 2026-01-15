@@ -11,8 +11,9 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
-export default function CommentSection({ postId, onCommentAdded, onCommentsLoaded }: {
+export default function CommentSection({ postId, postOwnerId, onCommentAdded, onCommentsLoaded }: {
     postId: string,
+    postOwnerId: string,
     onCommentAdded?: () => void,
     onCommentsLoaded?: (count: number) => void
 }) {
@@ -208,10 +209,15 @@ export default function CommentSection({ postId, onCommentAdded, onCommentsLoade
                                     (edited)
                                 </span>
                             )}
+                            {comment.userId === postOwnerId && (
+                                <span className="text-[10px] bg-primary/20 text-primary px-1.5 py-0.5 rounded text-xs font-medium">
+                                    Author
+                                </span>
+                            )}
                         </div>
 
                         {/* More Options Menu */}
-                        {user?.uid === comment.userId && !isEditing && (
+                        {user && !isEditing && (user.uid === comment.userId || user.uid === postOwnerId) && (
                             <div className="relative" ref={menuRef}>
                                 <button
                                     onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -222,16 +228,18 @@ export default function CommentSection({ postId, onCommentAdded, onCommentsLoade
 
                                 {isMenuOpen && (
                                     <div className="absolute right-0 top-full mt-1 w-28 bg-[#1A1A1A] border border-white/10 rounded-lg shadow-xl z-20 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-                                        <button
-                                            onClick={() => {
-                                                setIsEditing(true);
-                                                setIsMenuOpen(false);
-                                            }}
-                                            className="w-full flex items-center gap-3 px-3 py-2 text-xs text-white hover:bg-white/5 transition-colors text-left"
-                                        >
-                                            <Pencil className="w-3.5 h-3.5" />
-                                            Edit
-                                        </button>
+                                        {user.uid === comment.userId && (
+                                            <button
+                                                onClick={() => {
+                                                    setIsEditing(true);
+                                                    setIsMenuOpen(false);
+                                                }}
+                                                className="w-full flex items-center gap-3 px-3 py-2 text-xs text-white hover:bg-white/5 transition-colors text-left"
+                                            >
+                                                <Pencil className="w-3.5 h-3.5" />
+                                                Edit
+                                            </button>
+                                        )}
                                         <button
                                             onClick={() => handleDeleteComment(comment.id!)}
                                             className="w-full flex items-center gap-3 px-3 py-2 text-xs text-red-500 hover:bg-red-500/10 transition-colors text-left"

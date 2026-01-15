@@ -268,6 +268,7 @@ export default function PostCard({ post }: PostCardProps) {
                     >
                         <CommentSection
                             postId={post.id!}
+                            postOwnerId={post.userId}
                             onCommentAdded={() => setCommentCount(prev => prev + 1)}
                             onCommentsLoaded={(count: number) => setCommentCount(count)}
                         />
