@@ -318,6 +318,7 @@ export interface Comment {
     createdAt: string;
     likes: string[]; // User IDs who liked
     parentId?: string; // ID of parent comment if this is a reply
+    updatedAt?: string;
 }
 
 const POSTS_COLLECTION = "posts";
@@ -412,6 +413,42 @@ export const toggleLikeComment = async (commentId: string, userId: string) => {
 
         transaction.update(commentRef, { likes: newLikes });
     });
+};
+
+export const deleteComment = async (commentId: string, postId: string) => {
+    try {
+        await runTransaction(db, async (transaction) => {
+            const commentRef = doc(db, COMMENTS_COLLECTION, commentId);
+            const postRef = doc(db, POSTS_COLLECTION, postId);
+
+            // Delete comment
+            transaction.delete(commentRef);
+
+            // Update post count
+            const postDoc = await transaction.get(postRef);
+            if (postDoc.exists()) {
+                transaction.update(postRef, {
+                    commentCount: increment(-1)
+                });
+            }
+        });
+    } catch (e) {
+        console.error("Error deleting comment:", e);
+        throw e;
+    }
+};
+
+export const updateComment = async (commentId: string, content: string) => {
+    try {
+        const commentRef = doc(db, COMMENTS_COLLECTION, commentId);
+        await updateDoc(commentRef, {
+            content,
+            updatedAt: new Date().toISOString()
+        });
+    } catch (e) {
+        console.error("Error updating comment:", e);
+        throw e;
+    }
 };
 
 export const toggleLikePost = async (postId: string, userId: string) => {

@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@/components/AuthProvider';
 import { auth } from '@/lib/firebase';
-import { addComment, getPostComments, toggleLikeComment, Comment } from '@/lib/firestore';
+import { addComment, getPostComments, toggleLikeComment, Comment, deleteComment, updateComment } from '@/lib/firestore';
 import { Button } from '@/components/ui/Button';
-import { Send, UserCircle, Heart, MessageCircle, CornerDownRight } from 'lucide-react';
+import { Send, UserCircle, Heart, MessageCircle, CornerDownRight, MoreHorizontal, Pencil, Trash2 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -118,12 +118,77 @@ export default function CommentSection({ postId, onCommentAdded, onCommentsLoade
         }
     };
 
+    const handleDeleteComment = async (commentId: string) => {
+        if (!confirm("Are you sure you want to delete this comment?")) return;
+
+        const commentToDelete = comments.find(c => c.id === commentId);
+        // Optimistic remove
+        setComments(prev => prev.filter(c => c.id !== commentId));
+
+        try {
+            await deleteComment(commentId, postId);
+            if (onCommentsLoaded && comments.length > 0) onCommentsLoaded(comments.length - 1);
+        } catch (error) {
+            console.error("Failed to delete comment:", error);
+            alert("Failed to delete comment.");
+            // Revert
+            if (commentToDelete) {
+                setComments(prev => [...prev, commentToDelete]);
+            }
+        }
+    };
+
+    const handleUpdateComment = async (commentId: string, newContent: string) => {
+        try {
+            // Optimistic update
+            setComments(prev => prev.map(c =>
+                c.id === commentId
+                    ? { ...c, content: newContent, updatedAt: new Date().toISOString() }
+                    : c
+            ));
+
+            await updateComment(commentId, newContent);
+        } catch (error) {
+            console.error("Failed to update comment:", error);
+            alert("Failed to update comment.");
+            await loadComments(); // Revert
+        }
+    };
+
     const CommentItem = ({ comment, isReply = false }: { comment: Comment, isReply?: boolean }) => {
         const isLiked = user && comment.likes?.includes(user.uid);
         const likeCount = comment.likes?.length || 0;
+        const [isEditing, setIsEditing] = useState(false);
+        const [editContent, setEditContent] = useState(comment.content);
+        const [isMenuOpen, setIsMenuOpen] = useState(false);
+        const [isSaving, setIsSaving] = useState(false);
+        const menuRef = useRef<HTMLDivElement>(null);
+
+        // Close menu on outside click
+        useEffect(() => {
+            const handleClickOutside = (event: MouseEvent) => {
+                if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+                    setIsMenuOpen(false);
+                }
+            };
+            if (isMenuOpen) {
+                document.addEventListener('mousedown', handleClickOutside);
+            }
+            return () => {
+                document.removeEventListener('mousedown', handleClickOutside);
+            };
+        }, [isMenuOpen]);
+
+        const saveEdit = async () => {
+            if (!editContent.trim()) return;
+            setIsSaving(true);
+            await handleUpdateComment(comment.id!, editContent);
+            setIsSaving(false);
+            setIsEditing(false);
+        };
 
         return (
-            <div className={cn("flex gap-3 animate-in fade-in slide-in-from-top-2", isReply && "ml-12 mt-3")}>
+            <div className={cn("flex gap-3 animate-in fade-in slide-in-from-top-2 relative group", isReply && "ml-12 mt-3")}>
                 <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center overflow-hidden shrink-0">
                     {comment.userAvatar ? (
                         <img src={comment.userAvatar} alt={comment.userName} className="w-full h-full object-cover" />
@@ -131,47 +196,117 @@ export default function CommentSection({ postId, onCommentAdded, onCommentsLoade
                         <UserCircle className="w-5 h-5 text-muted-foreground" />
                     )}
                 </div>
-                <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-0.5">
-                        <span className="font-medium text-sm text-white">{comment.userName}</span>
-                        <span className="text-xs text-muted-foreground">
-                            {formatDistanceToNow(new Date(comment.createdAt), { addSuffix: true })}
-                        </span>
-                    </div>
-                    <p className="text-sm text-white/80 leading-relaxed mb-2">{comment.content}</p>
-
-                    {/* Actions */}
-                    <div className="flex items-center gap-4">
-                        <button
-                            onClick={() => handleLike(comment.id!)}
-                            className={cn(
-                                "flex items-center gap-1.5 text-xs font-medium transition-colors",
-                                isLiked ? "text-red-500" : "text-muted-foreground hover:text-white"
+                <div className="flex-1 min-w-0"> {/* min-w-0 prevents text overflow issues */}
+                    <div className="flex items-center justify-between mb-0.5">
+                        <div className="flex items-center gap-2">
+                            <span className="font-medium text-sm text-white truncate">{comment.userName}</span>
+                            <span className="text-xs text-muted-foreground shrink-0">
+                                {formatDistanceToNow(new Date(comment.createdAt), { addSuffix: true })}
+                            </span>
+                            {comment.updatedAt && (
+                                <span className="text-[10px] text-muted-foreground/60 italic shrink-0">
+                                    (edited)
+                                </span>
                             )}
-                        >
-                            <Heart className={cn("w-3.5 h-3.5", isLiked && "fill-current")} />
-                            {likeCount > 0 && likeCount}
-                        </button>
+                        </div>
 
-                        {!isReply && (
-                            <button
-                                onClick={() => {
-                                    if (!user) {
-                                        router.push('/login');
-                                        return;
-                                    }
-                                    setReplyingTo(replyingTo === comment.id ? null : comment.id!);
-                                }}
-                                className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-white transition-colors"
-                            >
-                                <MessageCircle className="w-3.5 h-3.5" />
-                                Reply
-                            </button>
+                        {/* More Options Menu */}
+                        {user?.uid === comment.userId && !isEditing && (
+                            <div className="relative" ref={menuRef}>
+                                <button
+                                    onClick={() => setIsMenuOpen(!isMenuOpen)}
+                                    className="p-1 text-muted-foreground hover:text-white rounded-full hover:bg-white/5 transition-colors md:opacity-0 md:group-hover:opacity-100 opacity-100 focus:opacity-100"
+                                >
+                                    <MoreHorizontal className="w-4 h-4" />
+                                </button>
+
+                                {isMenuOpen && (
+                                    <div className="absolute right-0 top-full mt-1 w-28 bg-[#1A1A1A] border border-white/10 rounded-lg shadow-xl z-20 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                                        <button
+                                            onClick={() => {
+                                                setIsEditing(true);
+                                                setIsMenuOpen(false);
+                                            }}
+                                            className="w-full flex items-center gap-3 px-3 py-2 text-xs text-white hover:bg-white/5 transition-colors text-left"
+                                        >
+                                            <Pencil className="w-3.5 h-3.5" />
+                                            Edit
+                                        </button>
+                                        <button
+                                            onClick={() => handleDeleteComment(comment.id!)}
+                                            className="w-full flex items-center gap-3 px-3 py-2 text-xs text-red-500 hover:bg-red-500/10 transition-colors text-left"
+                                        >
+                                            <Trash2 className="w-3.5 h-3.5" />
+                                            Delete
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
                         )}
                     </div>
 
+                    {isEditing ? (
+                        <div className="space-y-2 mt-1">
+                            <textarea
+                                value={editContent}
+                                onChange={(e) => setEditContent(e.target.value)}
+                                className="w-full bg-white/5 border border-white/10 rounded-xl p-2.5 text-sm text-white focus:outline-none focus:border-primary/50 min-h-[60px] resize-none"
+                                autoFocus
+                            />
+                            <div className="flex justify-end gap-2">
+                                <button
+                                    onClick={() => setIsEditing(false)}
+                                    className="px-2 py-1 text-xs text-muted-foreground hover:text-white transition-colors"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={saveEdit}
+                                    disabled={isSaving || !editContent.trim()}
+                                    className="px-3 py-1 bg-primary text-white text-xs rounded-full hover:bg-primary/90 transition-colors disabled:opacity-50"
+                                >
+                                    {isSaving ? 'Saving...' : 'Save'}
+                                </button>
+                            </div>
+                        </div>
+                    ) : (
+                        <p className="text-sm text-white/80 leading-relaxed mb-2 break-words">{comment.content}</p>
+                    )}
+
+                    {/* Actions */}
+                    {!isEditing && (
+                        <div className="flex items-center gap-4">
+                            <button
+                                onClick={() => handleLike(comment.id!)}
+                                className={cn(
+                                    "flex items-center gap-1.5 text-xs font-medium transition-colors",
+                                    isLiked ? "text-red-500" : "text-muted-foreground hover:text-white"
+                                )}
+                            >
+                                <Heart className={cn("w-3.5 h-3.5", isLiked && "fill-current")} />
+                                {likeCount > 0 && likeCount}
+                            </button>
+
+                            {!isReply && (
+                                <button
+                                    onClick={() => {
+                                        if (!user) {
+                                            router.push('/login');
+                                            return;
+                                        }
+                                        setReplyingTo(replyingTo === comment.id ? null : comment.id!);
+                                    }}
+                                    className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-white transition-colors"
+                                >
+                                    <MessageCircle className="w-3.5 h-3.5" />
+                                    Reply
+                                </button>
+                            )}
+                        </div>
+                    )}
+
                     {/* Reply Input */}
-                    {replyingTo === comment.id && (
+                    {replyingTo === comment.id && !isEditing && (
                         <form onSubmit={(e) => handleSubmit(e, comment.id!)} className="flex gap-3 mt-3 animate-in fade-in zoom-in-95 duration-200">
                             <div className="flex items-center justify-center w-8 shrink-0">
                                 <CornerDownRight className="w-4 h-4 text-muted-foreground/50" />
