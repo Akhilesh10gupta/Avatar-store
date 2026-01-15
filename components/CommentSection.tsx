@@ -11,9 +11,10 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
-export default function CommentSection({ postId, postOwnerId, onCommentAdded, onCommentsLoaded }: {
+export default function CommentSection({ postId, postOwnerId, postOwnerAvatar, onCommentAdded, onCommentsLoaded }: {
     postId: string,
     postOwnerId: string,
+    postOwnerAvatar?: string,
     onCommentAdded?: () => void,
     onCommentsLoaded?: (count: number) => void
 }) {
@@ -189,70 +190,50 @@ export default function CommentSection({ postId, postOwnerId, onCommentAdded, on
         };
 
         return (
-            <div className={cn("flex gap-3 animate-in fade-in slide-in-from-top-2 relative group", isReply && "ml-12 mt-3")}>
-                <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center overflow-hidden shrink-0">
+            <div className={cn("flex gap-3 animate-in fade-in slide-in-from-top-2 relative group", isReply && "ml-6 md:ml-12 mt-3")}>
+                {/* Left: Avatar */}
+                {/* Left: Avatar */}
+                <div className={cn("rounded-full bg-secondary flex items-center justify-center overflow-hidden shrink-0", isReply ? "w-6 h-6 md:w-8 md:h-8" : "w-8 h-8")}>
                     {comment.userAvatar ? (
                         <img src={comment.userAvatar} alt={comment.userName} className="w-full h-full object-cover" />
                     ) : (
-                        <UserCircle className="w-5 h-5 text-muted-foreground" />
+                        <UserCircle className={cn("text-muted-foreground", isReply ? "w-4 h-4 md:w-5 md:h-5" : "w-5 h-5")} />
                     )}
                 </div>
-                <div className="flex-1 min-w-0"> {/* min-w-0 prevents text overflow issues */}
-                    <div className="flex items-center justify-between mb-0.5">
-                        <div className="flex items-center gap-2">
-                            <span className="font-medium text-sm text-white truncate">{comment.userName}</span>
-                            <span className="text-xs text-muted-foreground shrink-0">
-                                {formatDistanceToNow(new Date(comment.createdAt), { addSuffix: true })}
-                            </span>
-                            {comment.updatedAt && (
-                                <span className="text-[10px] text-muted-foreground/60 italic shrink-0">
-                                    (edited)
-                                </span>
-                            )}
-                            {comment.userId === postOwnerId && (
-                                <span className="text-[10px] bg-primary/20 text-primary px-1.5 py-0.5 rounded text-xs font-medium">
-                                    Author
-                                </span>
-                            )}
-                        </div>
 
-                        {/* More Options Menu */}
-                        {user && !isEditing && (user.uid === comment.userId || user.uid === postOwnerId) && (
-                            <div className="relative" ref={menuRef}>
-                                <button
-                                    onClick={() => setIsMenuOpen(!isMenuOpen)}
-                                    className="p-1 text-muted-foreground hover:text-white rounded-full hover:bg-white/5 transition-colors md:opacity-0 md:group-hover:opacity-100 opacity-100 focus:opacity-100"
-                                >
-                                    <MoreHorizontal className="w-4 h-4" />
-                                </button>
+                {/* Middle: Content & Actions */}
+                <div className="flex-1 min-w-0">
+                    {/* Header: Name, Time, Badge */}
+                    <div className="flex items-center gap-1.5 md:gap-2 mb-0.5">
+                        <span className="font-semibold text-sm text-white truncate">{comment.userName}</span>
+                        <span className="text-[10px] md:text-xs text-muted-foreground shrink-0">
+                            {formatDistanceToNow(new Date(comment.createdAt), { addSuffix: true })}
+                        </span>
+                        {comment.updatedAt && (
+                            <span className="text-[10px] text-muted-foreground/60 italic shrink-0">(edited)</span>
+                        )}
+                        {comment.userId === postOwnerId && (
+                            <span className="text-[10px] bg-primary/20 text-primary px-1.5 py-0.5 rounded text-xs font-medium">Author</span>
+                        )}
 
-                                {isMenuOpen && (
-                                    <div className="absolute right-0 top-full mt-1 w-28 bg-[#1A1A1A] border border-white/10 rounded-lg shadow-xl z-20 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-                                        {user.uid === comment.userId && (
-                                            <button
-                                                onClick={() => {
-                                                    setIsEditing(true);
-                                                    setIsMenuOpen(false);
-                                                }}
-                                                className="w-full flex items-center gap-3 px-3 py-2 text-xs text-white hover:bg-white/5 transition-colors text-left"
-                                            >
-                                                <Pencil className="w-3.5 h-3.5" />
-                                                Edit
-                                            </button>
-                                        )}
-                                        <button
-                                            onClick={() => handleDeleteComment(comment.id!)}
-                                            className="w-full flex items-center gap-3 px-3 py-2 text-xs text-red-500 hover:bg-red-500/10 transition-colors text-left"
-                                        >
-                                            <Trash2 className="w-3.5 h-3.5" />
-                                            Delete
-                                        </button>
-                                    </div>
-                                )}
+                        {/* Author Like Badge (Instagram Style) - Next to timestamp */}
+                        {comment.likes?.includes(postOwnerId) && (
+                            <div className="relative flex items-center justify-center w-3.5 h-3.5 ml-0.5" title="Liked by author">
+                                <div className="w-3.5 h-3.5 rounded-full overflow-hidden border border-background">
+                                    {postOwnerAvatar ? (
+                                        <img src={postOwnerAvatar} alt="Author" className="w-full h-full object-cover" />
+                                    ) : (
+                                        <div className="w-full h-full bg-primary/20 flex items-center justify-center">
+                                            <UserCircle className="w-3 h-3 text-primary" />
+                                        </div>
+                                    )}
+                                </div>
+                                <Heart className="w-2 h-2 text-red-500 fill-red-500 absolute -bottom-0.5 -right-0.5 drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)]" />
                             </div>
                         )}
                     </div>
 
+                    {/* Comment Text / Edit Mode */}
                     {isEditing ? (
                         <div className="space-y-2 mt-1">
                             <textarea
@@ -262,53 +243,46 @@ export default function CommentSection({ postId, postOwnerId, onCommentAdded, on
                                 autoFocus
                             />
                             <div className="flex justify-end gap-2">
-                                <button
-                                    onClick={() => setIsEditing(false)}
-                                    className="px-2 py-1 text-xs text-muted-foreground hover:text-white transition-colors"
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    onClick={saveEdit}
-                                    disabled={isSaving || !editContent.trim()}
-                                    className="px-3 py-1 bg-primary text-white text-xs rounded-full hover:bg-primary/90 transition-colors disabled:opacity-50"
-                                >
-                                    {isSaving ? 'Saving...' : 'Save'}
-                                </button>
+                                <button onClick={() => setIsEditing(false)} className="px-2 py-1 text-xs text-muted-foreground hover:text-white transition-colors">Cancel</button>
+                                <button onClick={saveEdit} disabled={isSaving || !editContent.trim()} className="px-3 py-1 bg-primary text-white text-xs rounded-full hover:bg-primary/90 transition-colors disabled:opacity-50">{isSaving ? 'Saving...' : 'Save'}</button>
                             </div>
                         </div>
                     ) : (
-                        <p className="text-sm text-white/80 leading-relaxed mb-2 break-words">{comment.content}</p>
+                        <p className="text-sm text-white/90 leading-relaxed break-words">{comment.content}</p>
                     )}
 
-                    {/* Actions */}
+                    {/* Actions: Reply, Menu */}
                     {!isEditing && (
-                        <div className="flex items-center gap-4">
-                            <button
-                                onClick={() => handleLike(comment.id!)}
-                                className={cn(
-                                    "flex items-center gap-1.5 text-xs font-medium transition-colors",
-                                    isLiked ? "text-red-500" : "text-muted-foreground hover:text-white"
-                                )}
-                            >
-                                <Heart className={cn("w-3.5 h-3.5", isLiked && "fill-current")} />
-                                {likeCount > 0 && likeCount}
-                            </button>
-
-                            {!isReply && (
+                        <div className="flex items-center gap-4 mt-1.5">
+                            <div className="flex items-center gap-3">
                                 <button
                                     onClick={() => {
-                                        if (!user) {
-                                            router.push('/login');
-                                            return;
-                                        }
+                                        if (!user) { router.push('/login'); return; }
                                         setReplyingTo(replyingTo === comment.id ? null : comment.id!);
                                     }}
-                                    className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-white transition-colors"
+                                    className="text-xs font-semibold text-muted-foreground hover:text-white transition-colors"
                                 >
-                                    <MessageCircle className="w-3.5 h-3.5" />
                                     Reply
                                 </button>
+                            </div>
+                            {user && (user.uid === comment.userId || user.uid === postOwnerId) && (
+                                <div className="relative" ref={menuRef}>
+                                    <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="p-1 text-muted-foreground/50 hover:text-white rounded-full transition-colors">
+                                        <MoreHorizontal className="w-4 h-4" />
+                                    </button>
+                                    {isMenuOpen && (
+                                        <div className="absolute left-0 top-full mt-1 w-28 bg-[#1A1A1A] border border-white/10 rounded-lg shadow-xl z-20 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                                            {user.uid === comment.userId && (
+                                                <button onClick={() => { setIsEditing(true); setIsMenuOpen(false); }} className="w-full flex items-center gap-3 px-3 py-2 text-xs text-white hover:bg-white/5 transition-colors text-left">
+                                                    <Pencil className="w-3.5 h-3.5" /> Edit
+                                                </button>
+                                            )}
+                                            <button onClick={() => handleDeleteComment(comment.id!)} className="w-full flex items-center gap-3 px-3 py-2 text-xs text-red-500 hover:bg-red-500/10 transition-colors text-left">
+                                                <Trash2 className="w-3.5 h-3.5" /> Delete
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
                             )}
                         </div>
                     )}
@@ -332,7 +306,7 @@ export default function CommentSection({ postId, postOwnerId, onCommentAdded, on
                                     type="submit"
                                     disabled={!replyContent.trim() || submitting}
                                     className="absolute right-1.5 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center bg-primary text-white hover:bg-primary/90 rounded-full transition-colors disabled:opacity-50 z-10"
-                                    onClick={(e) => e.stopPropagation()} // Prevent bubbling if needed
+                                    onClick={(e) => e.stopPropagation()}
                                 >
                                     <Send className="w-3.5 h-3.5" />
                                 </button>
@@ -340,8 +314,35 @@ export default function CommentSection({ postId, postOwnerId, onCommentAdded, on
                         </form>
                     )}
                 </div>
+
+                {/* Right: Like Button (Vertical) */}
+                {!isEditing && (
+                    <div className="shrink-0 flex flex-col items-center gap-0.5 pt-1">
+                        <button
+                            onClick={() => handleLike(comment.id!)}
+                            className="text-muted-foreground hover:text-red-500 transition-colors"
+                        >
+                            <Heart className={cn("w-4 h-4", isLiked ? "fill-red-500 text-red-500" : "")} />
+                        </button>
+                        {likeCount > 0 && (
+                            <span className="text-[10px] text-muted-foreground">{likeCount}</span>
+                        )}
+                    </div>
+                )}
             </div>
         );
+    };
+
+    const [expandedComments, setExpandedComments] = useState<Set<string>>(new Set());
+
+    const toggleReplies = (commentId: string) => {
+        const newExpanded = new Set(expandedComments);
+        if (newExpanded.has(commentId)) {
+            newExpanded.delete(commentId);
+        } else {
+            newExpanded.add(commentId);
+        }
+        setExpandedComments(newExpanded);
     };
 
     const rootComments = comments.filter(c => !c.parentId);
@@ -381,15 +382,51 @@ export default function CommentSection({ postId, postOwnerId, onCommentAdded, on
 
             {/* List */}
             <div className="space-y-6">
-                {rootComments.map((comment) => (
-                    <div key={comment.id} className="space-y-3">
-                        <CommentItem comment={comment} />
-                        {/* Render Replies */}
-                        {getReplies(comment.id!).map(reply => (
-                            <CommentItem key={reply.id} comment={reply} isReply={true} />
-                        ))}
-                    </div>
-                ))}
+                {rootComments.map((comment) => {
+                    const replies = getReplies(comment.id!);
+                    const isExpanded = expandedComments.has(comment.id!);
+
+                    return (
+                        <div key={comment.id} className="space-y-2">
+                            <CommentItem comment={comment} />
+
+                            {/* Replies Toggle */}
+                            {replies.length > 0 && (
+                                <div className="ml-12">
+                                    {!isExpanded && (
+                                        <button
+                                            onClick={() => toggleReplies(comment.id!)}
+                                            className="flex items-center gap-3 group/line my-2"
+                                        >
+                                            <div className="w-8 h-[1px] bg-white/20 group-hover/line:bg-white/40 transition-colors"></div>
+                                            <span className="text-xs font-semibold text-muted-foreground group-hover/line:text-white transition-colors">
+                                                View {replies.length} more {replies.length === 1 ? 'reply' : 'replies'}
+                                            </span>
+                                        </button>
+                                    )}
+
+                                    {/* Render Replies */}
+                                    {isExpanded && (
+                                        <div className="space-y-3 mt-3 animate-in fade-in slide-in-from-top-1">
+                                            {replies.map(reply => (
+                                                <CommentItem key={reply.id} comment={reply} isReply={true} />
+                                            ))}
+                                            <button
+                                                onClick={() => toggleReplies(comment.id!)}
+                                                className="flex items-center gap-3 group/line mt-4 mb-2"
+                                            >
+                                                <div className="w-8 h-[1px] bg-white/20 group-hover/line:bg-white/40 transition-colors"></div>
+                                                <span className="text-xs font-semibold text-muted-foreground group-hover/line:text-white transition-colors">
+                                                    Hide replies
+                                                </span>
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                    );
+                })}
             </div>
         </div>
     );
