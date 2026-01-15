@@ -1,7 +1,9 @@
 'use client';
 
-import { Gamepad2, Users, Rocket, Globe, Trophy, Heart, Sparkles, Target } from 'lucide-react';
+import { Gamepad2, Users, Rocket, Globe, Trophy, Heart, Sparkles, Target, ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
+import { Button } from '@/components/ui/Button';
 
 export default function AboutPage() {
     return (
@@ -14,6 +16,15 @@ export default function AboutPage() {
             </div>
 
             <div className="container mx-auto px-4 relative z-10">
+                {/* Back Button */}
+                <div className="mb-8">
+                    <Link href="/">
+                        <Button variant="outline" className="gap-2 bg-card hover:bg-secondary text-foreground border-border/50">
+                            <ArrowLeft className="w-4 h-4" /> Back to Store
+                        </Button>
+                    </Link>
+                </div>
+
                 {/* Hero Section */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
@@ -21,13 +32,13 @@ export default function AboutPage() {
                     transition={{ duration: 0.8 }}
                     className="text-center max-w-4xl mx-auto mb-20"
                 >
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-primary text-sm font-medium mb-6">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium mb-6">
                         <Sparkles className="w-4 h-4" />
                         <span>The Next Gen of Gaming</span>
                     </div>
 
-                    <h1 className="text-5xl md:text-7xl font-bold mb-6 tracking-tight">
-                        We Are <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-indigo-400 to-cyan-400">Avatar Play</span>
+                    <h1 className="text-5xl md:text-7xl font-bold mb-6 tracking-tight text-foreground">
+                        We Are <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-purple-400 to-indigo-400">Avatar Play</span>
                     </h1>
 
                     <p className="text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto mb-10">
@@ -36,7 +47,7 @@ export default function AboutPage() {
                     </p>
 
                     {/* Stats Grid */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-card/50 backdrop-blur-xl rounded-2xl border border-border/50 shadow-xl">
                         {[
                             { label: "Active Players", value: "10K+", icon: Users },
                             { label: "Epic Games", value: "500+", icon: Gamepad2 },
@@ -45,7 +56,7 @@ export default function AboutPage() {
                         ].map((stat, index) => (
                             <div key={index} className="flex flex-col items-center justify-center p-4">
                                 <stat.icon className="w-6 h-6 text-primary mb-2 opacity-80" />
-                                <div className="text-2xl font-bold text-white mb-1">{stat.value}</div>
+                                <div className="text-2xl font-bold text-foreground mb-1">{stat.value}</div>
                                 <div className="text-xs text-muted-foreground font-medium uppercase tracking-wider">{stat.label}</div>
                             </div>
                         ))}
@@ -62,16 +73,16 @@ export default function AboutPage() {
                         className="relative group"
                     >
                         <div className="absolute inset-0 bg-gradient-to-r from-primary to-indigo-600 rounded-2xl blur-2xl opacity-20 group-hover:opacity-40 transition-opacity duration-500"></div>
-                        <div className="relative bg-card/50 backdrop-blur-xl border border-white/10 rounded-2xl p-8 h-full bg-[url('https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&q=80&w=2070')] bg-cover bg-center">
-                            <div className="absolute inset-0 bg-black/80 rounded-2xl"></div>
+                        <div className="relative bg-card/80 backdrop-blur-xl border border-border/50 rounded-2xl p-8 h-full overflow-hidden">
+                            {/* Abstract Background Pattern */}
+                            <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white via-transparent to-transparent"></div>
+
                             <div className="relative z-10">
                                 <Target className="w-12 h-12 text-primary mb-6" />
-                                <h2 className="text-3xl font-bold mb-4">Our Mission</h2>
-                                <p className="text-gray-300 leading-relaxed">
+                                <h2 className="text-3xl font-bold mb-4 text-foreground">Our Mission</h2>
+                                <p className="text-muted-foreground leading-relaxed text-lg">
                                     To revolutionize digital distribution by putting power back into the hands of gamers.
-                                    We believe in transparent pricing, drm-free options, and supporting indie developers
-                                    alongside AAA giants. Our platform is built on the foundation of trust, speed, and
-                                    an unyielding passion for gaming culture.
+                                    We believe in transparent pricing, supporting indie developers alongside AAA giants, and creating a space where community comes first.
                                 </p>
                             </div>
                         </div>
@@ -87,26 +98,26 @@ export default function AboutPage() {
                         {[
                             {
                                 icon: Rocket,
-                                title: "Lightning Fast Delivery",
-                                description: "Our optimized CDN ensures you spend less time downloading and more time playing. Smart updates means you only download what changed."
+                                title: "Lightning Fast",
+                                description: "Our optimized platform ensures you spend less time waiting and more time playing. Instant access to your favorite titles."
                             },
                             {
                                 icon: Trophy,
                                 title: "Curated Excellence",
-                                description: "Every game on our platform is hand-picked and tested. We prize quality over quantity, ensuring you only get the best gaming experiences."
+                                description: "Every game on our platform is hand-picked. We prize quality over quantity, ensuring you only get the best gaming experiences."
                             },
                             {
                                 icon: Users,
-                                title: "Community Driven",
-                                description: "Join a vibrant community of passionate gamers. Share reviews, join tournaments, and shape the future of the platform with your feedback."
+                                title: "Community First",
+                                description: "Join a vibrant community. Share reviews, join discussions, and shape the future of the platform with your feedback."
                             }
                         ].map((item, index) => (
                             <div key={index} className="flex gap-4 group">
-                                <div className="shrink-0 w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-primary/20 group-hover:border-primary/50 transition-colors duration-300">
-                                    <item.icon className="w-6 h-6 text-white group-hover:text-primary transition-colors" />
+                                <div className="shrink-0 w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all duration-300">
+                                    <item.icon className="w-6 h-6 text-primary group-hover:text-white transition-colors" />
                                 </div>
                                 <div>
-                                    <h3 className="text-xl font-bold mb-2 group-hover:text-primary transition-colors">{item.title}</h3>
+                                    <h3 className="text-xl font-bold mb-2 group-hover:text-primary transition-colors text-foreground">{item.title}</h3>
                                     <p className="text-muted-foreground leading-relaxed">
                                         {item.description}
                                     </p>
@@ -121,20 +132,22 @@ export default function AboutPage() {
                     initial={{ opacity: 0, y: 50 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    className="relative rounded-3xl overflow-hidden border border-white/10"
+                    className="relative rounded-3xl overflow-hidden border border-border/50 shadow-2xl"
                 >
-                    <div className="absolute inset-0 bg-gradient-to-r from-indigo-900/50 to-primary/50"></div>
-                    <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&q=80&w=2071')] bg-cover bg-center mix-blend-overlay opacity-50"></div>
+                    <div className="absolute inset-0 bg-gradient-to-r from-indigo-900/80 to-primary/80"></div>
+                    <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&q=80&w=2071')] bg-cover bg-center mix-blend-overlay opacity-30"></div>
 
                     <div className="relative z-10 px-8 py-24 text-center max-w-3xl mx-auto">
-                        <h2 className="text-4xl md:text-5xl font-bold mb-6">Ready to Level Up?</h2>
-                        <p className="text-xl text-gray-200 mb-8">
+                        <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">Ready to Level Up?</h2>
+                        <p className="text-xl text-white/80 mb-8">
                             Join thousands of gamers who have already found their new home.
                             The next great adventure is just a click away.
                         </p>
-                        <button className="bg-primary hover:bg-primary/90 text-white font-bold py-4 px-10 rounded-full text-lg transition-transform hover:scale-105 active:scale-95 shadow-lg shadow-primary/25">
-                            Browse Games
-                        </button>
+                        <Link href="/browse">
+                            <Button size="lg" className="bg-white text-primary hover:bg-white/90 font-bold px-10 py-6 text-lg rounded-full shadow-xl">
+                                Browse Games
+                            </Button>
+                        </Link>
                     </div>
                 </motion.div>
             </div>
