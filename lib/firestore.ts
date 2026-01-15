@@ -100,6 +100,7 @@ export interface Game {
     genre: string;
     releaseDate: string;
     developer: string;
+    price?: string;
 
     // Platform Support
     platform: 'PC' | 'Android' | 'Both';
