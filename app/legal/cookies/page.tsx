@@ -15,53 +15,42 @@ export default function CookiePolicy() {
 
             <section className="space-y-8">
                 <div className="space-y-4">
-                    <h2 className="text-2xl font-semibold flex items-center gap-2 text-foreground">
-                        <span className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary text-sm font-bold">1</span>
-                        What Are Cookies
+                    <h2 className="text-2xl font-semibold flex items-center gap-3 text-foreground">
+                        <span className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white text-sm font-bold shadow-md shadow-primary/20">1</span>
+                        What Are Cookies?
                     </h2>
                     <p>
-                        Cookies are small text files that are placed on your computer or mobile device by websites that you visit. They are widely used in order to make websites work, or work more efficiently, as well as to provide information to the owners of the site.
+                        Not the tasty kind 🍪. Cookies are tiny files we save on your browser to remember who you are. Without them, you'd have to log in every single time you clicked a new page.
                     </p>
                 </div>
 
                 <div className="space-y-4">
-                    <h2 className="text-2xl font-semibold flex items-center gap-2 text-foreground">
-                        <span className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary text-sm font-bold">2</span>
-                        How We Use Cookies
+                    <h2 className="text-2xl font-semibold flex items-center gap-3 text-foreground">
+                        <span className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white text-sm font-bold shadow-md shadow-primary/20">2</span>
+                        How We Use Them
                     </h2>
-                    <p>We use cookies for the following purposes:</p>
+                    <p>We keep it minimal. We use cookies for exactly one main thing:</p>
                     <div className="grid gap-4">
                         <div className="bg-secondary/50 p-4 rounded-lg border border-border/50 flex gap-4">
                             <div className="w-2 h-full bg-primary rounded-full shrink-0" />
                             <div>
-                                <strong className="text-foreground block mb-1">Essential Cookies</strong>
-                                These represent the basic functionality of our website, such as keeping you logged in.
-                            </div>
-                        </div>
-                        <div className="bg-secondary/50 p-4 rounded-lg border border-border/50 flex gap-4">
-                            <div className="w-2 h-full bg-blue-500 rounded-full shrink-0" />
-                            <div>
-                                <strong className="text-foreground block mb-1">Analytics Cookies</strong>
-                                We use these to understand how visitors interact with our website.
-                            </div>
-                        </div>
-                        <div className="bg-secondary/50 p-4 rounded-lg border border-border/50 flex gap-4">
-                            <div className="w-2 h-full bg-green-500 rounded-full shrink-0" />
-                            <div>
-                                <strong className="text-foreground block mb-1">Preferences</strong>
-                                These help us remember your settings and preferences to provide a personalized experience.
+                                <strong className="text-foreground block mb-1">Keeping You Logged In</strong>
+                                This is the "Essential" cookie. It just tells our Code "Hey, this is [Username], let them post a comment."
                             </div>
                         </div>
                     </div>
+                    <p className="text-sm text-muted-foreground mt-2">
+                        *We don't use creepy tracking cookies to follow you around the internet.*
+                    </p>
                 </div>
 
                 <div className="space-y-4">
-                    <h2 className="text-2xl font-semibold flex items-center gap-2 text-foreground">
-                        <span className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary text-sm font-bold">3</span>
+                    <h2 className="text-2xl font-semibold flex items-center gap-3 text-foreground">
+                        <span className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white text-sm font-bold shadow-md shadow-primary/20">3</span>
                         Managing Cookies
                     </h2>
                     <p>
-                        Most web browsers allow some control of most cookies through the browser settings. To find out more about cookies, including how to see what cookies have been set, visit www.aboutcookies.org or www.allaboutcookies.org.
+                        If you really hate cookies, you can turn them off in your browser settings (Chrome, Firefox, Safari). But be warned: **You won't be able to log in** to Avatar Play if you do.
                     </p>
                 </div>
             </section>
