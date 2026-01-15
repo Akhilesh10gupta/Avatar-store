@@ -74,9 +74,7 @@ const Navbar = () => {
 
                 {/* Logo */}
                 <Link href="/" className="flex items-center gap-2 font-bold text-xl tracking-tight hover:opacity-80 transition-opacity">
-                    <div className="bg-primary p-1.5 rounded-lg">
-                        <Gamepad2 className="w-5 h-5 text-white" />
-                    </div>
+                    <img src="/logo.png" alt="Avatar Play Logo" className="w-8 h-8 rounded-lg object-contain" />
                     <span className="text-white">Avatar<span className="text-violet-400"> Play</span></span>
                 </Link>
 

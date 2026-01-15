@@ -23,9 +23,7 @@ export default function Footer() {
                     {/* Brand Section */}
                     <div className="space-y-6">
                         <Link href="/" className="flex items-center gap-2 font-bold text-xl tracking-tight">
-                            <div className="bg-primary p-1.5 rounded-lg">
-                                <Gamepad2 className="w-5 h-5 text-white" />
-                            </div>
+                            <img src="/logo.png" alt="Avatar Play Logo" className="w-8 h-8 rounded-lg object-contain" />
                             <span className="text-white">Avatar<span className="text-primary"> Play</span></span>
                         </Link>
                         <p className="text-muted-foreground leading-relaxed text-sm">
