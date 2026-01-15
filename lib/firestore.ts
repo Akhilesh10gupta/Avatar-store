@@ -306,6 +306,7 @@ export interface Post {
     likes: string[]; // User IDs who liked
     commentCount?: number;
     createdAt: string;
+    updatedAt?: string;
 }
 
 export interface Comment {

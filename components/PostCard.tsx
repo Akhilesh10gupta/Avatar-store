@@ -21,6 +21,7 @@ export default function PostCard({ post }: PostCardProps) {
     const [isEditing, setIsEditing] = useState(false);
     const [editContent, setEditContent] = useState(post.content);
     const [editedContentDisplay, setEditedContentDisplay] = useState(post.content); // Display updated content after save
+    const [updatedAtDisplay, setUpdatedAtDisplay] = useState(post.updatedAt);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
@@ -109,6 +110,7 @@ export default function PostCard({ post }: PostCardProps) {
         try {
             await updatePost(post.id!, editContent);
             setEditedContentDisplay(editContent);
+            setUpdatedAtDisplay(new Date().toISOString());
             setIsEditing(false);
             setIsMenuOpen(false);
         } catch (error) {
@@ -140,9 +142,16 @@ export default function PostCard({ post }: PostCardProps) {
                         </div>
                         <div>
                             <h3 className="font-semibold text-white">{post.userName}</h3>
-                            <p className="text-xs text-muted-foreground">
-                                {formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })}
-                            </p>
+                            <div className="flex items-center gap-2">
+                                <p className="text-xs text-muted-foreground">
+                                    {formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })}
+                                </p>
+                                {updatedAtDisplay && (
+                                    <span className="text-[10px] text-muted-foreground/60 italic">
+                                        (edited)
+                                    </span>
+                                )}
+                            </div>
                         </div>
                     </div>
 
