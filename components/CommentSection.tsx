@@ -26,15 +26,34 @@ export default function CommentSection({ postId, postOwnerId, postOwnerAvatar, o
     const [replyContent, setReplyContent] = useState('');
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
+    const [lastDoc, setLastDoc] = useState<any>(null);
+    const [hasMore, setHasMore] = useState(true);
 
     useEffect(() => {
-        loadComments();
+        setComments([]);
+        setLastDoc(null);
+        setHasMore(true);
+        loadComments(true);
     }, [postId]);
 
-    const loadComments = async () => {
-        const fetchedComments = await getPostComments(postId);
-        setComments(fetchedComments);
-        if (onCommentsLoaded) onCommentsLoaded(fetchedComments.length);
+    const loadComments = async (isInitial = false) => {
+        if (!isInitial && !hasMore) return;
+
+        // If initial load, start from null. Otherwise stick with current lastDoc
+        const currentLastDoc = isInitial ? null : lastDoc;
+        const { comments: newComments, lastDoc: newLastDoc } = await getPostComments(postId, currentLastDoc);
+
+        if (newComments.length < 20) {
+            setHasMore(false);
+        }
+
+        setLastDoc(newLastDoc);
+        setComments(prev => isInitial ? newComments : [...prev, ...newComments]);
+
+        if (onCommentsLoaded) {
+            // This count might be inaccurate with pagination, but keeps existing contract
+            onCommentsLoaded(newComments.length);
+        }
         setLoading(false);
     };
 
@@ -427,6 +446,18 @@ export default function CommentSection({ postId, postOwnerId, postOwnerAvatar, o
                         </div>
                     );
                 })}
+
+                {hasMore && !loading && (
+                    <button
+                        onClick={() => loadComments(false)}
+                        className="w-full py-2 text-xs text-muted-foreground hover:text-white transition-colors border border-white/5 rounded-lg hover:bg-white/5"
+                    >
+                        Load more comments
+                    </button>
+                )}
+                {loading && comments.length > 0 && (
+                    <div className="text-center py-2 text-xs text-muted-foreground animate-pulse">Loading more...</div>
+                )}
             </div>
         </div>
     );

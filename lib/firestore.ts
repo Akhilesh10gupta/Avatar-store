@@ -13,7 +13,10 @@ import {
     where,
     increment,
     runTransaction,
-    writeBatch
+    writeBatch,
+    startAfter,
+    arrayUnion,
+    arrayRemove // Ensure these are all present
 } from "firebase/firestore";
 
 // ... (Interfaces omitted, assuming they match file) ...
@@ -384,21 +387,33 @@ export const addComment = async (comment: Omit<Comment, "id">) => {
     }
 };
 
-export const getPostComments = async (postId: string) => {
+export const getPostComments = async (postId: string, lastDoc: any = null) => {
     try {
-        const q = query(
+        let q = query(
             collection(db, COMMENTS_COLLECTION),
-            where("postId", "==", postId)
+            where("postId", "==", postId),
+            orderBy("createdAt", "desc"),
+            limit(20)
         );
-        const querySnapshot = await getDocs(q);
-        const comments = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Comment));
 
-        return comments.sort((a, b) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        );
-    } catch (e) {
-        console.error("Error fetching comments:", e);
-        return [];
+        if (lastDoc) {
+            q = query(q, startAfter(lastDoc));
+        }
+
+        const querySnapshot = await getDocs(q);
+        const comments: Comment[] = [];
+        querySnapshot.forEach((doc) => {
+            comments.push({ id: doc.id, ...doc.data() } as Comment);
+        });
+
+        // Return object with comments and lastDoc
+        return {
+            comments,
+            lastDoc: querySnapshot.docs.length > 0 ? querySnapshot.docs[querySnapshot.docs.length - 1] : null
+        };
+    } catch (error) {
+        console.error("Error getting comments: ", error);
+        return { comments: [], lastDoc: null };
     }
 };
 
