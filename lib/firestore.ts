@@ -304,7 +304,7 @@ export interface Post {
     id?: string;
     userId: string;
     userName: string;
-    userAvatar?: string;
+    userAvatar?: string | null;
     content: string;
     imageUrl?: string;
     imageUrls?: string[]; // Multiple images support

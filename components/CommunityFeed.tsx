@@ -9,6 +9,7 @@ import { Button } from './ui/Button';
 import Link from 'next/link';
 import { uploadFile } from '@/lib/storage';
 import GameLoader from './GameLoader';
+import { checkImageSafety } from '@/lib/contentSafety';
 
 export default function CommunityFeed() {
     const { user } = useAuth();
@@ -19,6 +20,7 @@ export default function CommunityFeed() {
     const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
     const [previewUrls, setPreviewUrls] = useState<string[]>([]);
     const [isPosting, setIsPosting] = useState(false);
+    const [isCheckingSafety, setIsCheckingSafety] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
@@ -56,12 +58,28 @@ export default function CommunityFeed() {
         if (fileInputRef.current) fileInputRef.current.value = '';
     };
 
+
     const handleCreatePost = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!user || (!newPostContent.trim() && selectedFiles.length === 0 && imageUrls.length === 0)) return;
 
         setIsPosting(true);
         try {
+            // 1. Content Safety Check
+            if (selectedFiles.length > 0) {
+                setIsCheckingSafety(true);
+                for (const file of selectedFiles) {
+                    const safetyResult = await checkImageSafety(file);
+                    if (!safetyResult.safe) {
+                        alert(safetyResult.reason || "Image violates content guidelines.");
+                        setIsCheckingSafety(false);
+                        setIsPosting(false);
+                        return; // Stop the process
+                    }
+                }
+                setIsCheckingSafety(false);
+            }
+
             const uploadedUrls = await Promise.all(
                 selectedFiles.map(file => uploadFile(file, 'community_posts'))
             );
@@ -71,7 +89,7 @@ export default function CommunityFeed() {
             await addPost({
                 userId: user.uid,
                 userName: user.displayName || 'Anonymous',
-                userAvatar: user.photoURL || undefined,
+                userAvatar: user.photoURL || null,
                 content: newPostContent.trim(),
                 imageUrls: finalImageUrls.length > 0 ? finalImageUrls : undefined,
                 imageUrl: finalImageUrls[0], // Backward compatibility
@@ -180,7 +198,7 @@ export default function CommunityFeed() {
                                 </Button>
                             </div>
                             <Button type="submit" disabled={(!newPostContent.trim() && selectedFiles.length === 0 && imageUrls.length === 0) || isPosting} className="px-6 rounded-full">
-                                {isPosting ? 'Posting...' : 'Post'}
+                                {isCheckingSafety ? 'Scanning...' : (isPosting ? 'Posting...' : 'Post')}
                             </Button>
                         </div>
                     </form>
