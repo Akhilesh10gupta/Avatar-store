@@ -30,8 +30,31 @@ export default function LegalLayout({
             </div>
 
             <div className="grid md:grid-cols-[280px_1fr] gap-8 items-start">
-                {/* Sidebar Navigation */}
-                <div className="space-y-6 sticky top-24">
+                {/* Mobile Navigation (Tabs) */}
+                <div className="md:hidden mb-6 sticky top-20 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 py-2 -mx-4 px-4 overflow-x-auto scrollbar-hide border-b border-border/50">
+                    <nav className="flex items-center gap-2 min-w-max">
+                        {links.map((link) => {
+                            const Icon = link.icon;
+                            const isActive = pathname === link.href;
+                            return (
+                                <Link key={link.href} href={link.href}>
+                                    <div className={cn(
+                                        "flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 border",
+                                        isActive
+                                            ? "bg-primary text-white border-primary shadow-lg shadow-primary/25"
+                                            : "bg-card border-border/50 text-muted-foreground hover:bg-secondary hover:text-foreground hover:border-border"
+                                    )}>
+                                        <Icon className="w-3.5 h-3.5" />
+                                        {link.label}
+                                    </div>
+                                </Link>
+                            );
+                        })}
+                    </nav>
+                </div>
+
+                {/* Desktop Sidebar Navigation */}
+                <div className="hidden md:block space-y-6 sticky top-24">
                     <div className="bg-card border border-border/50 rounded-xl p-6 shadow-sm">
                         <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
                             <FileText className="w-5 h-5 text-primary" />
@@ -46,7 +69,7 @@ export default function LegalLayout({
                                         <div className={cn(
                                             "flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200",
                                             isActive
-                                                ? "bg-primary/10 text-primary border border-primary/20 shadow-[0_0_15px_rgba(168,85,247,0.1)]"
+                                                ? "bg-primary text-white shadow-lg shadow-primary/25"
                                                 : "text-muted-foreground hover:bg-secondary hover:text-foreground"
                                         )}>
                                             <Icon className="w-4 h-4" />
