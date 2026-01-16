@@ -2,9 +2,23 @@
 
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/components/AuthProvider';
-import { getAllGamesAdmin, getSubscribers, getContactMessages, getAllUsers, Game, ContactMessage } from '@/lib/firestore';
+import {
+    getGames,
+    getAllGamesAdmin,
+    getContactMessages,
+    addSubscriber,
+    getSubscribers,
+    getAllUsers,
+    getPosts,
+    deleteGame,
+    deletePost,
+    Game,
+    ContactMessage,
+    UserProfile,
+    Post
+} from '@/lib/firestore';
 import { useRouter } from 'next/navigation';
-import { Monitor, Smartphone, Download, Star, Users, ArrowUpRight, ShieldAlert, Mail, User } from 'lucide-react';
+import { Monitor, Smartphone, Download, Star, Users, ArrowUpRight, ShieldAlert, Mail, User, Trash2 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
@@ -18,11 +32,12 @@ export default function SuperAdminPage() {
     const [games, setGames] = useState<Game[]>([]);
     const [subscribers, setSubscribers] = useState<{ id: string, email: string, createdAt: string }[]>([]);
     const [messages, setMessages] = useState<ContactMessage[]>([]);
-    const [users, setUsers] = useState<any[]>([]);
+    const [users, setUsers] = useState<UserProfile[]>([]);
+    const [posts, setPosts] = useState<Post[]>([]);
     const [loading, setLoading] = useState(true);
 
     // Pagination State
-    const [activeTab, setActiveTab] = useState<'games' | 'subscribers' | 'inbox' | 'users'>('games');
+    const [activeTab, setActiveTab] = useState<'games' | 'subscribers' | 'inbox' | 'users' | 'posts'>('games');
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
 
@@ -48,17 +63,19 @@ export default function SuperAdminPage() {
         const load = async () => {
             try {
                 // Parallel fetch
-                const [gamesData, subscribersData, messagesData, usersData] = await Promise.all([
+                const [gamesData, subscribersData, messagesData, usersData, postsData] = await Promise.all([
                     getAllGamesAdmin(),
                     getSubscribers(),
                     getContactMessages(),
-                    getAllUsers()
+                    getAllUsers(),
+                    getPosts()
                 ]);
 
                 setGames(gamesData);
                 setSubscribers(subscribersData);
                 setMessages(messagesData);
                 setUsers(usersData);
+                setPosts(postsData);
 
                 // Calculate Stats
                 const totalDl = gamesData.reduce((acc, g) => acc + (g.downloadCount || 0), 0);
@@ -87,6 +104,32 @@ export default function SuperAdminPage() {
     useEffect(() => {
         setCurrentPage(1);
     }, [activeTab]);
+
+    const handleDeleteGame = async (id: string, title: string) => {
+        if (confirm(`SUPER ADMIN ACTION:\nAre you sure you want to PERMANENTLY DELETE the game "${title}"? This cannot be undone.`)) {
+            try {
+                await deleteGame(id);
+                setGames(prev => prev.filter(g => g.id !== id));
+                alert("Game deleted successfully.");
+            } catch (e) {
+                console.error(e);
+                alert("Failed to delete game.");
+            }
+        }
+    };
+
+    const handleDeletePost = async (id: string) => {
+        if (confirm("SUPER ADMIN ACTION:\nAre you sure you want to delete this post?")) {
+            try {
+                await deletePost(id);
+                setPosts(prev => prev.filter(p => p.id !== id));
+                alert("Post deleted successfully.");
+            } catch (e) {
+                console.error(e);
+                alert("Failed to delete post.");
+            }
+        }
+    };
 
     if (authLoading || loading) return <div className="min-h-screen flex items-center justify-center text-white">Loading Dashboard...</div>;
 
@@ -124,7 +167,7 @@ export default function SuperAdminPage() {
 
                 {/* Tab Navigation */}
                 <div className="flex items-center gap-4 mb-8 border-b border-white/10 pb-1 overflow-x-auto">
-                    {['games', 'users', 'subscribers', 'inbox'].map((tab) => (
+                    {['games', 'users', 'posts', 'subscribers', 'inbox'].map((tab) => (
                         <button
                             key={tab}
                             onClick={() => setActiveTab(tab as any)}
@@ -135,8 +178,9 @@ export default function SuperAdminPage() {
                             <span className="ml-2 text-xs bg-white/10 px-2 py-0.5 rounded-full">
                                 {tab === 'games' ? games.length :
                                     tab === 'users' ? users.length :
-                                        tab === 'subscribers' ? subscribers.length :
-                                            messages.length}
+                                        tab === 'posts' ? posts.length :
+                                            tab === 'subscribers' ? subscribers.length :
+                                                messages.length}
                             </span>
                         </button>
                     ))}
@@ -153,11 +197,13 @@ export default function SuperAdminPage() {
                                 Showing {(currentPage - 1) * itemsPerPage + 1}-{Math.min(currentPage * itemsPerPage,
                                     activeTab === 'games' ? games.length :
                                         activeTab === 'users' ? users.length :
-                                            activeTab === 'subscribers' ? subscribers.length : messages.length
+                                            activeTab === 'subscribers' ? subscribers.length :
+                                                activeTab === 'posts' ? posts.length : messages.length
                                 )} of {
                                     activeTab === 'games' ? games.length :
                                         activeTab === 'users' ? users.length :
-                                            activeTab === 'subscribers' ? subscribers.length : messages.length
+                                            activeTab === 'subscribers' ? subscribers.length :
+                                                activeTab === 'posts' ? posts.length : messages.length
                                 }
                             </span>
                         </div>
@@ -185,7 +231,16 @@ export default function SuperAdminPage() {
                                             <td className="p-4">{game.platform}</td>
                                             <td className="p-4 text-white/70">{game.developer}</td>
                                             <td className="p-4 text-emerald-400 font-mono">{game.downloadCount}</td>
-                                            <td className="p-4"><Link href={`/game/${game.id}`} target="_blank"><ArrowUpRight className="w-4 h-4" /></Link></td>
+                                            <td className="p-4 flex gap-2">
+                                                <Link href={`/game/${game.id}`} target="_blank">
+                                                    <Button size="sm" variant="ghost">
+                                                        <ArrowUpRight className="w-4 h-4" />
+                                                    </Button>
+                                                </Link>
+                                                <Button size="sm" variant="danger" onClick={() => handleDeleteGame(game.id!, game.title)}>
+                                                    <Trash2 className="w-4 h-4" />
+                                                </Button>
+                                            </td>
                                         </tr>
                                     ))}
                                     {games.length === 0 && (
@@ -224,7 +279,7 @@ export default function SuperAdminPage() {
                                                 </div>
                                             </td>
                                             <td className="p-4 font-mono text-white/70">{u.email}</td>
-                                            <td className="p-4 text-muted-foreground">{new Date(u.createdAt).toLocaleDateString()}</td>
+                                            <td className="p-4 text-muted-foreground">{new Date(u.createdAt || Date.now()).toLocaleDateString()}</td>
                                             <td className="p-4 text-muted-foreground">{u.lastLogin ? new Date(u.lastLogin).toLocaleDateString() : '-'}</td>
                                         </tr>
                                     ))}
@@ -232,6 +287,61 @@ export default function SuperAdminPage() {
                                         <tr>
                                             <td colSpan={4} className="p-8 text-center text-muted-foreground">
                                                 No registered users found.
+                                            </td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
+                        )}
+
+                        {/* POSTS TABLE */}
+                        {activeTab === 'posts' && (
+                            <table className="w-full text-left text-sm">
+                                <thead className="bg-white/5 text-muted-foreground">
+                                    <tr>
+                                        <th className="p-4 uppercase">Post / Caption</th>
+                                        <th className="p-4 uppercase">Author</th>
+                                        <th className="p-4 uppercase">Stats</th>
+                                        <th className="p-4 uppercase">Posted</th>
+                                        <th className="p-4 uppercase">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-white/5">
+                                    {getPaginatedData(posts).map((post) => (
+                                        <tr key={post.id} className="hover:bg-white/5">
+                                            <td className="p-4 max-w-xs">
+                                                <div className="flex gap-3">
+                                                    {post.imageUrl && (
+                                                        <div className="relative w-12 h-12 rounded overflow-hidden bg-white/5 shrink-0">
+                                                            <Image src={post.imageUrl} alt="" fill className="object-cover" />
+                                                        </div>
+                                                    )}
+                                                    <div className="line-clamp-2 text-white/80">{post.content}</div>
+                                                </div>
+                                            </td>
+                                            <td className="p-4">
+                                                <div className="flex items-center gap-2">
+                                                    <span className="font-medium">{post.userName}</span>
+                                                </div>
+                                            </td>
+                                            <td className="p-4">
+                                                <div className="flex gap-4 text-xs text-muted-foreground">
+                                                    <span>❤️ {(post.likes || []).length}</span>
+                                                    <span>💬 {post.commentCount || 0}</span>
+                                                </div>
+                                            </td>
+                                            <td className="p-4 text-muted-foreground">{new Date(post.createdAt).toLocaleDateString()}</td>
+                                            <td className="p-4">
+                                                <Button size="sm" variant="danger" onClick={() => handleDeletePost(post.id!)}>
+                                                    <Trash2 className="w-4 h-4" />
+                                                </Button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                    {posts.length === 0 && (
+                                        <tr>
+                                            <td colSpan={5} className="p-8 text-center text-muted-foreground">
+                                                No posts found.
                                             </td>
                                         </tr>
                                     )}
