@@ -48,6 +48,22 @@ const BOT_RESPONSES: Record<string, Partial<Message>> = {
             { label: "None of these", action: "contact_form" }
         ]
     },
+    topic_upload: {
+        text: "You want to upload a game? That's awesome! We love new creators.",
+        options: [
+            { label: "How to become a publisher?", action: "sol_publisher" },
+            { label: "My upload failed", action: "sol_upload_fail" },
+            { label: "Other upload question", action: "contact_form" }
+        ]
+    },
+    topic_bugs: {
+        text: "Found a bug? Oh no! Tell me more.",
+        options: [
+            { label: "Game keeps crashing", action: "sol_crash" },
+            { label: "Visual glitch / weird graphics", action: "sol_glitch" },
+            { label: "Report a serious bug", action: "contact_form" }
+        ]
+    },
     sol_password: {
         text: "To reset your password, go to the Login page and click 'Forgot Password?'. We'll send you a reset link immediately. Did that help?",
         options: [
@@ -55,11 +71,63 @@ const BOT_RESPONSES: Record<string, Partial<Message>> = {
             { label: "No, still stuck", action: "contact_form" }
         ]
     },
+    sol_verify: {
+        text: "If you didn't get the verification email, check your Spam/Junk folder. It can take up to 5 minutes. Still nothing?",
+        options: [
+            { label: "Found it!", action: "end_good" },
+            { label: "Still nothing", action: "contact_form" }
+        ]
+    },
+    sol_delete: {
+        text: "We're sad to see you go. To delete your account, please go to your Profile settings -> Danger Zone. This cannot be undone.",
+        options: [
+            { label: "Okay, thanks", action: "end_good" },
+            { label: "I can't access profile", action: "contact_form" }
+        ]
+    },
     sol_stuck: {
         text: "If downloads are stuck, try disabling your ad-blocker or VPN temporarily. Refresh the page and try again. Is it working now?",
         options: [
             { label: "Yes, working!", action: "end_good" },
             { label: "No", action: "contact_form" }
+        ]
+    },
+    sol_broken: {
+        text: "A 404 error means the file might have been moved. Please let us know specifically which game it is so we can fix it.",
+        options: [
+            { label: "Report Broken Link", action: "contact_form" }
+        ]
+    },
+    sol_slow: {
+        text: "Slow speeds are usually due to network traffic. Try pausing and resuming, or using a download manager.",
+        options: [
+            { label: "Okay, I'll try that", action: "end_good" }
+        ]
+    },
+    sol_publisher: {
+        text: "Go to your Profile -> Admin Dashboard -> 'Add New Game'. You can publish instantly!",
+        options: [
+            { label: "Got it!", action: "end_good" }
+        ]
+    },
+    sol_upload_fail: {
+        text: "Uploads might fail if the file is too big or your internet dropped. Ensure your game is under 2GB or host it externally (Drive/Itch.io).",
+        options: [
+            { label: "I'll try external link", action: "end_good" },
+            { label: "Still failing", action: "contact_form" }
+        ]
+    },
+    sol_crash: {
+        text: "Crashes are often due to missing drivers. Update your Graphics Drivers and DirectX. Does that help?",
+        options: [
+            { label: "I'll try that", action: "end_good" },
+            { label: "Didn't work", action: "contact_form" }
+        ]
+    },
+    sol_glitch: {
+        text: "Try changing the game resolution or quality settings in the launcher.",
+        options: [
+            { label: "Okay", action: "end_good" }
         ]
     },
     end_good: {
