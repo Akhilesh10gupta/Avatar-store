@@ -211,11 +211,11 @@ export default function HelpCenter() {
                                     <p className="text-sm text-muted-foreground mb-6">
                                         Can't find what you're looking for? Our support team is here to assist you 24/7.
                                     </p>
-                                    <a href="mailto:support@avatarplay.in" className="block">
+                                    <Link href="/contact" className="block">
                                         <Button className="w-full bg-white text-black hover:bg-gray-200">
                                             Contact Support
                                         </Button>
-                                    </a>
+                                    </Link>
                                 </div>
                             </div>
                         </div>

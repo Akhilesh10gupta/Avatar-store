@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/components/AuthProvider';
-import { getAllGamesAdmin, getSubscribers, Game } from '@/lib/firestore';
+import { getAllGamesAdmin, getSubscribers, getContactMessages, Game, ContactMessage } from '@/lib/firestore';
 import { useRouter } from 'next/navigation';
 import { Monitor, Smartphone, Download, Star, Users, ArrowUpRight, ShieldAlert, Mail } from 'lucide-react';
 import Image from 'next/image';
@@ -16,6 +16,7 @@ export default function SuperAdminPage() {
     const router = useRouter();
     const [games, setGames] = useState<Game[]>([]);
     const [subscribers, setSubscribers] = useState<{ id: string, email: string, createdAt: string }[]>([]);
+    const [messages, setMessages] = useState<ContactMessage[]>([]);
     const [loading, setLoading] = useState(true);
 
     // Stats
@@ -39,13 +40,15 @@ export default function SuperAdminPage() {
         const load = async () => {
             try {
                 // Parallel fetch
-                const [gamesData, subscribersData] = await Promise.all([
+                const [gamesData, subscribersData, messagesData] = await Promise.all([
                     getAllGamesAdmin(),
-                    getSubscribers()
+                    getSubscribers(),
+                    getContactMessages()
                 ]);
 
                 setGames(gamesData);
                 setSubscribers(subscribersData);
+                setMessages(messagesData);
 
                 // Calculate Stats
                 const totalDl = gamesData.reduce((acc, g) => acc + (g.downloadCount || 0), 0);
@@ -223,6 +226,59 @@ export default function SuperAdminPage() {
                                     <tr>
                                         <td colSpan={2} className="p-8 text-center text-muted-foreground">
                                             No subscribers found yet.
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                {/* Support Inbox Table */}
+                <div className="bg-card border border-white/10 rounded-2xl overflow-hidden mb-12">
+                    <div className="p-6 border-b border-white/10 flex justify-between items-center">
+                        <h2 className="text-xl font-bold">Support Inbox</h2>
+                        <span className="text-sm text-muted-foreground">{messages.length} messages</span>
+                    </div>
+                    <div className="overflow-x-auto max-h-96">
+                        <table className="w-full text-left text-sm">
+                            <thead className="bg-white/5 text-muted-foreground sticky top-0 bg-[#1a1a1a]">
+                                <tr>
+                                    <th className="p-4 font-medium uppercase tracking-wider">Date</th>
+                                    <th className="p-4 font-medium uppercase tracking-wider">User</th>
+                                    <th className="p-4 font-medium uppercase tracking-wider">Subject</th>
+                                    <th className="p-4 font-medium uppercase tracking-wider">Message</th>
+                                    <th className="p-4 font-medium uppercase tracking-wider text-right">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-white/5">
+                                {messages.map((msg) => (
+                                    <tr key={msg.id} className="hover:bg-white/5 transition-colors">
+                                        <td className="p-4 text-muted-foreground whitespace-nowrap">
+                                            {new Date(msg.createdAt).toLocaleDateString()} <br />
+                                            <span className="text-xs">{new Date(msg.createdAt).toLocaleTimeString()}</span>
+                                        </td>
+                                        <td className="p-4">
+                                            <div className="font-medium text-white">{msg.name}</div>
+                                            <div className="text-xs text-muted-foreground">{msg.email}</div>
+                                        </td>
+                                        <td className="p-4 text-white font-medium">
+                                            {msg.subject}
+                                        </td>
+                                        <td className="p-4 text-white/80 max-w-md truncate" title={msg.message}>
+                                            {msg.message}
+                                        </td>
+                                        <td className="p-4 text-right">
+                                            <a href={`mailto:${msg.email}?subject=Re: ${msg.subject}`} className="inline-flex items-center justify-center p-2 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors" title="Reply via Email">
+                                                <Mail className="w-4 h-4" />
+                                            </a>
+                                        </td>
+                                    </tr>
+                                ))}
+                                {messages.length === 0 && (
+                                    <tr>
+                                        <td colSpan={5} className="p-8 text-center text-muted-foreground">
+                                            No support messages yet.
                                         </td>
                                     </tr>
                                 )}

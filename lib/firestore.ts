@@ -627,3 +627,41 @@ export const getAllGamesAdmin = async () => {
         return [];
     }
 };
+
+// --- Contact & Support ---
+
+const CONTACT_COLLECTION = "contact_messages";
+
+export interface ContactMessage {
+    id?: string;
+    name: string;
+    email: string;
+    subject: string;
+    message: string;
+    status: 'new' | 'read' | 'replied';
+    createdAt: string;
+}
+
+export const addContactMessage = async (msg: Omit<ContactMessage, "id" | "status" | "createdAt">) => {
+    try {
+        await addDoc(collection(db, CONTACT_COLLECTION), {
+            ...msg,
+            status: 'new',
+            createdAt: new Date().toISOString()
+        });
+    } catch (e) {
+        console.error("Error sending message:", e);
+        throw e;
+    }
+};
+
+export const getContactMessages = async () => {
+    try {
+        const q = query(collection(db, CONTACT_COLLECTION), orderBy("createdAt", "desc"));
+        const snapshot = await getDocs(q);
+        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as ContactMessage));
+    } catch (e) {
+        console.error("Error fetching messages:", e);
+        return [];
+    }
+};
