@@ -8,6 +8,7 @@ import PostCard from '@/components/PostCard';
 import { Plus, Pencil, Trash2, ExternalLink, Heart, MessageCircle, Gamepad2, Grid, LayoutGrid, LogOut, X } from 'lucide-react';
 import Image from 'next/image';
 import ProfileManager from '@/components/ProfileManager';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/components/AuthProvider';
 
 export default function AdminDashboard() {
@@ -370,26 +371,37 @@ export default function AdminDashboard() {
             )}
 
             {/* Post Detail Modal */}
-            {selectedPost && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200" onClick={() => setSelectedPost(null)}>
-                    <div
-                        className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl bg-background border border-white/10 shadow-2xl animate-in zoom-in-95 duration-200 no-scrollbar"
-                        onClick={e => e.stopPropagation()}
+            <AnimatePresence>
+                {selectedPost && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+                        onClick={() => setSelectedPost(null)}
                     >
-                        <button
-                            onClick={() => setSelectedPost(null)}
-                            className="absolute top-4 right-4 p-2 bg-black/50 hover:bg-black/70 rounded-full text-white z-50 transition-colors"
+                        <motion.div
+                            initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                            animate={{ scale: 1, opacity: 1, y: 0 }}
+                            exit={{ scale: 0.9, opacity: 0, y: 20 }}
+                            transition={{ type: "spring", damping: 25, stiffness: 300 }}
+                            className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl bg-background border border-white/10 shadow-2xl no-scrollbar"
+                            onClick={e => e.stopPropagation()}
                         >
-                            <X className="w-5 h-5" />
-                        </button>
+                            <button
+                                onClick={() => setSelectedPost(null)}
+                                className="absolute top-4 right-4 p-2 bg-black/50 hover:bg-black/70 rounded-full text-white z-50 transition-colors"
+                            >
+                                <X className="w-5 h-5" />
+                            </button>
 
-                        <div className="p-0">
-                            {/* Pass unique key to force re-render if needed, but usually not necessary unless switching posts */}
-                            <PostCard post={selectedPost} />
-                        </div>
-                    </div>
-                </div>
-            )}
+                            <div className="p-0">
+                                <PostCard post={selectedPost} />
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
         </div>
     );
