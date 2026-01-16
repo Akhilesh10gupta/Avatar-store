@@ -15,6 +15,7 @@ export default function SuperAdminPage() {
     const { user, loading: authLoading } = useAuth();
     const router = useRouter();
     const [games, setGames] = useState<Game[]>([]);
+    const [subscribers, setSubscribers] = useState<{ id: string, email: string, createdAt: string }[]>([]);
     const [loading, setLoading] = useState(true);
 
     // Stats
@@ -44,6 +45,7 @@ export default function SuperAdminPage() {
                 ]);
 
                 setGames(gamesData);
+                setSubscribers(subscribersData);
 
                 // Calculate Stats
                 const totalDl = gamesData.reduce((acc, g) => acc + (g.downloadCount || 0), 0);
@@ -182,6 +184,52 @@ export default function SuperAdminPage() {
                     </div>
                 </div>
 
+                {/* Newsletter Subscribers Table */}
+                <div className="bg-card border border-white/10 rounded-2xl overflow-hidden mb-12">
+                    <div className="p-6 border-b border-white/10 flex justify-between items-center">
+                        <h2 className="text-xl font-bold">Newsletter Subscribers</h2>
+                        <div className="flex items-center gap-4">
+                            <span className="text-sm text-muted-foreground">{subscribers.length} found</span>
+                            <button
+                                onClick={() => {
+                                    const emails = subscribers.map(s => s.email).join(',');
+                                    navigator.clipboard.writeText(emails);
+                                    alert('Copied all emails to clipboard!');
+                                }}
+                                className="text-xs bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-lg transition-colors text-white"
+                            >
+                                Copy All
+                            </button>
+                        </div>
+                    </div>
+                    <div className="overflow-x-auto max-h-96">
+                        <table className="w-full text-left text-sm">
+                            <thead className="bg-white/5 text-muted-foreground sticky top-0 bg-[#1a1a1a]">
+                                <tr>
+                                    <th className="p-4 font-medium uppercase tracking-wider">Email Address</th>
+                                    <th className="p-4 font-medium uppercase tracking-wider text-right">Joined Date</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-white/5">
+                                {subscribers.map((sub) => (
+                                    <tr key={sub.id} className="hover:bg-white/5 transition-colors">
+                                        <td className="p-4 text-white font-mono">{sub.email}</td>
+                                        <td className="p-4 text-right text-muted-foreground">
+                                            {new Date(sub.createdAt).toLocaleDateString()}
+                                        </td>
+                                    </tr>
+                                ))}
+                                {subscribers.length === 0 && (
+                                    <tr>
+                                        <td colSpan={2} className="p-8 text-center text-muted-foreground">
+                                            No subscribers found yet.
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </main>
     );
