@@ -183,6 +183,72 @@ export default function AdminDashboard() {
                     No games found. Click "Add New Game" to start.
                 </div>
             )}
+
+            <SubscribersSection />
+        </div>
+    );
+}
+
+function SubscribersSection() {
+    const [subscribers, setSubscribers] = useState<{ id: string, email: string, createdAt: string }[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const load = async () => {
+            try {
+                const { getSubscribers } = await import('@/lib/firestore');
+                const data = await getSubscribers();
+                setSubscribers(data);
+            } catch (e) {
+                console.error(e);
+            } finally {
+                setLoading(false);
+            }
+        };
+        load();
+    }, []);
+
+    if (loading) return null;
+
+    return (
+        <div className="mt-12 pt-8 border-t border-border">
+            <h2 className="text-xl font-bold mb-4">Newsletter Subscribers</h2>
+            <div className="bg-card rounded-xl border border-border overflow-hidden">
+                <table className="w-full text-left text-sm">
+                    <thead className="bg-secondary/50 border-b border-border">
+                        <tr>
+                            <th className="p-4 font-medium text-muted-foreground text-xs uppercase">Email</th>
+                            <th className="p-4 font-medium text-muted-foreground text-xs uppercase">Joined</th>
+                        </tr>
+                    </thead>
+                    <tbody className="divide-y divide-border/50">
+                        {subscribers.map((sub) => (
+                            <tr key={sub.id} className="hover:bg-secondary/20">
+                                <td className="p-4">{sub.email}</td>
+                                <td className="p-4 text-muted-foreground">
+                                    {new Date(sub.createdAt).toLocaleDateString()}
+                                </td>
+                            </tr>
+                        ))}
+                        {subscribers.length === 0 && (
+                            <tr>
+                                <td colSpan={2} className="p-8 text-center text-muted-foreground">
+                                    No subscribers yet.
+                                </td>
+                            </tr>
+                        )}
+                    </tbody>
+                </table>
+            </div>
+            <div className="mt-4 flex justify-end">
+                <Button variant="outline" size="sm" onClick={() => {
+                    const emails = subscribers.map(s => s.email).join(',');
+                    navigator.clipboard.writeText(emails);
+                    alert('Copied all emails to clipboard!');
+                }}>
+                    Copy All Emails
+                </Button>
+            </div>
         </div>
     );
 }

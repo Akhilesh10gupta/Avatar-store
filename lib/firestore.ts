@@ -579,3 +579,40 @@ export const recalculateCommentCounts = async () => {
         console.error("Error calculating counts:", e);
     }
 };
+
+const SUBSCRIBERS_COLLECTION = "subscribers";
+
+export const addSubscriber = async (email: string) => {
+    try {
+        // Check if already subscribed to avoid duplicates (optional but good)
+        const q = query(collection(db, SUBSCRIBERS_COLLECTION), where("email", "==", email));
+        const snapshot = await getDocs(q);
+
+        if (!snapshot.empty) {
+            return; // Already subscribed, just return success silently
+        }
+
+        await addDoc(collection(db, SUBSCRIBERS_COLLECTION), {
+            email,
+            createdAt: new Date().toISOString()
+        });
+    } catch (e) {
+        console.error("Error adding subscriber:", e);
+        throw e;
+    }
+};
+
+export const getSubscribers = async () => {
+    try {
+        const q = query(collection(db, SUBSCRIBERS_COLLECTION), orderBy("createdAt", "desc"));
+        const snapshot = await getDocs(q);
+        return snapshot.docs.map(doc => ({
+            id: doc.id,
+            email: doc.data().email,
+            createdAt: doc.data().createdAt
+        }));
+    } catch (e) {
+        console.error("Error fetching subscribers:", e);
+        return [];
+    }
+};

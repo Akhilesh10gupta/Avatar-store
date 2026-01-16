@@ -6,11 +6,24 @@ import { useState } from 'react';
 
 export default function Footer() {
     const [email, setEmail] = useState('');
+    const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
 
-    const handleSubscribe = (e: React.FormEvent) => {
+    const handleSubscribe = async (e: React.FormEvent) => {
         e.preventDefault();
-        // Mock subscription
-        setEmail('');
+        if (!email) return;
+
+        setStatus('loading');
+        try {
+            const { addSubscriber } = await import('@/lib/firestore');
+            await addSubscriber(email);
+            setStatus('success');
+            setEmail('');
+            setTimeout(() => setStatus('idle'), 3000); // Reset after 3s
+        } catch (error) {
+            console.error(error);
+            setStatus('error');
+            setTimeout(() => setStatus('idle'), 3000);
+        }
     };
 
     return (
@@ -103,10 +116,26 @@ export default function Footer() {
                             </div>
                             <button
                                 type="submit"
-                                className="w-full bg-white text-black font-bold py-2.5 rounded-lg text-sm hover:bg-gray-200 transition-colors flex items-center justify-center gap-2"
+                                disabled={status === 'loading' || status === 'success'}
+                                className={`w-full font-bold py-2.5 rounded-lg text-sm transition-all flex items-center justify-center gap-2 ${status === 'success'
+                                    ? 'bg-green-500 text-white'
+                                    : status === 'error'
+                                        ? 'bg-red-500 text-white'
+                                        : 'bg-white text-black hover:bg-gray-200'
+                                    }`}
                             >
-                                Subscribe
-                                <ArrowRight className="w-4 h-4" />
+                                {status === 'loading' ? (
+                                    <span className="w-4 h-4 border-2 border-black/20 border-t-black rounded-full animate-spin" />
+                                ) : status === 'success' ? (
+                                    "Subscribed!"
+                                ) : status === 'error' ? (
+                                    "Failed"
+                                ) : (
+                                    <>
+                                        Subscribe
+                                        <ArrowRight className="w-4 h-4" />
+                                    </>
+                                )}
                             </button>
                         </form>
                     </div>
