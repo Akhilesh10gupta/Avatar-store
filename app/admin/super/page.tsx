@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/components/AuthProvider';
-import { getAllGamesAdmin, getSubscribers, getContactMessages, Game, ContactMessage } from '@/lib/firestore';
+import { getAllGamesAdmin, getSubscribers, getContactMessages, getAllUsers, Game, ContactMessage } from '@/lib/firestore';
 import { useRouter } from 'next/navigation';
-import { Monitor, Smartphone, Download, Star, Users, ArrowUpRight, ShieldAlert, Mail } from 'lucide-react';
+import { Monitor, Smartphone, Download, Star, Users, ArrowUpRight, ShieldAlert, Mail, User } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { Button } from '@/components/ui/Button';
 
 // ALLOWED ADMIN EMAILS
 const ADMIN_EMAILS = ['gakhilesh946@gmail.com'];
@@ -17,16 +18,21 @@ export default function SuperAdminPage() {
     const [games, setGames] = useState<Game[]>([]);
     const [subscribers, setSubscribers] = useState<{ id: string, email: string, createdAt: string }[]>([]);
     const [messages, setMessages] = useState<ContactMessage[]>([]);
+    const [users, setUsers] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 
-    const [activeTab, setActiveTab] = useState<'games' | 'subscribers' | 'inbox'>('games');
+    // Pagination State
+    const [activeTab, setActiveTab] = useState<'games' | 'subscribers' | 'inbox' | 'users'>('games');
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
 
     // Stats
     const [stats, setStats] = useState({
         totalGames: 0,
         totalDownloads: 0,
         totalSubscribers: 0,
-        avgRating: 0
+        avgRating: 0,
+        totalUsers: 0
     });
 
     useEffect(() => {
@@ -42,15 +48,17 @@ export default function SuperAdminPage() {
         const load = async () => {
             try {
                 // Parallel fetch
-                const [gamesData, subscribersData, messagesData] = await Promise.all([
+                const [gamesData, subscribersData, messagesData, usersData] = await Promise.all([
                     getAllGamesAdmin(),
                     getSubscribers(),
-                    getContactMessages()
+                    getContactMessages(),
+                    getAllUsers()
                 ]);
 
                 setGames(gamesData);
                 setSubscribers(subscribersData);
                 setMessages(messagesData);
+                setUsers(usersData);
 
                 // Calculate Stats
                 const totalDl = gamesData.reduce((acc, g) => acc + (g.downloadCount || 0), 0);
@@ -62,7 +70,8 @@ export default function SuperAdminPage() {
                     totalGames: gamesData.length,
                     totalDownloads: totalDl,
                     totalSubscribers: subscribersData.length,
-                    avgRating: avgR
+                    avgRating: avgR,
+                    totalUsers: usersData.length
                 });
 
             } catch (e) {
@@ -74,9 +83,21 @@ export default function SuperAdminPage() {
         load();
     }, []);
 
+    // Reset page on tab change
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [activeTab]);
+
     if (authLoading || loading) return <div className="min-h-screen flex items-center justify-center text-white">Loading Dashboard...</div>;
 
     if (!user) return <div className="min-h-screen flex items-center justify-center text-white">Please log in.</div>;
+
+    // Helper for pagination
+    const getPaginatedData = (data: any[]) => {
+        const start = (currentPage - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+        return data.slice(start, end);
+    };
 
     return (
         <main className="min-h-screen bg-[#050505] pt-24 pb-12 px-4 text-white">
@@ -93,161 +114,145 @@ export default function SuperAdminPage() {
                 </div>
 
                 {/* KPI Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-                    <StatCard
-                        label="Total Games"
-                        value={stats.totalGames}
-                        icon={Monitor}
-                        color="text-blue-400"
-                        bg="bg-blue-400/10"
-                    />
-                    <StatCard
-                        label="Total Downloads"
-                        value={stats.totalDownloads.toLocaleString()}
-                        icon={Download}
-                        color="text-emerald-400"
-                        bg="bg-emerald-400/10"
-                    />
-                    <StatCard
-                        label="Newsletter Subscribers"
-                        value={stats.totalSubscribers.toLocaleString()}
-                        subValue="Active Emails"
-                        icon={Mail}
-                        color="text-violet-400"
-                        bg="bg-violet-400/10"
-                    />
-                    <StatCard
-                        label="Average Rating"
-                        value={stats.avgRating.toFixed(1)}
-                        icon={Star}
-                        color="text-yellow-400"
-                        bg="bg-yellow-400/10"
-                    />
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-12">
+                    <StatCard label="Total Games" value={stats.totalGames} icon={Monitor} color="text-blue-400" bg="bg-blue-400/10" />
+                    <StatCard label="Total Downloads" value={stats.totalDownloads.toLocaleString()} icon={Download} color="text-emerald-400" bg="bg-emerald-400/10" />
+                    <StatCard label="Subscribers" value={stats.totalSubscribers.toLocaleString()} icon={Mail} color="text-violet-400" bg="bg-violet-400/10" />
+                    <StatCard label="Reg. Users" value={stats.totalUsers.toLocaleString()} icon={Users} color="text-pink-400" bg="bg-pink-400/10" />
+                    <StatCard label="Avg Rating" value={stats.avgRating.toFixed(1)} icon={Star} color="text-yellow-400" bg="bg-yellow-400/10" />
                 </div>
 
-                {/* Games Table */}
                 {/* Tab Navigation */}
                 <div className="flex items-center gap-4 mb-8 border-b border-white/10 pb-1 overflow-x-auto">
-                    <button
-                        onClick={() => setActiveTab('games')}
-                        className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors ${activeTab === 'games' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-white'}`}
-                    >
-                        Games
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('subscribers')}
-                        className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors ${activeTab === 'subscribers' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-white'}`}
-                    >
-                        Subscribers <span className="ml-2 text-xs bg-white/10 px-2 py-0.5 rounded-full">{subscribers.length}</span>
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('inbox')}
-                        className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors ${activeTab === 'inbox' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-white'}`}
-                    >
-                        Support Inbox <span className="ml-2 text-xs bg-white/10 px-2 py-0.5 rounded-full">{messages.length}</span>
-                    </button>
+                    {['games', 'users', 'subscribers', 'inbox'].map((tab) => (
+                        <button
+                            key={tab}
+                            onClick={() => setActiveTab(tab as any)}
+                            className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors capitalize ${activeTab === tab ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-white'
+                                }`}
+                        >
+                            {tab}
+                            <span className="ml-2 text-xs bg-white/10 px-2 py-0.5 rounded-full">
+                                {tab === 'games' ? games.length :
+                                    tab === 'users' ? users.length :
+                                        tab === 'subscribers' ? subscribers.length :
+                                            messages.length}
+                            </span>
+                        </button>
+                    ))}
                 </div>
 
-                {/* Games Table */}
-                {activeTab === 'games' && (
-                    <div className="bg-card border border-white/10 rounded-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-4">
-                        <div className="p-6 border-b border-white/10 flex justify-between items-center">
-                            <h2 className="text-xl font-bold">All Published Games</h2>
-                            <span className="text-sm text-muted-foreground">{games.length} titles found</span>
+                {/* Content Area */}
+                <div className="bg-card border border-white/10 rounded-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-4">
+
+                    {/* Header */}
+                    <div className="p-6 border-b border-white/10 flex justify-between items-center">
+                        <h2 className="text-xl font-bold capitalize">{activeTab} List</h2>
+                        <div className="flex items-center gap-4">
+                            <span className="text-sm text-muted-foreground">
+                                Showing {(currentPage - 1) * itemsPerPage + 1}-{Math.min(currentPage * itemsPerPage,
+                                    activeTab === 'games' ? games.length :
+                                        activeTab === 'users' ? users.length :
+                                            activeTab === 'subscribers' ? subscribers.length : messages.length
+                                )} of {
+                                    activeTab === 'games' ? games.length :
+                                        activeTab === 'users' ? users.length :
+                                            activeTab === 'subscribers' ? subscribers.length : messages.length
+                                }
+                            </span>
                         </div>
-                        <div className="overflow-x-auto">
+                    </div>
+
+                    {/* Table Container */}
+                    <div className="overflow-x-auto min-h-[300px]">
+
+                        {/* GAMES TABLE */}
+                        {activeTab === 'games' && (
                             <table className="w-full text-left text-sm">
                                 <thead className="bg-white/5 text-muted-foreground">
                                     <tr>
-                                        <th className="p-4 font-medium uppercase tracking-wider">Game</th>
-                                        <th className="p-4 font-medium uppercase tracking-wider">Platform</th>
-                                        <th className="p-4 font-medium uppercase tracking-wider">Developer</th>
-                                        <th className="p-4 font-medium uppercase tracking-wider">Downloads</th>
-                                        <th className="p-4 font-medium uppercase tracking-wider">Rating</th>
-                                        <th className="p-4 font-medium uppercase tracking-wider text-right">Action</th>
+                                        <th className="p-4 uppercase">Game</th>
+                                        <th className="p-4 uppercase">Platform</th>
+                                        <th className="p-4 uppercase">Dev</th>
+                                        <th className="p-4 uppercase">Downloads</th>
+                                        <th className="p-4 uppercase">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-white/5">
-                                    {games.map((game) => (
-                                        <tr key={game.id} className="hover:bg-white/5 transition-colors">
-                                            <td className="p-4">
-                                                <div className="flex items-center gap-3">
-                                                    <div className="w-10 h-10 rounded-lg bg-white/10 relative overflow-hidden shrink-0">
-                                                        {game.icon && <Image src={game.icon} alt="" fill className="object-cover" />}
-                                                    </div>
-                                                    <div>
-                                                        <div className="font-semibold text-white">{game.title}</div>
-                                                        <div className="text-xs text-muted-foreground">{new Date(game.createdAt || '').toLocaleDateString()}</div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td className="p-4">
-                                                <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-white/5 text-xs font-medium">
-                                                    {game.platform === 'Android' ? <Smartphone className="w-3 h-3" /> : <Monitor className="w-3 h-3" />}
-                                                    {game.platform}
-                                                </span>
-                                            </td>
-                                            <td className="p-4 text-white/80">
-                                                {game.developer}
-                                                {/* Note: In a real app, you'd fetch the user email via game.userId if needed */}
-                                            </td>
-                                            <td className="p-4 font-mono text-emerald-400">
-                                                {game.downloadCount || 0}
-                                            </td>
-                                            <td className="p-4">
-                                                <div className="flex items-center gap-1 text-yellow-400">
-                                                    <Star className="w-3 h-3 fill-current" />
-                                                    {game.rating?.toFixed(1) || '0.0'}
-                                                    <span className="text-muted-foreground text-xs ml-1">({game.ratingCount || 0})</span>
-                                                </div>
-                                            </td>
-                                            <td className="p-4 text-right">
-                                                <Link href={`/game/${game.id}`} target="_blank" className="inline-flex items-center justify-center p-2 rounded-lg hover:bg-white/10 text-white/60 hover:text-white transition-colors">
-                                                    <ArrowUpRight className="w-4 h-4" />
-                                                </Link>
-                                            </td>
+                                    {getPaginatedData(games).map((game) => (
+                                        <tr key={game.id} className="hover:bg-white/5">
+                                            <td className="p-4 font-semibold">{game.title}</td>
+                                            <td className="p-4">{game.platform}</td>
+                                            <td className="p-4 text-white/70">{game.developer}</td>
+                                            <td className="p-4 text-emerald-400 font-mono">{game.downloadCount}</td>
+                                            <td className="p-4"><Link href={`/game/${game.id}`} target="_blank"><ArrowUpRight className="w-4 h-4" /></Link></td>
                                         </tr>
                                     ))}
+                                    {games.length === 0 && (
+                                        <tr>
+                                            <td colSpan={5} className="p-8 text-center text-muted-foreground">
+                                                No games found.
+                                            </td>
+                                        </tr>
+                                    )}
                                 </tbody>
                             </table>
-                        </div>
-                    </div>
-                )}
+                        )}
 
-                {/* Newsletter Subscribers Table */}
-                {activeTab === 'subscribers' && (
-                    <div className="bg-card border border-white/10 rounded-2xl overflow-hidden mb-12 animate-in fade-in slide-in-from-bottom-4">
-                        <div className="p-6 border-b border-white/10 flex justify-between items-center">
-                            <h2 className="text-xl font-bold">Newsletter Subscribers</h2>
-                            <div className="flex items-center gap-4">
-                                <span className="text-sm text-muted-foreground">{subscribers.length} found</span>
-                                <button
-                                    onClick={() => {
-                                        const emails = subscribers.map(s => s.email).join(',');
-                                        navigator.clipboard.writeText(emails);
-                                        alert('Copied all emails to clipboard!');
-                                    }}
-                                    className="text-xs bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-lg transition-colors text-white"
-                                >
-                                    Copy All
-                                </button>
-                            </div>
-                        </div>
-                        <div className="overflow-x-auto max-h-96">
+                        {/* USERS TABLE */}
+                        {activeTab === 'users' && (
                             <table className="w-full text-left text-sm">
-                                <thead className="bg-white/5 text-muted-foreground sticky top-0 bg-[#1a1a1a]">
+                                <thead className="bg-white/5 text-muted-foreground">
                                     <tr>
-                                        <th className="p-4 font-medium uppercase tracking-wider">Email Address</th>
-                                        <th className="p-4 font-medium uppercase tracking-wider text-right">Joined Date</th>
+                                        <th className="p-4 uppercase">User</th>
+                                        <th className="p-4 uppercase">Email</th>
+                                        <th className="p-4 uppercase">Joined</th>
+                                        <th className="p-4 uppercase">Last Login</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-white/5">
-                                    {subscribers.map((sub) => (
-                                        <tr key={sub.id} className="hover:bg-white/5 transition-colors">
-                                            <td className="p-4 text-white font-mono">{sub.email}</td>
-                                            <td className="p-4 text-right text-muted-foreground">
-                                                {new Date(sub.createdAt).toLocaleDateString()}
+                                    {getPaginatedData(users).map((u) => (
+                                        <tr key={u.id} className="hover:bg-white/5">
+                                            <td className="p-4">
+                                                <div className="flex items-center gap-3">
+                                                    {u.photoURL ? (
+                                                        <Image src={u.photoURL} width={32} height={32} alt="" className="rounded-full" />
+                                                    ) : (
+                                                        <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center"><User className="w-4 h-4" /></div>
+                                                    )}
+                                                    <span className="font-medium">{u.displayName || 'No Name'}</span>
+                                                </div>
                                             </td>
+                                            <td className="p-4 font-mono text-white/70">{u.email}</td>
+                                            <td className="p-4 text-muted-foreground">{new Date(u.createdAt).toLocaleDateString()}</td>
+                                            <td className="p-4 text-muted-foreground">{u.lastLogin ? new Date(u.lastLogin).toLocaleDateString() : '-'}</td>
+                                        </tr>
+                                    ))}
+                                    {users.length === 0 && (
+                                        <tr>
+                                            <td colSpan={4} className="p-8 text-center text-muted-foreground">
+                                                No registered users found.
+                                            </td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
+                        )}
+
+                        {/* SUBSCRIBERS TABLE */}
+                        {activeTab === 'subscribers' && (
+                            <table className="w-full text-left text-sm">
+                                <thead className="bg-white/5 text-muted-foreground">
+                                    <tr>
+                                        <th className="p-4 uppercase">Email</th>
+                                        <th className="p-4 uppercase text-right">Joined</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-white/5">
+                                    {getPaginatedData(subscribers).map((s) => (
+                                        <tr key={s.id} className="hover:bg-white/5">
+                                            <td className="p-4 font-mono">{s.email}</td>
+                                            <td className="p-4 text-right text-muted-foreground">{new Date(s.createdAt).toLocaleDateString()}</td>
                                         </tr>
                                     ))}
                                     {subscribers.length === 0 && (
@@ -259,64 +264,74 @@ export default function SuperAdminPage() {
                                     )}
                                 </tbody>
                             </table>
-                        </div>
-                    </div>
-                )}
+                        )}
 
-                {/* Support Inbox Table */}
-                {activeTab === 'inbox' && (
-                    <div className="bg-card border border-white/10 rounded-2xl overflow-hidden mb-12 animate-in fade-in slide-in-from-bottom-4">
-                        <div className="p-6 border-b border-white/10 flex justify-between items-center">
-                            <h2 className="text-xl font-bold">Support Inbox</h2>
-                            <span className="text-sm text-muted-foreground">{messages.length} messages</span>
-                        </div>
-                        <div className="overflow-x-auto max-h-96">
+                        {/* INBOX TABLE */}
+                        {activeTab === 'inbox' && (
                             <table className="w-full text-left text-sm">
-                                <thead className="bg-white/5 text-muted-foreground sticky top-0 bg-[#1a1a1a]">
+                                <thead className="bg-white/5 text-muted-foreground">
                                     <tr>
-                                        <th className="p-4 font-medium uppercase tracking-wider">Date</th>
-                                        <th className="p-4 font-medium uppercase tracking-wider">User</th>
-                                        <th className="p-4 font-medium uppercase tracking-wider">Subject</th>
-                                        <th className="p-4 font-medium uppercase tracking-wider">Message</th>
-                                        <th className="p-4 font-medium uppercase tracking-wider text-right">Action</th>
+                                        <th className="p-4 uppercase">From</th>
+                                        <th className="p-4 uppercase">Subject</th>
+                                        <th className="p-4 uppercase">Message</th>
+                                        <th className="p-4 uppercase">Date</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-white/5">
-                                    {messages.map((msg) => (
-                                        <tr key={msg.id} className="hover:bg-white/5 transition-colors">
-                                            <td className="p-4 text-muted-foreground whitespace-nowrap">
-                                                {new Date(msg.createdAt).toLocaleDateString()} <br />
-                                                <span className="text-xs">{new Date(msg.createdAt).toLocaleTimeString()}</span>
-                                            </td>
+                                    {getPaginatedData(messages).map((m) => (
+                                        <tr key={m.id} className="hover:bg-white/5">
                                             <td className="p-4">
-                                                <div className="font-medium text-white">{msg.name}</div>
-                                                <div className="text-xs text-muted-foreground">{msg.email}</div>
+                                                <div className="font-medium">{m.name}</div>
+                                                <div className="text-xs text-muted-foreground">{m.email}</div>
                                             </td>
-                                            <td className="p-4 text-white font-medium">
-                                                {msg.subject}
-                                            </td>
-                                            <td className="p-4 text-white/80 max-w-md truncate" title={msg.message}>
-                                                {msg.message}
-                                            </td>
-                                            <td className="p-4 text-right">
-                                                <a href={`mailto:${msg.email}?subject=Re: ${msg.subject}`} className="inline-flex items-center justify-center p-2 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors" title="Reply via Email">
-                                                    <Mail className="w-4 h-4" />
-                                                </a>
-                                            </td>
+                                            <td className="p-4">{m.subject}</td>
+                                            <td className="p-4 text-white/70 truncate max-w-xs">{m.message}</td>
+                                            <td className="p-4 text-muted-foreground text-xs">{new Date(m.createdAt).toLocaleDateString()}</td>
                                         </tr>
                                     ))}
                                     {messages.length === 0 && (
                                         <tr>
-                                            <td colSpan={5} className="p-8 text-center text-muted-foreground">
+                                            <td colSpan={4} className="p-8 text-center text-muted-foreground">
                                                 No support messages yet.
                                             </td>
                                         </tr>
                                     )}
                                 </tbody>
                             </table>
-                        </div>
+                        )}
                     </div>
-                )}
+
+                    {/* Pagination Controls */}
+                    <div className="p-4 border-t border-white/10 flex items-center justify-between">
+                        <Button
+                            variant="outline"
+                            disabled={currentPage === 1}
+                            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                        >
+                            Previous
+                        </Button>
+                        <span className="text-sm text-muted-foreground">
+                            Page {currentPage} of {Math.ceil(
+                                (activeTab === 'games' ? games.length :
+                                    activeTab === 'users' ? users.length :
+                                        activeTab === 'subscribers' ? subscribers.length :
+                                            messages.length) / itemsPerPage
+                            ) || 1}
+                        </span>
+                        <Button
+                            variant="outline"
+                            disabled={currentPage * itemsPerPage >= (
+                                activeTab === 'games' ? games.length :
+                                    activeTab === 'users' ? users.length :
+                                        activeTab === 'subscribers' ? subscribers.length :
+                                            messages.length
+                            )}
+                            onClick={() => setCurrentPage(p => p + 1)}
+                        >
+                            Next
+                        </Button>
+                    </div>
+                </div>
             </div>
         </main>
     );

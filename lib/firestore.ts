@@ -16,7 +16,8 @@ import {
     writeBatch,
     startAfter,
     arrayUnion,
-    arrayRemove // Ensure these are all present
+    arrayRemove,
+    setDoc
 } from "firebase/firestore";
 
 // ... (Interfaces omitted, assuming they match file) ...
@@ -662,6 +663,59 @@ export const getContactMessages = async () => {
         return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as ContactMessage));
     } catch (e) {
         console.error("Error fetching messages:", e);
+        return [];
+    }
+};
+
+// --- User Management ---
+
+const USERS_COLLECTION = "users";
+
+export interface UserProfile {
+    id: string;
+    email: string;
+    displayName?: string;
+    photoURL?: string;
+    createdAt?: string;
+    lastLogin?: string;
+}
+
+export const syncUser = async (user: any) => {
+    if (!user) return;
+    try {
+        const userRef = doc(db, USERS_COLLECTION, user.uid);
+        const userDoc = await getDoc(userRef);
+
+        if (!userDoc.exists()) {
+            // Create new user doc
+            await setDoc(userRef, {
+                email: user.email,
+                displayName: user.displayName || '',
+                photoURL: user.photoURL || '',
+                createdAt: new Date().toISOString(),
+                lastLogin: new Date().toISOString()
+            });
+        } else {
+            // Update last login
+            await updateDoc(userRef, {
+                lastLogin: new Date().toISOString(),
+                email: user.email, // Sync these just in case
+                displayName: user.displayName || userDoc.data().displayName,
+                photoURL: user.photoURL || userDoc.data().photoURL
+            });
+        }
+    } catch (e) {
+        console.error("Error syncing user:", e);
+    }
+};
+
+export const getAllUsers = async () => {
+    try {
+        const q = query(collection(db, USERS_COLLECTION), orderBy("createdAt", "desc"));
+        const snapshot = await getDocs(q);
+        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as UserProfile));
+    } catch (e) {
+        console.error("Error fetching users:", e);
         return [];
     }
 };
