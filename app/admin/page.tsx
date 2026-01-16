@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react';
 import { getGames, deleteGame, getUserGames, getUserPosts, Game, Post } from '@/lib/firestore';
 import { Button } from '@/components/ui/Button';
 import Link from 'next/link';
-import { Plus, Pencil, Trash2, ExternalLink, Heart, MessageCircle, Gamepad2, Grid, LayoutGrid, LogOut } from 'lucide-react';
+import PostCard from '@/components/PostCard';
+import { Plus, Pencil, Trash2, ExternalLink, Heart, MessageCircle, Gamepad2, Grid, LayoutGrid, LogOut, X } from 'lucide-react';
 import Image from 'next/image';
 import ProfileManager from '@/components/ProfileManager';
 import { useAuth } from '@/components/AuthProvider';
@@ -16,6 +17,7 @@ export default function AdminDashboard() {
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState<'games' | 'posts'>('games');
     const [showSettings, setShowSettings] = useState(false);
+    const [selectedPost, setSelectedPost] = useState<Post | null>(null);
 
     useEffect(() => {
         const loadUserData = async () => {
@@ -186,10 +188,10 @@ export default function AdminDashboard() {
             {/* TAB: GAMES */}
             {activeTab === 'games' && (
                 <div className="mt-8 animate-in fade-in slide-in-from-bottom-2">
-                    <div className="flex items-center justify-between mb-6">
-                        <div className="text-sm text-muted-foreground">Manage your published games.</div>
-                        <div className="flex items-center gap-2">
-                            <Button variant="outline" size="sm" onClick={async () => {
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                        <div className="text-sm text-muted-foreground text-center md:text-left hidden md:block">Manage your published games.</div>
+                        <div className="flex flex-col md:flex-row items-center gap-2 w-full md:w-auto">
+                            <Button variant="outline" size="sm" className="w-full md:w-auto" onClick={async () => {
                                 if (confirm("This will link ALL previous games (without an owner) to your account. Continue?")) {
                                     setLoading(true);
                                     try {
@@ -206,8 +208,8 @@ export default function AdminDashboard() {
                             }}>
                                 Claim Legacy Games
                             </Button>
-                            <Link href="/admin/add">
-                                <Button size="sm">
+                            <Link href="/admin/add" className="w-full md:w-auto">
+                                <Button size="sm" className="w-full">
                                     <Plus className="w-4 h-4 mr-2" />
                                     Add New Game
                                 </Button>
@@ -312,19 +314,23 @@ export default function AdminDashboard() {
             {/* TAB: POSTS */}
             {activeTab === 'posts' && (
                 <div className="mt-8 animate-in fade-in slide-in-from-bottom-2">
-                    <div className="flex items-center justify-between mb-6">
-                        <div className="text-sm text-muted-foreground">Your shared moments with the community.</div>
-                        <Link href="/community">
-                            <Button size="sm">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                        <div className="text-sm text-muted-foreground text-center md:text-left hidden md:block">Your shared moments with the community.</div>
+                        <Link href="/community" className="w-full md:w-auto">
+                            <Button size="sm" className="w-full">
                                 <Plus className="w-4 h-4 mr-2" />
                                 New Post
                             </Button>
                         </Link>
                     </div>
 
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-2 lg:grid-cols-3 gap-1 md:gap-4">
                         {posts.map((post) => (
-                            <div key={post.id} className="group relative bg-card border border-border rounded-xl overflow-hidden aspect-square hover:border-primary/50 transition-colors">
+                            <div
+                                key={post.id}
+                                onClick={() => setSelectedPost(post)}
+                                className="group relative bg-card border border-border rounded-lg md:rounded-xl overflow-hidden aspect-square hover:border-primary/50 transition-all cursor-pointer"
+                            >
                                 {/* Image / Content Preview */}
                                 {post.imageUrl ? (
                                     <Image src={post.imageUrl} alt="post" fill className="object-cover transition-transform group-hover:scale-105" />
@@ -334,8 +340,8 @@ export default function AdminDashboard() {
                                     </div>
                                 )}
 
-                                {/* Hover Overlay (Desktop) / Always visible bar (Mobile style if adjusted, but sticking to hover for "Instagram feel") */}
-                                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white gap-4">
+                                {/* Hover Overlay */}
+                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white gap-4">
                                     <div className="flex items-center gap-6 font-bold text-lg">
                                         <div className="flex items-center gap-2">
                                             <Heart className="w-6 h-6 fill-white" />
@@ -345,9 +351,6 @@ export default function AdminDashboard() {
                                             <MessageCircle className="w-6 h-6 fill-white" />
                                             {post.commentCount || 0}
                                         </div>
-                                    </div>
-                                    <div className="absolute bottom-4 left-0 right-0 p-4 text-xs text-center text-white/70">
-                                        {new Date(post.createdAt || '').toLocaleDateString()}
                                     </div>
                                 </div>
                             </div>
@@ -363,6 +366,28 @@ export default function AdminDashboard() {
                             </Link>
                         </div>
                     )}
+                </div>
+            )}
+
+            {/* Post Detail Modal */}
+            {selectedPost && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200" onClick={() => setSelectedPost(null)}>
+                    <div
+                        className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl bg-background border border-white/10 shadow-2xl animate-in zoom-in-95 duration-200 no-scrollbar"
+                        onClick={e => e.stopPropagation()}
+                    >
+                        <button
+                            onClick={() => setSelectedPost(null)}
+                            className="absolute top-4 right-4 p-2 bg-black/50 hover:bg-black/70 rounded-full text-white z-50 transition-colors"
+                        >
+                            <X className="w-5 h-5" />
+                        </button>
+
+                        <div className="p-0">
+                            {/* Pass unique key to force re-render if needed, but usually not necessary unless switching posts */}
+                            <PostCard post={selectedPost} />
+                        </div>
+                    </div>
                 </div>
             )}
 
