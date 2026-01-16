@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { getPosts, addPost, Post } from '@/lib/firestore';
 import PostCard from './PostCard';
-import { Plus, UserCircle, Image as ImageIcon, Loader2, Link as LinkIcon, X } from 'lucide-react';
+import { Plus, UserCircle, Image as ImageIcon, Loader2, Link as LinkIcon, X, ShieldCheck, Send } from 'lucide-react';
 import { useAuth } from '@/components/AuthProvider';
 import { Button } from './ui/Button';
 import Link from 'next/link';
@@ -197,8 +197,29 @@ export default function CommunityFeed() {
                                     Link
                                 </Button>
                             </div>
-                            <Button type="submit" disabled={(!newPostContent.trim() && selectedFiles.length === 0 && imageUrls.length === 0) || isPosting} className="px-6 rounded-full">
-                                {isCheckingSafety ? 'Scanning...' : (isPosting ? 'Posting...' : 'Post')}
+
+
+                            <Button
+                                type="submit"
+                                disabled={(!newPostContent.trim() && selectedFiles.length === 0 && imageUrls.length === 0) || isPosting || isCheckingSafety}
+                                className={`px-6 rounded-full transition-all duration-300 ${isCheckingSafety ? 'bg-purple-500/80' : ''}`}
+                            >
+                                {isCheckingSafety ? (
+                                    <>
+                                        <ShieldCheck className="w-4 h-4 mr-2 animate-pulse" />
+                                        <span className="animate-pulse">Scanning...</span>
+                                    </>
+                                ) : isPosting ? (
+                                    <>
+                                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                        Posting...
+                                    </>
+                                ) : (
+                                    <>
+                                        <Send className="w-4 h-4 mr-2" />
+                                        Post
+                                    </>
+                                )}
                             </Button>
                         </div>
                     </form>

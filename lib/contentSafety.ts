@@ -71,11 +71,12 @@ export async function checkImageSafety(file: File): Promise<SafetyCheckResult> {
         // User wants to block "complete nude" (Porn) but allow "panty or bra" (Sexy).
         // NSFWJS 'Sexy' class covers partial nudity/lingerie. 'Porn' covers explicit acts/genitalia.
 
-        const STRICT_THRESHOLD = 0.25; // Lowered to 25% to catch more nude images
+        const STRICT_THRESHOLD = 0.10; // Lowered to 10% - Very Strict
 
         // Log for debugging on client
         console.log(`Safety Check: Porn=${porn?.probability.toFixed(2)}, Hentai=${hentai?.probability.toFixed(2)}, Sexy=${sexy?.probability.toFixed(2)}`);
 
+        // 1. Block High Probability Porn/Hentai
         if (porn && porn.probability > STRICT_THRESHOLD) {
             return {
                 safe: false,
@@ -88,6 +89,18 @@ export async function checkImageSafety(file: File): Promise<SafetyCheckResult> {
                 safe: false,
                 reason: "Explicit content detected (Hentai). Please upload appropriate content."
             };
+        }
+
+        // 2. Block High "Sexy" score if accompanied by suspicious "Porn" score
+        // This catches "softcore" or border-line nudity that the model isn't 100% sure is Porn.
+        // Example: Sexy=0.8, Porn=0.08 -> Blocked.
+        if (sexy && sexy.probability > 0.60) {
+            if (porn && porn.probability > 0.05) {
+                return {
+                    safe: false,
+                    reason: "Content flagged as potentially explicit. Please ensure images are appropriate."
+                };
+            }
         }
 
         return { safe: true };
