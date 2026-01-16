@@ -11,6 +11,8 @@ import ProfileManager from '@/components/ProfileManager';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/components/AuthProvider';
 
+import { EmailAuthProvider, reauthenticateWithCredential } from 'firebase/auth';
+
 export default function AdminDashboard() {
     const { user, loading: authLoading } = useAuth();
     const [games, setGames] = useState<Game[]>([]);
@@ -19,6 +21,12 @@ export default function AdminDashboard() {
     const [activeTab, setActiveTab] = useState<'games' | 'posts'>('games');
     const [showSettings, setShowSettings] = useState(false);
     const [selectedPost, setSelectedPost] = useState<Post | null>(null);
+
+    // Secure Deletion State
+    const [gameToDelete, setGameToDelete] = useState<{ id: string, title: string } | null>(null);
+    const [password, setPassword] = useState('');
+    const [confirmName, setConfirmName] = useState('');
+    const [isReauthenticating, setIsReauthenticating] = useState(false);
 
     useEffect(() => {
         const loadUserData = async () => {
@@ -47,9 +55,38 @@ export default function AdminDashboard() {
     }, [user, authLoading]);
 
     const handleDelete = async (id: string, title: string) => {
-        if (confirm(`Are you sure you want to delete "${title}"?`)) {
-            await deleteGame(id);
-            setGames(prev => prev.filter(g => g.id !== id));
+        setGameToDelete({ id, title });
+        setPassword('');
+        setConfirmName('');
+    };
+
+    const handleConfirmDelete = async () => {
+        if (!user || !gameToDelete) return;
+
+        if (confirmName !== gameToDelete.title) {
+            alert("Game name does not match!");
+            return;
+        }
+
+        setIsReauthenticating(true);
+        try {
+            const credential = EmailAuthProvider.credential(user.email!, password);
+            await reauthenticateWithCredential(user, credential);
+
+            // If auth successful, delete game
+            await deleteGame(gameToDelete.id);
+            setGames(prev => prev.filter(g => g.id !== gameToDelete.id));
+            setGameToDelete(null); // Close modal
+            alert("Game deleted successfully.");
+        } catch (error: any) {
+            console.error("Re-authentication failed", error);
+            if (error.code === 'auth/wrong-password') {
+                alert("Incorrect password.");
+            } else {
+                alert("Authentication failed. Please check your password and try again.");
+            }
+        } finally {
+            setIsReauthenticating(false);
         }
     };
 
@@ -397,6 +434,87 @@ export default function AdminDashboard() {
 
                             <div className="p-0">
                                 <PostCard post={selectedPost} />
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* Secure Deletion Modal */}
+            <AnimatePresence>
+                {gameToDelete && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+                        onClick={() => setGameToDelete(null)}
+                    >
+                        <motion.div
+                            initial={{ scale: 0.95, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.95, opacity: 0 }}
+                            className="bg-[#0A0A0A] border border-red-500/30 w-full max-w-md p-6 rounded-xl shadow-2xl shadow-red-900/20"
+                            onClick={e => e.stopPropagation()}
+                        >
+                            <div className="flex items-center gap-3 text-red-500 mb-4">
+                                <div className="p-2 bg-red-500/10 rounded-lg">
+                                    <Trash2 className="w-6 h-6" />
+                                </div>
+                                <h2 className="text-xl font-bold">Delete Game?</h2>
+                            </div>
+
+                            <p className="text-muted-foreground text-sm mb-6">
+                                This action cannot be undone. This will permanently delete
+                                <span className="font-bold text-white"> "{gameToDelete.title}" </span>
+                                and remove all associated data.
+                            </p>
+
+                            <div className="space-y-4">
+                                <div>
+                                    <label className="block text-xs font-medium text-muted-foreground uppercase mb-1">
+                                        Type <span className="text-white select-all">{gameToDelete.title}</span> to confirm
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={confirmName}
+                                        onChange={(e) => setConfirmName(e.target.value)}
+                                        className="w-full bg-zinc-900 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-red-500/50 transition-colors"
+                                        placeholder={gameToDelete.title}
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-xs font-medium text-muted-foreground uppercase mb-1">
+                                        Enter your password
+                                    </label>
+                                    <input
+                                        type="password"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        className="w-full bg-zinc-900 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-red-500/50 transition-colors"
+                                        placeholder="Current Password"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="flex gap-3 mt-8">
+                                <Button
+                                    variant="ghost"
+                                    className="flex-1 hover:bg-zinc-800"
+                                    onClick={() => setGameToDelete(null)}
+                                    disabled={isReauthenticating}
+                                >
+                                    Cancel
+                                </Button>
+                                <Button
+                                    variant="danger"
+                                    className="flex-1 bg-red-600 hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    onClick={handleConfirmDelete}
+                                    disabled={confirmName !== gameToDelete.title || !password || isReauthenticating}
+                                >
+                                    {isReauthenticating ? 'Verifying...' : 'Delete Permanently'}
+                                </Button>
                             </div>
                         </motion.div>
                     </motion.div>
