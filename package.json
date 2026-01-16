@@ -12,6 +12,7 @@
   "dependencies": {
     "@tensorflow/tfjs": "^4.22.0",
     "@types/uuid": "^10.0.0",
+    "chart.js": "^4.5.1",
     "cloudinary": "^2.8.0",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
@@ -21,6 +22,7 @@
     "next": "16.1.1",
     "nsfwjs": "^4.2.1",
     "react": "19.2.3",
+    "react-chartjs-2": "^5.3.1",
     "react-dom": "19.2.3",
     "tailwind-merge": "^3.4.0",
     "uuid": "^13.0.0"

@@ -616,3 +616,14 @@ export const getSubscribers = async () => {
         return [];
     }
 };
+
+export const getAllGamesAdmin = async () => {
+    try {
+        const q = query(collection(db, GAMES_COLLECTION), orderBy("createdAt", "desc"));
+        const snapshot = await getDocs(q);
+        return snapshot.docs.map(docToGame);
+    } catch (e) {
+        console.error("Error fetching all games for admin:", e);
+        return [];
+    }
+};

@@ -50,6 +50,8 @@ export default function ProfileManager() {
         }
     };
 
+    const isSuperAdmin = user.email === 'gakhilesh946@gmail.com';
+
     const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
@@ -122,6 +124,20 @@ export default function ProfileManager() {
                 <UserIcon className="w-5 h-5 text-primary" />
                 Profile Settings
             </h2>
+
+            {isSuperAdmin && (
+                <div className="mb-8 p-4 bg-gradient-to-r from-red-500/10 to-orange-500/10 border border-red-500/20 rounded-xl flex items-center justify-between">
+                    <div>
+                        <h3 className="font-bold text-red-400 flex items-center gap-2">
+                            <Lock className="w-4 h-4" /> Super Admin Access
+                        </h3>
+                        <p className="text-xs text-muted-foreground">You have special developer privileges.</p>
+                    </div>
+                    <Button variant="outline" className="border-red-500/30 hover:bg-red-500/20 text-red-400" onClick={() => window.location.href = '/admin/super'}>
+                        Open Dashboard
+                    </Button>
+                </div>
+            )}
 
             <div className="flex flex-col xl:flex-row gap-12 items-start">
 
