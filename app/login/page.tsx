@@ -39,8 +39,15 @@ export default function Login() {
             await signInWithEmailAndPassword(auth, email, password);
             router.push(redirectPath);
         } catch (err: any) {
-            console.error(err);
-            setError('Invalid email or password. Please try again.');
+            // Handle specific Firebase errors
+            if (err.code === 'auth/invalid-credential' || err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password') {
+                setError('Invalid email or password. Please try again.');
+            } else if (err.code === 'auth/too-many-requests') {
+                setError('Too many failed attempts. Please try again later.');
+            } else {
+                console.error(err); // Only log unknown errors
+                setError('Something went wrong. Please try again.');
+            }
         } finally {
             setLoading(false);
         }
