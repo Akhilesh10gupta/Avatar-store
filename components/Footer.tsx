@@ -68,7 +68,7 @@ export default function Footer() {
                         <h4 className="text-white font-bold mb-6">Support</h4>
                         <ul className="space-y-4 text-sm text-muted-foreground">
                             {[
-                                { label: 'Help Center', href: '#' },
+                                { label: 'Help Center', href: '/help-center' },
                                 { label: 'Terms of Service', href: '/legal/terms' },
                                 { label: 'Privacy Policy', href: '/legal/privacy' },
                                 { label: 'Cookie Policy', href: '/legal/cookies' },
