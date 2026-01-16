@@ -47,18 +47,6 @@ export default function AdminLayout({
 
     return (
         <div className="admin-layout space-y-6">
-            <div className="flex items-center justify-between border-b border-border/50 pb-4">
-                <h1 className="text-2xl font-bold tracking-tight">Admin Dashboard</h1>
-                <div className="flex items-center gap-4">
-                    <div className="text-sm text-muted-foreground hidden md:block">
-                        Logged in as <span className="text-foreground">{user.email}</span>
-                    </div>
-                    <Button size="sm" variant="outline" onClick={handleLogout} className="text-xs">
-                        <LogOut className="w-4 h-4 mr-2" />
-                        Logout
-                    </Button>
-                </div>
-            </div>
             {children}
         </div>
     );

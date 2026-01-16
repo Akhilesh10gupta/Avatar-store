@@ -357,6 +357,25 @@ export const getPosts = async () => {
     }
 };
 
+export const getUserPosts = async (userId: string) => {
+    try {
+        const q = query(
+            collection(db, POSTS_COLLECTION),
+            where("userId", "==", userId)
+        );
+        const querySnapshot = await getDocs(q);
+        const posts = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Post));
+
+        // Sort client-side to avoid needing a composite index
+        return posts.sort((a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+    } catch (e) {
+        console.error("Error fetching user posts:", e);
+        return [];
+    }
+};
+
 export const addComment = async (comment: Omit<Comment, "id">) => {
     try {
         await runTransaction(db, async (transaction) => {
