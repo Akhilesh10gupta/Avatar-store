@@ -170,7 +170,7 @@ export default function ProfileManager() {
                             )}
 
                             {/* Overlay for upload */}
-                            <label className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                            <label className={`absolute inset-0 bg-black/50 flex flex-col items-center justify-center transition-opacity cursor-pointer ${isUploading ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
                                 {isUploading ? (
                                     <div className="flex flex-col items-center">
                                         <Gamepad2 className="w-8 h-8 text-white animate-spin mb-1" />
