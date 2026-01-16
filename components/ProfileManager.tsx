@@ -7,8 +7,8 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Camera, Save, User as UserIcon, Lock, KeyRound, Gamepad2 } from 'lucide-react';
 import { uploadFile } from '@/lib/storage';
+import { checkImageSafety } from '@/lib/contentSafety';
 import { syncUserProfile } from '@/lib/firestore';
-import { UserAvatar } from '@/components/UserAvatar';
 
 export default function ProfileManager() {
     const { user } = useAuth();
@@ -16,6 +16,7 @@ export default function ProfileManager() {
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState('');
     const [isUploading, setIsUploading] = useState(false);
+    const [uploadStatus, setUploadStatus] = useState(''); // 'Scanning...', 'Uploading...'
 
     // Password Update State
     const [currentPassword, setCurrentPassword] = useState('');
@@ -29,8 +30,6 @@ export default function ProfileManager() {
 
     // Check if user is authenticated with email/password
     const isEmailProvider = user.providerData.some(p => p.providerId === 'password');
-
-    if (!user) return null;
 
     const handleUpdateProfile = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -57,7 +56,21 @@ export default function ProfileManager() {
         if (!file) return;
 
         setIsUploading(true);
+        setUploadStatus('Scanning...'); // Start with scanning
+
         try {
+            // 1. Content Safety Check
+            const safetyResult = await checkImageSafety(file);
+            if (!safetyResult.safe) {
+                alert(safetyResult.reason || "Image violates content guidelines.");
+                setIsUploading(false);
+                setUploadStatus('');
+                e.target.value = ''; // Reset input
+                return;
+            }
+
+            // 2. Upload
+            setUploadStatus('Uploading...');
             const photoURL = await uploadFile(file, 'avatars');
             await updateProfile(user, { photoURL });
             await syncUserProfile(user.uid, { userAvatar: photoURL });
@@ -67,6 +80,7 @@ export default function ProfileManager() {
             setMessage('Failed to upload image.');
         } finally {
             setIsUploading(false);
+            setUploadStatus('');
         }
     };
 
@@ -158,7 +172,10 @@ export default function ProfileManager() {
                             {/* Overlay for upload */}
                             <label className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
                                 {isUploading ? (
-                                    <Gamepad2 className="w-8 h-8 text-white animate-spin" />
+                                    <div className="flex flex-col items-center">
+                                        <Gamepad2 className="w-8 h-8 text-white animate-spin mb-1" />
+                                        <span className="text-[10px] text-white font-medium animate-pulse">{uploadStatus}</span>
+                                    </div>
                                 ) : (
                                     <>
                                         <Camera className="w-8 h-8 text-white mb-1" />

@@ -60,28 +60,33 @@ export async function checkImageSafety(file: File): Promise<SafetyCheckResult> {
         // img.remove() is not strictly necessary as it's not attached to DOM, but good practice if it were.
 
         // Analyze predictions
-        // Predictions are sorted by probability (highest first), but we find specific classes.
-        console.log("Content Safety Predictions:", predictions); // Debugging
+        // Predictions are sorted by probability (highest first).
+        console.log("Content Safety Predictions:", predictions);
+
         const porn = predictions.find(p => p.className === 'Porn');
         const hentai = predictions.find(p => p.className === 'Hentai');
+        const sexy = predictions.find(p => p.className === 'Sexy');
 
         // Logic: 
         // User wants to block "complete nude" (Porn) but allow "panty or bra" (Sexy).
         // NSFWJS 'Sexy' class covers partial nudity/lingerie. 'Porn' covers explicit acts/genitalia.
 
-        const THRESHOLD = 0.35; // 35% confidence (Stricter)
+        const STRICT_THRESHOLD = 0.25; // Lowered to 25% to catch more nude images
 
-        if (porn && porn.probability > THRESHOLD) {
+        // Log for debugging on client
+        console.log(`Safety Check: Porn=${porn?.probability.toFixed(2)}, Hentai=${hentai?.probability.toFixed(2)}, Sexy=${sexy?.probability.toFixed(2)}`);
+
+        if (porn && porn.probability > STRICT_THRESHOLD) {
             return {
                 safe: false,
-                reason: "Nudity is not allowed. This content is not permitted."
+                reason: "Explicit content detected (Nudity). Please upload appropriate content."
             };
         }
 
-        if (hentai && hentai.probability > THRESHOLD) {
+        if (hentai && hentai.probability > STRICT_THRESHOLD) {
             return {
                 safe: false,
-                reason: "Nudity is not allowed. This content is not permitted."
+                reason: "Explicit content detected (Hentai). Please upload appropriate content."
             };
         }
 
@@ -89,7 +94,7 @@ export async function checkImageSafety(file: File): Promise<SafetyCheckResult> {
 
     } catch (error) {
         console.error("Error during content safety check:", error);
-        // Fail open to avoid blocking users on technical errors
+        // Fail open to avoid blocking users on technical errors, but log it
         return { safe: true };
     }
 }
