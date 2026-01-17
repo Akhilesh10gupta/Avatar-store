@@ -179,6 +179,12 @@ export const getUserGames = async (userId: string) => {
     return querySnapshot.docs.map(docToGame);
 };
 
+export const getTopRatedGames = async () => {
+    const q = query(collection(db, GAMES_COLLECTION), orderBy("rating", "desc"), limit(20));
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map(docToGame);
+};
+
 export const getFeaturedGames = async () => {
     // Simplified for now, real implementation would filter by featured
     const q = query(collection(db, GAMES_COLLECTION), orderBy("createdAt", "desc"), limit(5));

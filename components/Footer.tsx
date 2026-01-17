@@ -63,8 +63,8 @@ export default function Footer() {
                             {[
                                 { label: 'Store', href: '/' },
                                 { label: 'Browse Games', href: '/browse' },
-                                { label: 'Top Rated', href: '/browse?sort=rating' },
-                                { label: 'New Arrivals', href: '/browse?sort=newest' },
+                                { label: 'Top Rated', href: '/top-rated' },
+                                { label: 'New Arrivals', href: '/new-arrivals' },
                                 { label: 'Meet the Developer', href: '/developer' },
                             ].map((link, idx) => (
                                 <li key={idx}>
