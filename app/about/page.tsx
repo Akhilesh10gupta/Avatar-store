@@ -127,6 +127,28 @@ export default function AboutPage() {
                     </motion.div>
                 </div>
 
+                {/* Developer Section */}
+                <div className="mb-32">
+                    <div className="bg-gradient-to-r from-zinc-900 to-black border border-white/10 rounded-3xl p-8 md:p-12 relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-[80px] pointer-events-none"></div>
+
+                        <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+                            <div className="text-center md:text-left">
+                                <h2 className="text-3xl font-bold mb-4 text-white">Behind the Code</h2>
+                                <p className="text-muted-foreground text-lg max-w-xl">
+                                    Avatar Play is crafted with precision and passion.
+                                    Meet the developer turning complex code into seamless experiences.
+                                </p>
+                            </div>
+                            <Link href="/developer">
+                                <Button size="lg" variant="outline" className="border-primary/50 text-primary hover:bg-primary/10 font-bold px-8 rounded-full">
+                                    Meet the Developer
+                                </Button>
+                            </Link>
+                        </div>
+                    </div>
+                </div>
+
                 {/* Team/Join CTA */}
                 <motion.div
                     initial={{ opacity: 0, y: 50 }}

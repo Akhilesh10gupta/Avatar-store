@@ -65,6 +65,7 @@ export default function Footer() {
                                 { label: 'Browse Games', href: '/browse' },
                                 { label: 'Top Rated', href: '/browse?sort=rating' },
                                 { label: 'New Arrivals', href: '/browse?sort=newest' },
+                                { label: 'Meet the Developer', href: '/developer' },
                             ].map((link, idx) => (
                                 <li key={idx}>
                                     <Link href={link.href} className="hover:text-white transition-all duration-300 flex items-center gap-2 group hover:translate-x-1">
