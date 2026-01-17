@@ -21,12 +21,14 @@ A premium, modern game distribution platform built with **Next.js 14**, **Tailwi
 
 ## 🛠️ Tech Stack
 
-*   **Framework**: [Next.js 14](https://nextjs.org/) (App Router, Server Components)
+*   **Framework**: [Next.js 16](https://nextjs.org/) (App Router, Server Components)
 *   **Styling**: [Tailwind CSS v4](https://tailwindcss.com/) + CSS Variables
 *   **Animations**: [Framer Motion](https://www.framer.com/motion/)
 *   **Database**: Firebase Firestore
 *   **Auth**: Firebase Authentication
 *   **Media**: Cloudinary (Image & Video optimization)
+*   **AI/ML**: [TensorFlow.js](https://www.tensorflow.org/js) + [NSFWJS](https://github.com/infinitered/nsfwjs) (Content Moderation)
+*   **Visualization**: [Chart.js](https://www.chartjs.org/) (Data Visualization)
 *   **Icons**: Lucide React
 
 ## 📦 Installation
