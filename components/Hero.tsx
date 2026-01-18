@@ -74,7 +74,7 @@ const Hero = ({ games }: HeroProps) => {
         }, 5000);
 
         return () => clearInterval(timer);
-    }, [isAutoPlaying, heroGames.length]);
+    }, [isAutoPlaying, heroGames.length, currentIndex]); // Reset timer on index change
 
     if (heroGames.length === 0) return null;
 
@@ -83,9 +83,6 @@ const Hero = ({ games }: HeroProps) => {
     // Helper to handle manual selection
     const handleSelect = (index: number) => {
         setCurrentIndex(index);
-        setIsAutoPlaying(false); // Pause auto-play on interaction
-        // Resume auto-play after 10s of inactivity if desired, or keep it paused
-        setTimeout(() => setIsAutoPlaying(true), 10000);
     };
 
     return (

@@ -5,6 +5,8 @@ import FeaturedGames from "@/components/FeaturedGames";
 import TopRatedGames from "@/components/TopRatedGames";
 
 // Dummy data for initial render if DB is empty
+export const dynamic = 'force-dynamic';
+
 const dummyGames: Game[] = [
   {
     id: '1',
