@@ -8,7 +8,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { getYouTubeEmbedUrl } from '@/lib/youtube';
+import { getVideoEmbedUrl } from '@/lib/video';
 import { getOptimizedImage } from "@/lib/cloudinary";
 
 // Force dynamic rendering since we are fetching data
@@ -129,26 +129,49 @@ export default async function GameDetails({ params }: { params: Promise<{ id: st
                             <Monitor className="text-primary" />
                             Gameplay Video
                         </h2>
-                        <div className="rounded-xl overflow-hidden border border-border/50 shadow-2xl bg-black aspect-video relative">
-                            {game.gameplayVideo && getYouTubeEmbedUrl(game.gameplayVideo) ? (
-                                <iframe
-                                    src={getYouTubeEmbedUrl(game.gameplayVideo)!}
-                                    title="Gameplay Video"
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                    allowFullScreen
-                                    className="absolute inset-0 w-full h-full"
-                                />
-                            ) : (
-                                <video
-                                    src={game.gameplayVideo}
-                                    controls
-                                    className="w-full h-full"
-                                    poster={game.coverImage}
-                                >
-                                    Your browser does not support the video tag.
-                                </video>
-                            )}
-                        </div>
+                        {(() => {
+                            const embed = game.gameplayVideo ? getVideoEmbedUrl(game.gameplayVideo) : null;
+                            const isReel = embed?.type === 'instagram';
+
+                            return (
+                                <div className={`rounded-xl overflow-hidden border border-border/50 shadow-2xl bg-black relative mx-auto ${isReel ? 'aspect-[9/16] max-w-sm' : 'aspect-video'}`}>
+                                    {(() => {
+                                        if (embed?.type === 'youtube' && embed.url) {
+                                            return (
+                                                <iframe
+                                                    src={embed.url}
+                                                    title="Gameplay Video"
+                                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                    allowFullScreen
+                                                    className="absolute inset-0 w-full h-full"
+                                                />
+                                            );
+                                        } else if (embed?.type === 'instagram' && embed.url) {
+                                            return (
+                                                <iframe
+                                                    src={embed.url}
+                                                    title="Gameplay Video"
+                                                    allow="encrypted-media"
+                                                    allowFullScreen
+                                                    className="absolute inset-0 w-full h-full"
+                                                />
+                                            );
+                                        } else {
+                                            return (
+                                                <video
+                                                    src={game.gameplayVideo}
+                                                    controls
+                                                    className="w-full h-full"
+                                                    poster={game.coverImage}
+                                                >
+                                                    Your browser does not support the video tag.
+                                                </video>
+                                            );
+                                        }
+                                    })()}
+                                </div>
+                            );
+                        })()}
                     </section>
                 )
             }
