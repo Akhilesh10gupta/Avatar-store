@@ -28,7 +28,7 @@ export default function Footer() {
     };
 
     return (
-        <footer className="bg-[#050505] border-t border-white/5 pt-16 pb-8 relative overflow-hidden">
+        <footer className="bg-[#050505] border-t border-white/5 pt-16 pb-8 relative overflow-hidden" style={{ overflowAnchor: 'none' }}>
             {/* Background Glow */}
             <div className="absolute bottom-0 left-1/4 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] pointer-events-none"></div>
 

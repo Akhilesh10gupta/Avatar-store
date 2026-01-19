@@ -106,7 +106,7 @@ export default function VisitorCounter() {
                     </span>
 
                     {isLoading ? (
-                        <div className="h-4 w-12 bg-white/10 animate-pulse rounded" />
+                        <div className="h-3.5 w-12 bg-white/10 animate-pulse rounded" />
                     ) : (
                         <CounterDisplay value={count} />
                     )}
