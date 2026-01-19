@@ -113,114 +113,110 @@ export default function AdminDashboard() {
 
     return (
         <div>
-            {/* INSTAGRAM-STYLE PROFILE HEADER */}
-            <div className="flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-8 mb-8 md:mb-12 animate-in fade-in slide-in-from-top-4">
+            {/* CYBER/GAMING PROFILE HEADER */}
+            <div className="relative overflow-hidden rounded-3xl bg-black/40 border border-white/10 p-6 md:p-10 mb-8 md:mb-12 backdrop-blur-md animate-in fade-in slide-in-from-top-4 group">
+                {/* Grid Background Effect */}
+                <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
 
-                {/* Mobile Layout: Row with Avatar + Stats */}
-                <div className="flex items-center gap-6 w-full md:hidden px-2">
-                    {/* Avatar */}
-                    <div className="relative w-24 h-24 rounded-full p-[2px] bg-gradient-to-tr from-primary to-purple-500 shrink-0">
-                        <div className="w-full h-full rounded-full overflow-hidden border-4 border-black bg-zinc-800 relative">
+                {/* Ambient Glow */}
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-lg h-32 bg-primary/20 blur-[100px] rounded-full pointer-events-none" />
+
+                <div className="relative flex flex-col md:flex-row items-center gap-8 md:gap-12">
+
+                    {/* CYBER CIRCLE AVATAR */}
+                    <div className="relative shrink-0 group/avatar">
+                        {/* Rotating Outer Tech Rings */}
+                        <div className="absolute -inset-2 border border-primary/40 border-t-primary border-r-primary rounded-full animate-spin-slow pointer-events-none" style={{ animationDuration: '6s' }} />
+                        <div className="absolute -inset-1 border border-white/20 rounded-full pointer-events-none" />
+
+                        <div className="relative w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden border-2 border-primary/50 box-content shadow-[0_0_20px_rgba(var(--primary-rgb),0.5)] bg-zinc-900 z-10">
                             {user.photoURL ? (
-                                <Image src={user.photoURL} alt={user.displayName || 'User'} fill className="object-cover" />
+                                <Image
+                                    src={user.photoURL}
+                                    alt={user.displayName || 'User'}
+                                    fill
+                                    className="object-cover transition-transform duration-500 group-hover/avatar:scale-105"
+                                />
                             ) : (
                                 <div className="w-full h-full flex items-center justify-center bg-zinc-800 text-white">
-                                    <span className="text-3xl font-bold">{(user.displayName || '?').charAt(0).toUpperCase()}</span>
+                                    <span className="text-4xl md:text-5xl font-bold">{(user.displayName || '?').charAt(0).toUpperCase()}</span>
                                 </div>
                             )}
                         </div>
-                    </div>
 
-                    {/* Stats (Right side on mobile) */}
-                    <div className="flex-1 flex justify-around text-center">
-                        <div className="flex flex-col items-center">
-                            <span className="font-bold text-xl text-white">{games.length}</span>
-                            <span className="text-xs text-muted-foreground uppercase tracking-wide">games</span>
-                        </div>
-                        <div className="flex flex-col items-center">
-                            <span className="font-bold text-xl text-white">{posts.length}</span>
-                            <span className="text-xs text-muted-foreground uppercase tracking-wide">posts</span>
+                        {/* Status Badge */}
+                        <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 py-1 px-4 bg-primary text-white border border-primary/50 rounded-full text-[10px] font-black uppercase tracking-widest shadow-[0_0_15px_rgba(var(--primary-rgb),0.6)] z-20">
+                            Creator
                         </div>
                     </div>
-                </div>
 
-                {/* Desktop Avatar (Hidden on mobile) */}
-                <div className="hidden md:block relative w-32 h-32 rounded-full p-[3px] bg-gradient-to-tr from-primary to-purple-500 shrink-0">
-                    <div className="w-full h-full rounded-full overflow-hidden border-4 border-black bg-zinc-800 relative">
-                        {user.photoURL ? (
-                            <Image src={user.photoURL} alt={user.displayName || 'User'} fill className="object-cover" />
-                        ) : (
-                            <div className="w-full h-full flex items-center justify-center bg-zinc-800 text-muted-foreground">
-                                <span className="text-4xl font-bold">{(user.displayName || '?').charAt(0).toUpperCase()}</span>
+                    {/* INFO & STATS */}
+                    <div className="flex-1 w-full flex flex-col items-center md:items-start text-center md:text-left">
+                        <div className="mb-6 space-y-2">
+                            <h1 className="text-2xl md:text-4xl font-black uppercase tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-white/50 filter drop-shadow-lg">
+                                {user.displayName || 'Anonymous User'}
+                            </h1>
+                            <p className="text-muted-foreground text-sm font-medium max-w-md mx-auto md:mx-0">
+                                Welcome to your command center. Manage your games and community posts.
+                            </p>
+                        </div>
+
+                        {/* HUD Stats Row */}
+                        <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 mb-8 w-full">
+                            <div className="flex flex-col items-center justify-center min-w-[100px] p-3 rounded-2xl bg-white/5 border border-white/10 hover:border-primary/50 hover:bg-white/10 transition-all group/stat">
+                                <span className="text-2xl font-bold text-white group-hover/stat:text-primary transition-colors">{games.length}</span>
+                                <span className="text-[10px] uppercase tracking-wider text-muted-foreground">Games</span>
                             </div>
-                        )}
-                    </div>
-                </div>
+                            <div className="w-px h-10 bg-white/10 hidden md:block" />
+                            <div className="flex flex-col items-center justify-center min-w-[100px] p-3 rounded-2xl bg-white/5 border border-white/10 hover:border-pink-500/50 hover:bg-white/10 transition-all group/stat">
+                                <span className="text-2xl font-bold text-white group-hover/stat:text-pink-500 transition-colors">{posts.length}</span>
+                                <span className="text-[10px] uppercase tracking-wider text-muted-foreground">Posts</span>
+                            </div>
+                        </div>
 
-                {/* Info Section */}
-                <div className="flex-1 flex flex-col gap-4 w-full">
-
-                    {/* Name & Buttons Row */}
-                    <div className="flex flex-col md:flex-row md:items-center gap-3 md:gap-4 px-2 md:px-0">
-                        <h1 className="text-xl md:text-2xl font-bold">{user.displayName || 'Anonymous User'}</h1>
-
-                        <div className="flex gap-3 w-full md:w-auto mt-1 md:mt-0">
-                            <Button variant="secondary" size="sm" className="flex-1 md:flex-none h-9 text-xs font-semibold bg-zinc-800 hover:bg-zinc-700 border border-white/10" onClick={() => setShowSettings(true)}>
-                                <Pencil className="w-3 h-3 mr-1" />
+                        {/* Action Buttons */}
+                        <div className="flex items-center gap-3 w-full md:w-auto mt-2">
+                            <Button className="flex-1 md:flex-none h-11 px-6 font-bold bg-primary text-white hover:bg-primary/90 rounded-xl shadow-[0_0_20px_rgba(var(--primary-rgb),0.4)] hover:shadow-[0_0_30px_rgba(var(--primary-rgb),0.6)] transition-all whitespace-nowrap" onClick={() => setShowSettings(true)}>
+                                <Pencil className="w-4 h-4 mr-2" />
                                 Edit Profile
                             </Button>
-                            <Button variant="outline" size="sm" className="flex-1 md:flex-none h-9 text-xs font-semibold border-white/10 hover:bg-white/5" onClick={async () => {
+                            <Button variant="secondary" className="flex-1 md:flex-none h-11 px-6 font-bold bg-white/5 text-white border border-white/10 hover:bg-white/10 hover:border-white/30 rounded-xl whitespace-nowrap" onClick={async () => {
                                 const { auth } = await import('@/lib/firebase');
                                 auth.signOut();
                                 window.location.href = '/login';
                             }}>
-                                <LogOut className="w-3 h-3 mr-1" />
+                                <LogOut className="w-4 h-4 mr-2" />
                                 Logout
                             </Button>
                         </div>
                     </div>
-
-                    {/* Desktop Stats (Hidden on mobile) */}
-                    <div className="hidden md:flex items-center gap-8 text-sm">
-                        <div>
-                            <span className="font-bold text-white mr-1">{games.length}</span>
-                            <span className="text-muted-foreground">games</span>
-                        </div>
-                        <div>
-                            <span className="font-bold text-white mr-1">{posts.length}</span>
-                            <span className="text-muted-foreground">posts</span>
-                        </div>
-                    </div>
-
-                    {/* Bio */}
-                    <p className="text-muted-foreground text-sm max-w-md px-2 md:px-0 leading-relaxed">
-                        Welcome to your creator hub.
-                    </p>
                 </div>
             </div>
 
-            {/* Navigation Tabs */}
-            <div className="flex items-center justify-around md:justify-start md:gap-12 border-t border-border sticky top-0 bg-[#050505]/95 backdrop-blur-xl z-20 shadow-2xl shadow-black/50">
-                <button
-                    onClick={() => setActiveTab('games')}
-                    className={`flex-1 md:flex-none py-3 md:py-4 text-xs md:text-sm font-medium transition-all flex items-center justify-center gap-2 uppercase tracking-wider ${activeTab === 'games'
-                        ? 'text-white border-b-2 border-white'
-                        : 'text-muted-foreground hover:text-white border-b-2 border-transparent'
-                        }`}
-                >
-                    <Gamepad2 className="w-4 h-4" />
-                    <span className="hidden md:inline">Games</span>
-                </button>
-                <button
-                    onClick={() => setActiveTab('posts')}
-                    className={`flex-1 md:flex-none py-3 md:py-4 text-xs md:text-sm font-medium transition-all flex items-center justify-center gap-2 uppercase tracking-wider ${activeTab === 'posts'
-                        ? 'text-white border-b-2 border-white'
-                        : 'text-muted-foreground hover:text-white border-b-2 border-transparent'
-                        }`}
-                >
-                    <Grid className="w-4 h-4" />
-                    <span className="hidden md:inline">Posts</span>
-                </button>
+            {/* CYBER TABS */}
+            <div className="sticky top-6 z-40 mb-8 flex justify-center md:justify-start pointer-events-none">
+                <div className="flex items-center gap-1 p-1.5 bg-black/60 border border-white/10 rounded-2xl backdrop-blur-xl shadow-2xl shadow-black/50 pointer-events-auto">
+                    <button
+                        onClick={() => setActiveTab('games')}
+                        className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest transition-all ${activeTab === 'games'
+                            ? 'bg-primary text-white shadow-[0_0_20px_rgba(var(--primary-rgb),0.4)] scale-105'
+                            : 'text-muted-foreground hover:text-white hover:bg-white/10'
+                            }`}
+                    >
+                        <Gamepad2 className="w-4 h-4" />
+                        <span>Games</span>
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('posts')}
+                        className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest transition-all ${activeTab === 'posts'
+                            ? 'bg-primary text-white shadow-[0_0_20px_rgba(var(--primary-rgb),0.4)] scale-105'
+                            : 'text-muted-foreground hover:text-white hover:bg-white/10'
+                            }`}
+                    >
+                        <Grid className="w-4 h-4" />
+                        <span>Posts</span>
+                    </button>
+                </div>
             </div>
 
             {/* TAB: GAMES */}
