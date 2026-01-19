@@ -17,7 +17,8 @@ import {
     startAfter,
     arrayUnion,
     arrayRemove,
-    setDoc
+    setDoc,
+    onSnapshot
 } from "firebase/firestore";
 
 // ... (Interfaces omitted, assuming they match file) ...
@@ -769,6 +770,8 @@ export const incrementVisitorCount = async () => {
     }
 };
 
+
+
 export const getVisitorCount = async () => {
     try {
         const statsRef = doc(db, STATS_COLLECTION, GLOBAL_STATS_DOC);
@@ -781,4 +784,17 @@ export const getVisitorCount = async () => {
         console.error("Error getting visitor count:", e);
         return 0;
     }
+};
+
+export const subscribeToVisitorCount = (callback: (count: number) => void) => {
+    const statsRef = doc(db, STATS_COLLECTION, GLOBAL_STATS_DOC);
+    return onSnapshot(statsRef, (doc) => {
+        if (doc.exists()) {
+            callback(doc.data().visitorCount as number);
+        } else {
+            callback(0);
+        }
+    }, (error) => {
+        console.error("Error subscribing to visitor count:", error);
+    });
 };
