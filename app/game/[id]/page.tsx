@@ -106,15 +106,21 @@ export default async function GameDetails({ params }: { params: Promise<{ id: st
                         <ImageIcon className="text-primary" />
                         Screenshots
                     </h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className={`flex md:grid items-center gap-4 md:gap-6 overflow-x-auto md:overflow-visible pb-4 md:pb-0 snap-x snap-mandatory md:snap-none -mx-4 px-4 md:mx-0 md:px-0 scrollbar-hide ${game.screenshots.length === 4
+                        ? 'md:grid-cols-2 lg:grid-cols-2' // 4 images -> 2x2 grid
+                        : game.screenshots.length === 1
+                            ? 'md:grid-cols-1 md:max-w-4xl md:mx-auto' // 1 image -> Centered large
+                            : 'md:grid-cols-2 lg:grid-cols-3' // Default -> 3 columns
+                        }`}>
                         {game.screenshots.map((shot, idx) => (
-                            <div key={idx} className="relative aspect-video rounded-lg overflow-hidden border border-border/50 hover:border-primary/50 transition-colors group">
-                                <Image
-                                    src={shot}
-                                    alt={`${game.title} screenshot ${idx + 1}`}
-                                    fill
-                                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                                />
+                            <div key={idx} className="min-w-full md:min-w-0 px-2 md:px-0 flex-shrink-0 snap-center">
+                                <div className="relative aspect-video md:aspect-auto rounded-xl overflow-hidden border border-border/50 shadow-2xl bg-black group">
+                                    <img
+                                        src={shot}
+                                        alt={`${game.title} screenshot ${idx + 1}`}
+                                        className="absolute md:static inset-0 w-full h-full md:h-auto md:max-h-[500px] object-contain md:object-contain transition-transform duration-500 group-hover:scale-105"
+                                    />
+                                </div>
                             </div>
                         ))}
                     </div>
