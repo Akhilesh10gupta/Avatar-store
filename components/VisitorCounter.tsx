@@ -1,13 +1,15 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Users, Activity } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { motion, useInView } from 'framer-motion';
+import { Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export default function VisitorCounter() {
     const [count, setCount] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
+    const ref = useRef(null);
+    const isInView = useInView(ref, { once: true }); // Standard trigger
 
     // Odometer Digit Component
     const Digit = ({ value }: { value: number }) => (
@@ -15,11 +17,8 @@ export default function VisitorCounter() {
             <motion.div
                 initial={{ y: 0 }}
                 animate={{ y: `-${value * 10}%` }}
-                transition={{ type: "spring", stiffness: 40, damping: 12 }}
-                className="absolute top-0 left-0 flex flex-col w-full h-[1000%]" // 10 items so 1000% height relative to container? No, if we use % of self, standard flow works well if container is fixed.
-            // Actually frame-motion 'y' % is usually relative to element size. 
-            // If element height is auto (10 digits stacked), and container is 1 digit height.
-            // y: -10% should shift by 1/10th of total height. Correct.
+                transition={{ type: "spring", stiffness: 30, damping: 10 }}
+                className="absolute top-0 left-0 flex flex-col w-full h-[1000%]"
             >
                 {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => (
                     <div key={i} className="h-[10%] flex items-center justify-center">
@@ -30,14 +29,15 @@ export default function VisitorCounter() {
         </div>
     );
 
-    const CounterDisplay = ({ value }: { value: number }) => {
+    const CounterDisplay = ({ value, trigger }: { value: number, trigger: boolean }) => {
         // Format with commas, then split
         const chars = value.toLocaleString().split('');
         return (
             <div className="flex items-center font-mono font-bold text-white tracking-widest leading-none drop-shadow-[0_0_8px_rgba(255,255,255,0.2)] text-sm">
                 {chars.map((char, i) => {
                     if (/\d/.test(char)) {
-                        return <Digit key={i} value={parseInt(char)} />;
+                        // Always render the digit component, but pass 0 if not triggered yet
+                        return <Digit key={i} value={trigger ? parseInt(char) : 0} />;
                     }
                     return <span key={i} className="w-[0.3em] text-center">{char}</span>;
                 })}
@@ -81,7 +81,7 @@ export default function VisitorCounter() {
     }, []);
 
     return (
-        <div className="relative group">
+        <div ref={ref} className="relative group">
             {/* Ambient Glow - Toned down */}
             <div className="absolute -inset-1 bg-gradient-to-r from-primary/40 to-purple-600/40 rounded-full blur opacity-0 group-hover:opacity-50 transition duration-700" />
 
@@ -108,7 +108,7 @@ export default function VisitorCounter() {
                     {isLoading ? (
                         <div className="h-3.5 w-12 bg-white/10 animate-pulse rounded" />
                     ) : (
-                        <CounterDisplay value={count} />
+                        <CounterDisplay value={count} trigger={isInView} />
                     )}
                 </div>
             </div>
