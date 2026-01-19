@@ -20,7 +20,16 @@ export default function TopRatedPage() {
             setLoading(true);
             try {
                 const ratedGames = await getTopRatedGames();
-                setGames(ratedGames);
+                // Sync sorting with Home Page (Downloads -> Rating)
+                const sortedGames = [...ratedGames].sort((a, b) => {
+                    const downloadsA = a.downloadCount || 0;
+                    const downloadsB = b.downloadCount || 0;
+                    if (downloadsA !== downloadsB) {
+                        return downloadsB - downloadsA;
+                    }
+                    return (b.rating || 0) - (a.rating || 0);
+                });
+                setGames(sortedGames);
             } catch (error) {
                 console.error("Error fetching games:", error);
             } finally {
@@ -120,7 +129,11 @@ export default function TopRatedPage() {
                 ) : filteredGames.length > 0 ? (
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 animate-in fade-in duration-500">
                         {filteredGames.map((game) => (
-                            <GameCard key={game.id} game={game} />
+                            <GameCard
+                                key={game.id}
+                                game={game}
+                                rank={games.findIndex(g => g.id === game.id) + 1}
+                            />
                         ))}
                     </div>
                 ) : (

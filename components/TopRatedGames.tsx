@@ -55,7 +55,7 @@ export default function TopRatedGames({ games }: TopRatedGamesProps) {
         <section className="space-y-4">
             {/* Header */}
             <div className="flex items-center justify-between px-1">
-                <Link href="/browse" className="group flex items-center gap-1 cursor-pointer">
+                <Link href="/top-rated" className="group flex items-center gap-1 cursor-pointer">
                     <h2 className="text-xl font-bold text-white group-hover:text-white/90 transition-colors flex items-center gap-2">
                         <Trophy className="w-5 h-5 text-yellow-500" />
                         Top Rated Games
@@ -94,15 +94,11 @@ export default function TopRatedGames({ games }: TopRatedGamesProps) {
                 <div
                     ref={scrollContainerRef}
                     onScroll={checkScroll}
-                    className="flex gap-4 overflow-x-auto pb-4 md:mx-0 md:px-0 scrollbar-hide snap-x snap-mandatory scroll-smooth"
+                    className="flex gap-4 overflow-x-auto pb-4 pt-6 md:mx-0 md:px-0 scrollbar-hide snap-x snap-mandatory scroll-smooth"
                 >
                     {sortedGames.map((game, index) => (
                         <div key={game.id} className="min-w-[calc(50%-8px)] md:min-w-[calc(25%-12px)] snap-start relative">
-                            {/* Rank Badge */}
-                            <div className="absolute top-2 left-2 z-10 bg-yellow-500/90 text-black font-bold w-8 h-8 flex items-center justify-center rounded-full shadow-lg text-sm border-2 border-white/20">
-                                #{index + 1}
-                            </div>
-                            <GameCard game={game} />
+                            <GameCard game={game} rank={index + 1} />
                         </div>
                     ))}
                 </div>
