@@ -1,8 +1,9 @@
 'use client';
 
 import Link from 'next/link';
-import { Gamepad2, Twitter, Facebook, Instagram, Youtube, Mail, ArrowRight } from 'lucide-react';
+import { Gamepad2, Twitter, Facebook, Instagram, Youtube, Mail, ArrowRight, Users } from 'lucide-react';
 import { useState } from 'react';
+import VisitorCounter from './VisitorCounter';
 
 export default function Footer() {
     const [email, setEmail] = useState('');
@@ -142,14 +143,20 @@ export default function Footer() {
                     </div>
                 </div>
 
-                <div className="border-t border-white/5 pt-8 text-center md:text-left flex flex-col md:flex-row items-center justify-between gap-4">
-                    <p className="text-sm text-muted-foreground">
+                <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row items-center justify-between gap-6">
+                    <p className="text-sm text-muted-foreground text-center md:text-left">
                         © {new Date().getFullYear()} Avatar Play. All rights reserved.
                     </p>
-                    <div className="flex items-center gap-6 text-sm text-muted-foreground">
-                        <Link href="/legal/privacy" className="hover:text-white transition-colors">Privacy</Link>
-                        <Link href="/legal/terms" className="hover:text-white transition-colors">Terms</Link>
-                        <Link href="/legal/cookies" className="hover:text-white transition-colors">Cookies</Link>
+
+                    <div className="flex flex-col md:flex-row items-center gap-6 w-full md:w-auto justify-center md:justify-end">
+                        {/* Creative Visitor Counter */}
+                        <VisitorCounter />
+
+                        <div className="flex items-center gap-6 text-sm text-muted-foreground shrink-0">
+                            <Link href="/legal/privacy" className="hover:text-white transition-colors">Privacy</Link>
+                            <Link href="/legal/terms" className="hover:text-white transition-colors">Terms</Link>
+                            <Link href="/legal/cookies" className="hover:text-white transition-colors">Cookies</Link>
+                        </div>
                     </div>
                 </div>
             </div>

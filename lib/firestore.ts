@@ -744,3 +744,41 @@ export const getAllUsers = async () => {
         return [];
     }
 };
+
+// --- Site Stats (Visitor Counter) ---
+
+const STATS_COLLECTION = "site_stats";
+const GLOBAL_STATS_DOC = "global";
+
+export const incrementVisitorCount = async () => {
+    const statsRef = doc(db, STATS_COLLECTION, GLOBAL_STATS_DOC);
+    try {
+        await updateDoc(statsRef, {
+            visitorCount: increment(1)
+        });
+    } catch (e: any) {
+        // If doc doesn't exist, create it
+        if (e.code === 'not-found') {
+            await setDoc(statsRef, {
+                visitorCount: 1,
+                updatedAt: new Date().toISOString()
+            });
+        } else {
+            console.error("Error incrementing visitor count:", e);
+        }
+    }
+};
+
+export const getVisitorCount = async () => {
+    try {
+        const statsRef = doc(db, STATS_COLLECTION, GLOBAL_STATS_DOC);
+        const docSnap = await getDoc(statsRef);
+        if (docSnap.exists()) {
+            return docSnap.data().visitorCount as number;
+        }
+        return 0;
+    } catch (e) {
+        console.error("Error getting visitor count:", e);
+        return 0;
+    }
+};
