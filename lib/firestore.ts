@@ -101,6 +101,7 @@ export interface Game {
     title: string;
     description: string;
     coverImage: string; // URL from Storage or external
+    cardImage?: string; // Optional dedicated card image (3:4 aspect ratio)
     screenshots: string[];
     genre: string;
     releaseDate: string;

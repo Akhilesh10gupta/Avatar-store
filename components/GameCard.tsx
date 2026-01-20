@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { Download, Monitor, Smartphone, Layers, Crown, Medal, Trophy } from 'lucide-react';
 import { Game } from '@/lib/firestore'; // Assuming types are exported from here or a types file
 
-import { getOptimizedImage } from '@/lib/cloudinary';
+import { getOptimizedImage, getAICardImage } from '@/lib/cloudinary';
 
 import { cn } from "@/lib/utils";
 
@@ -13,6 +13,7 @@ interface GameCardProps {
     variant?: 'default' | 'clean';
     rank?: number;
 }
+
 
 const RankBadge = ({ rank }: { rank: number }) => {
     if (rank > 10) return null; // Only show top 10 badges prominently to avoid clutter, or maybe plain styles for others.
@@ -105,7 +106,16 @@ const CyberBadge = ({ rank }: { rank: number }) => {
 }
 
 const GameCard = ({ game, className, variant = 'default', rank }: GameCardProps) => {
-    const imageUrl = game.coverImage ? getOptimizedImage(game.coverImage, 600, 800) : 'https://images.unsplash.com/photo-1552820728-8b83bb6b773f?q=80&w=2070&auto=format&fit=crop';
+    // Priority:
+    // 1. Explicitly uploaded Card Image (Use standard optimization)
+    // 2. AI Generated Card from Cover Image (Use AI Generative Fill)
+    // 3. Fallback placeholder
+
+    const imageUrl = game.cardImage
+        ? getOptimizedImage(game.cardImage, 600, 800) // Direct 3:4 crop/resize if user provided specific asset
+        : game.coverImage
+            ? getAICardImage(game.coverImage, 600, 800) // Magic AI generation if only cover exists
+            : 'https://images.unsplash.com/photo-1552820728-8b83bb6b773f?q=80&w=2070&auto=format&fit=crop';
 
     if (variant === 'clean') {
         return (

@@ -16,7 +16,9 @@ A premium, modern game distribution platform built with **Next.js 14**, **Tailwi
 ### for Admins
 *   **Secure Dashboard**: Protected admin panel with Firebase Authentication.
 *   **Game Management**: Create, Edit, and Delete games with a user-friendly interface.
-*   **Cloudinary Integration**: Automatic high-performance image hosting and smart cropping for varying aspect ratios.
+*   **AI-Powered Image Generation**: Automatically converts any cover image into a perfect 3:4 aspect ratio card using **Cloudinary Generative Fill**.
+*   **Hybrid Upload System**: Option to upload a specific **Card Image** manually OR let the AI generate one from the **Cover Image**.
+*   **Cloudinary Integration**: Automatic high-performance image hosting, smart cropping, and AI-based enhancements.
 *   **Mobile Admin**: Manage your store on-the-go with a mobile-optimized admin layout.
 
 ## 🛠️ Tech Stack

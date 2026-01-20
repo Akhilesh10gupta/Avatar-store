@@ -6,7 +6,7 @@ import { Game, addGame, updateGame } from '@/lib/firestore';
 import { uploadFile, uploadMultipleFiles } from '@/lib/storage';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { Loader2, Upload, X, Image as ImageIcon, Monitor, Smartphone, Layers } from 'lucide-react';
+import { Loader2, Upload, X, Image as ImageIcon, Monitor, Smartphone, Layers, Sparkles } from 'lucide-react';
 import Image from 'next/image';
 
 interface GameFormProps {
@@ -26,6 +26,7 @@ export default function GameForm({ initialData }: GameFormProps) {
         downloadLinkPC: initialData?.downloadLinkPC || initialData?.downloadLink || '', // Fallback to legacy link
         downloadLinkAndroid: initialData?.downloadLinkAndroid || '',
         coverImage: initialData?.coverImage || '',
+        cardImage: initialData?.cardImage || '',
         icon: initialData?.icon || '',
         gameplayVideo: initialData?.gameplayVideo || '',
         screenshots: initialData?.screenshots || [],
@@ -45,6 +46,7 @@ export default function GameForm({ initialData }: GameFormProps) {
     });
 
     const [coverFile, setCoverFile] = useState<File | null>(null);
+    const [cardFile, setCardFile] = useState<File | null>(null);
     const [iconFile, setIconFile] = useState<File | null>(null);
     const [screenshotFiles, setScreenshotFiles] = useState<File[]>([]);
     const [videoFile, setVideoFile] = useState<File | null>(null);
@@ -78,9 +80,10 @@ export default function GameForm({ initialData }: GameFormProps) {
         }
     };
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'cover' | 'icon' | 'screenshots' | 'video') => {
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'cover' | 'card' | 'icon' | 'screenshots' | 'video') => {
         if (e.target.files && e.target.files.length > 0) {
             if (type === 'cover') setCoverFile(e.target.files[0]);
+            if (type === 'card') setCardFile(e.target.files[0]);
             if (type === 'icon') setIconFile(e.target.files[0]);
             if (type === 'video') setVideoFile(e.target.files[0]);
             if (type === 'screenshots') setScreenshotFiles(Array.from(e.target.files));
@@ -93,12 +96,16 @@ export default function GameForm({ initialData }: GameFormProps) {
 
         try {
             let coverUrl = formData.coverImage;
+            let cardUrl = formData.cardImage;
             let iconUrl = formData.icon;
             let gameplayVideoUrl = formData.gameplayVideo;
             let screenshotUrls = formData.screenshots || [];
 
             if (coverFile) {
                 coverUrl = await uploadFile(coverFile, 'covers');
+            }
+            if (cardFile) {
+                cardUrl = await uploadFile(cardFile, 'cards');
             }
             if (iconFile) {
                 iconUrl = await uploadFile(iconFile, 'icons');
@@ -125,6 +132,7 @@ export default function GameForm({ initialData }: GameFormProps) {
             const gameData = {
                 ...formData,
                 coverImage: coverUrl,
+                cardImage: cardUrl,
                 icon: iconUrl,
                 gameplayVideo: gameplayVideoUrl,
                 screenshots: screenshotUrls,
@@ -229,7 +237,7 @@ export default function GameForm({ initialData }: GameFormProps) {
                         <div className="flex flex-col gap-2">
                             <div className="flex items-center gap-4">
                                 {formData.coverImage && !coverFile && (
-                                    <div className="relative w-20 h-28 rounded bg-secondary overflow-hidden shrink-0">
+                                    <div className="relative w-24 h-14 rounded bg-secondary overflow-hidden shrink-0">
                                         <Image src={formData.coverImage} alt="cover" fill className="object-cover" />
                                     </div>
                                 )}
@@ -238,6 +246,62 @@ export default function GameForm({ initialData }: GameFormProps) {
                             <div className="flex items-center gap-2">
                                 <span className="text-xs text-muted-foreground">OR</span>
                                 <Input name="coverImage" value={formData.coverImage} onChange={handleChange} placeholder="Paste Cover Image URL here" className="text-xs h-8" />
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Card Image Upload (Optional) */}
+                    <div className="space-y-2 pt-2 border-t border-border/50">
+                        <div className="flex items-center justify-between">
+                            <label className="text-sm font-medium flex items-center gap-2">
+                                Card Image <span className="text-xs text-muted-foreground font-normal">(Optional)</span>
+                            </label>
+                            <span className="text-[10px] text-muted-foreground bg-secondary/50 px-2 py-0.5 rounded">
+                                Recommended: 3:4 Ratio (e.g. 600x800)
+                            </span>
+                        </div>
+
+                        <div className="p-3 bg-secondary/20 rounded-lg border border-border/50">
+                            <div className="flex flex-col gap-3">
+                                <p className="text-xs text-muted-foreground">
+                                    If you upload a specific card image, we will use it directly.
+                                    <br />
+                                    <span className="text-primary/80">Otherwise, our AI will automatically generate a perfect 3:4 card from your Cover Image.</span>
+                                </p>
+
+                                <div className="flex items-center gap-4">
+                                    {(formData.cardImage || cardFile) ? (
+                                        <div className="relative w-16 h-20 rounded bg-black/40 overflow-hidden shrink-0 border border-white/10 shadow-lg">
+                                            {/* Preview: prioritizing local file blob if needed, but for now assuming we just show what we have */}
+                                            {cardFile ? (
+                                                // Ideally we'd create a local object URL for preview, but let's just show a placeholder icon or simple text if complex
+                                                <div className="w-full h-full flex items-center justify-center bg-zinc-800">
+                                                    <span className="text-[9px] text-center px-1">Selected File</span>
+                                                </div>
+                                            ) : (
+                                                <Image src={formData.cardImage!} alt="card" fill className="object-cover" />
+                                            )}
+                                        </div>
+                                    ) : (
+                                        // "Empty" state showing AI Preview
+                                        <div className="relative w-16 h-20 rounded bg-gradient-to-br from-indigo-500/20 to-purple-500/20 overflow-hidden shrink-0 border border-white/5 flex items-center justify-center">
+                                            <Sparkles className="w-6 h-6 text-purple-400 opacity-80" />
+                                        </div>
+                                    )}
+
+                                    <div className="flex-1 flex flex-col gap-2">
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            onChange={(e) => handleFileChange(e, 'card')}
+                                            className="text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-primary/20 file:text-primary hover:file:bg-primary/30 w-full"
+                                        />
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-xs text-muted-foreground">OR</span>
+                                            <Input name="cardImage" value={formData.cardImage || ''} onChange={handleChange} placeholder="Paste Card Image URL" className="text-xs h-8" />
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

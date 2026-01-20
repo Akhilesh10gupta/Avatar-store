@@ -7,8 +7,9 @@ import { ArrowRight, Sparkles, Gamepad2, Plus } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Game } from '@/lib/firestore';
-import { getOptimizedImage } from '@/lib/cloudinary';
+import { getOptimizedImage, getAICardImage } from '@/lib/cloudinary';
 import { cn } from '@/lib/utils';
+
 
 interface HeroProps {
     games: Game[];
@@ -102,7 +103,11 @@ const Hero = ({ games }: HeroProps) => {
                         >
                             <Link href={`/game/${game.id}`} className="block w-full h-full">
                                 <Image
-                                    src={getOptimizedImage(game.coverImage, 600, 800)}
+                                    src={
+                                        game.cardImage
+                                            ? getOptimizedImage(game.cardImage, 600, 800)
+                                            : getAICardImage(game.coverImage, 600, 800)
+                                    }
                                     alt={game.title}
                                     fill
                                     className="object-cover"
@@ -171,7 +176,7 @@ const Hero = ({ games }: HeroProps) => {
                         >
                             {/* Background Image */}
                             <Image
-                                src={getOptimizedImage(activeGame.coverImage, 1200, 800)}
+                                src={getAICardImage(activeGame.coverImage, 1200, 800)}
                                 alt={activeGame.title}
                                 fill
                                 className="object-cover"
@@ -247,7 +252,11 @@ const Hero = ({ games }: HeroProps) => {
                             {/* Thumbnail */}
                             <div className="relative w-12 h-16 rounded-lg overflow-hidden shrink-0 shadow-sm border border-white/5 z-10">
                                 <Image
-                                    src={getOptimizedImage(game.coverImage, 200, 300)}
+                                    src={
+                                        game.cardImage
+                                            ? getOptimizedImage(game.cardImage, 200, 300)
+                                            : getAICardImage(game.coverImage, 200, 300)
+                                    }
                                     alt={game.title}
                                     fill
                                     className="object-cover"

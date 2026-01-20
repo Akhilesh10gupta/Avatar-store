@@ -9,7 +9,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { getVideoEmbedUrl } from '@/lib/video';
-import { getOptimizedImage } from "@/lib/cloudinary";
+import { getAICardImage } from "@/lib/cloudinary";
 
 // Force dynamic rendering since we are fetching data
 export const dynamic = 'force-dynamic';
@@ -22,7 +22,8 @@ export default async function GameDetails({ params }: { params: Promise<{ id: st
         return notFound();
     }
 
-    const coverUrl = game.coverImage ? getOptimizedImage(game.coverImage, 800, 1200) : 'https://images.unsplash.com/photo-1552820728-8b83bb6b773f?q=80&w=2070&auto=format&fit=crop';
+    // Match aspect-[3/4] container (e.g., 1200x1600) to avoid any CSS cropping
+    const coverUrl = game.coverImage ? getAICardImage(game.coverImage, 1200, 1600) : 'https://images.unsplash.com/photo-1552820728-8b83bb6b773f?q=80&w=2070&auto=format&fit=crop';
 
     return (
         <div className="space-y-8 animate-in fade-in duration-500">
