@@ -17,6 +17,17 @@ export default function Footer() {
         try {
             const { addSubscriber } = await import('@/lib/firestore');
             await addSubscriber(email);
+
+            // Send welcome email
+            await fetch('/api/send-email', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    to: email,
+                    type: 'welcome'
+                })
+            });
+
             setStatus('success');
             setEmail('');
             setTimeout(() => setStatus('idle'), 3000); // Reset after 3s

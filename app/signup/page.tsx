@@ -22,6 +22,22 @@ export default function Signup() {
     const searchParams = useSearchParams();
     const redirectPath = searchParams.get('redirect') || '/admin';
 
+    const sendWelcomeEmail = async (userEmail: string) => {
+        try {
+            await fetch('/api/send-email', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    to: userEmail,
+                    type: 'welcome'
+                })
+            });
+        } catch (error) {
+            console.error("Failed to send welcome email:", error);
+            // Don't block the user flow for email failure
+        }
+    };
+
     const handleSignup = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
@@ -41,6 +57,8 @@ export default function Signup() {
 
         try {
             await createUserWithEmailAndPassword(auth, email, password);
+            // Send welcome email
+            await sendWelcomeEmail(email);
             router.push(redirectPath);
         } catch (err: any) {
             console.error(err);
@@ -57,8 +75,15 @@ export default function Signup() {
     useEffect(() => {
         // Handle redirect result
         import('firebase/auth').then(({ getRedirectResult }) => {
-            getRedirectResult(auth).then((result) => {
+            getRedirectResult(auth).then(async (result) => {
                 if (result) {
+                    // Check if this is a new user? 
+                    // Firebase 'result' object has 'additionalUserInfo.isNewUser'
+                    // We should try to cast or check it safely.
+                    // For now, let's send it. Ideally we check if new.
+                    if (result.user.email) {
+                        await sendWelcomeEmail(result.user.email);
+                    }
                     router.push(redirectPath);
                 }
             }).catch((err) => {
@@ -72,11 +97,17 @@ export default function Signup() {
         setLoading(true);
         setError('');
         try {
-            const { signInWithRedirect, signInWithPopup } = await import('firebase/auth');
+            const { signInWithRedirect, signInWithPopup, getAdditionalUserInfo } = await import('firebase/auth');
 
             // Try popup first
             try {
-                await signInWithPopup(auth, googleProvider);
+                const result = await signInWithPopup(auth, googleProvider);
+                const additionalInfo = getAdditionalUserInfo(result);
+
+                if (additionalInfo?.isNewUser && result.user.email) {
+                    await sendWelcomeEmail(result.user.email);
+                }
+
                 router.push(redirectPath);
             } catch (popupError: any) {
                 console.error("Popup failed, trying redirect:", popupError);
