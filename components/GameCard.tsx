@@ -111,15 +111,13 @@ const GameCard = ({ game, className, variant = 'default', rank }: GameCardProps)
     // 2. AI Generated Card from Cover Image (Use AI Generative Fill)
     // 3. Fallback placeholder
 
-    if (game.id === 'debug_target' || true) { // Always log for now to debug
-        console.log(`GameCard [${game.title}]: cardImage=${game.cardImage}, coverImage=${game.coverImage}`);
-    }
-
-    const imageUrl = game.cardImage
+    const imageUrlRaw = game.cardImage
         ? getOptimizedImage(game.cardImage, 600, 800) // Direct 3:4 crop/resize if user provided specific asset
         : game.coverImage
             ? getAICardImage(game.coverImage, 600, 800, game.title) // Magic AI generation if only cover exists
             : 'https://images.unsplash.com/photo-1552820728-8b83bb6b773f?q=80&w=2070&auto=format&fit=crop';
+
+    const imageUrl = imageUrlRaw + (game.updatedAt ? `?v=${new Date(game.updatedAt).getTime()}` : '');
 
     if (variant === 'clean') {
         return (

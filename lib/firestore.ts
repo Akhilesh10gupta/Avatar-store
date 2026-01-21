@@ -133,6 +133,7 @@ export interface Game {
     featured?: boolean;
     createdAt?: string;
     userId?: string; // Owner of the game
+    updatedAt?: string;
 
     // Stats
     downloadCount?: number;
@@ -220,7 +221,10 @@ export const addGame = async (game: Omit<Game, "id">) => {
 
 export const updateGame = async (id: string, game: Partial<Game>) => {
     const gameRef = doc(db, GAMES_COLLECTION, id);
-    await updateDoc(gameRef, game);
+    await updateDoc(gameRef, {
+        ...game,
+        updatedAt: new Date().toISOString()
+    });
 };
 
 export const deleteGame = async (id: string) => {

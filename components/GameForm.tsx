@@ -143,13 +143,6 @@ export default function GameForm({ initialData }: GameFormProps) {
                 userId: user.uid, // Save owner ID
             } as Game;
 
-            console.log("Submitting game data:", {
-                id: initialData?.id,
-                cardImageBefore: initialData?.cardImage,
-                cardImageNew: cardUrl,
-                formDataCard: formData.cardImage
-            });
-
             if (initialData?.id) {
                 await updateGame(initialData.id, gameData);
             } else {

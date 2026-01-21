@@ -105,8 +105,8 @@ const Hero = ({ games }: HeroProps) => {
                                 <Image
                                     src={
                                         game.cardImage
-                                            ? getOptimizedImage(game.cardImage, 600, 800)
-                                            : getAICardImage(game.coverImage, 600, 800)
+                                            ? getOptimizedImage(game.cardImage, 600, 800) + (game.updatedAt ? `?v=${new Date(game.updatedAt).getTime()}` : '')
+                                            : getAICardImage(game.coverImage, 600, 800, game.title)
                                     }
                                     alt={game.title}
                                     fill
