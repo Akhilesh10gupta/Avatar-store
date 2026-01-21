@@ -7,14 +7,14 @@ import { motion } from 'framer-motion';
 
 export default function DeveloperPage() {
     const skills = [
-        { name: "React / Next.js", icon: <Layout className="w-4 h-4" />, level: 95, color: "text-blue-400", border: "border-blue-500/50" },
-        { name: "TypeScript", icon: <Code className="w-4 h-4" />, level: 90, color: "text-cyan-400", border: "border-cyan-500/50" },
-        { name: "Node.js", icon: <Server className="w-4 h-4" />, level: 85, color: "text-green-400", border: "border-green-500/50" },
-        { name: "Tailwind CSS", icon: <Layout className="w-4 h-4" />, level: 95, color: "text-purple-400", border: "border-purple-500/50" },
-        { name: "Java / Spring Boot", icon: <Cpu className="w-4 h-4" />, level: 75, color: "text-orange-400", border: "border-orange-500/50" },
-        { name: "C++", icon: <Code className="w-4 h-4" />, level: 80, color: "text-pink-400", border: "border-pink-500/50" },
-        { name: "PostgreSQL", icon: <Database className="w-4 h-4" />, level: 85, color: "text-indigo-400", border: "border-indigo-500/50" },
-        { name: "Three.js", icon: <Gamepad2 className="w-4 h-4" />, level: 70, color: "text-yellow-400", border: "border-yellow-500/50" },
+        { name: "React / Next.js", icon: <Layout className="w-4 h-4" />, level: 95, color: "text-blue-400", bgColor: "bg-blue-400", border: "border-blue-500/50" },
+        { name: "TypeScript", icon: <Code className="w-4 h-4" />, level: 90, color: "text-cyan-400", bgColor: "bg-cyan-400", border: "border-cyan-500/50" },
+        { name: "Node.js", icon: <Server className="w-4 h-4" />, level: 85, color: "text-green-400", bgColor: "bg-green-400", border: "border-green-500/50" },
+        { name: "Tailwind CSS", icon: <Layout className="w-4 h-4" />, level: 95, color: "text-purple-400", bgColor: "bg-purple-400", border: "border-purple-500/50" },
+        { name: "Java / Spring Boot", icon: <Cpu className="w-4 h-4" />, level: 75, color: "text-orange-400", bgColor: "bg-orange-400", border: "border-orange-500/50" },
+        { name: "C++", icon: <Code className="w-4 h-4" />, level: 80, color: "text-pink-400", bgColor: "bg-pink-400", border: "border-pink-500/50" },
+        { name: "PostgreSQL", icon: <Database className="w-4 h-4" />, level: 85, color: "text-indigo-400", bgColor: "bg-indigo-400", border: "border-indigo-500/50" },
+        { name: "Three.js", icon: <Gamepad2 className="w-4 h-4" />, level: 70, color: "text-yellow-400", bgColor: "bg-yellow-400", border: "border-yellow-500/50" },
     ];
 
     const projects = [
@@ -128,10 +128,10 @@ export default function DeveloperPage() {
                         transition={{ delay: 0.4 }}
                         className="flex gap-4 mt-10"
                     >
-                        <Link href="https://github.com/akhilesh10gupta" target="_blank">
+                        <Link href="https://dev.avatarplay.in" target="_blank">
                             <Button size="lg" className="h-12 px-8 bg-zinc-900 border border-white/20 hover:bg-white hover:text-black hover:border-white transition-all duration-300 font-bold tracking-wide group">
-                                <Github className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" />
-                                GITHUB
+                                <Globe className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" />
+                                PORTFOLIO
                             </Button>
                         </Link>
                         <Link href="https://www.linkedin.com/in/akhilesh-gupta-826067228/" target="_blank">
@@ -181,7 +181,7 @@ export default function DeveloperPage() {
                                         initial={{ width: 0 }}
                                         whileInView={{ width: `${skill.level}%` }}
                                         transition={{ duration: 1.5, delay: idx * 0.1 }}
-                                        className={`h-full ${skill.color.replace('text', 'bg')} shadow-[0_0_10px_currentColor]`}
+                                        className={`h-full ${skill.bgColor} shadow-[0_0_10px_currentColor]`}
                                     />
                                 </div>
                             </div>
