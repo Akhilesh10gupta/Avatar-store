@@ -13,6 +13,14 @@ A premium, modern game distribution platform built with **Next.js 14**, **Tailwi
 *   **Smart Search**: Real-time searching and filtering by genre/platform.
 *   **Dual Platform Support**: Clear distinction and download links for **PC** and **Android** versions.
 
+### for Users
+*   **Epic-Style Hero Carousel**: Interactive, auto-rotating hero section with progress fill animations and immersive visuals.
+*   **Universal Video Support**: Watch gameplay trailers via direct upload, YouTube videos, or **YouTube Shorts**.
+*   **Responsive Design**: Fully optimized UI for Desktops, Tablets, and Mobile devices.
+*   **Smart Search**: Real-time searching and filtering by genre/platform.
+*   **Dual Platform Support**: Clear distinction and download links for **PC** and **Android** versions.
+*   **Email Notifications**: Welcome emails triggers for new signups and newsletter subscriptions.
+
 ### for Admins
 *   **Secure Dashboard**: Protected admin panel with Firebase Authentication.
 *   **Game Management**: Create, Edit, and Delete games with a user-friendly interface.
@@ -62,6 +70,10 @@ A premium, modern game distribution platform built with **Next.js 14**, **Tailwi
     NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=your_cloud_name
     NEXT_PUBLIC_CLOUDINARY_API_KEY=your_api_key
     CLOUDINARY_API_SECRET=your_api_secret
+
+    # Email Configuration
+    EMAIL_USER=your_gmail_address
+    EMAIL_PASS=your_16_char_app_password
     ```
 
 4.  **Run the development server**
