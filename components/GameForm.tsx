@@ -133,10 +133,10 @@ export default function GameForm({ initialData }: GameFormProps) {
 
             const gameData = {
                 ...formData,
-                coverImage: coverUrl,
-                cardImage: cardUrl,
-                icon: iconUrl,
-                gameplayVideo: gameplayVideoUrl,
+                coverImage: coverUrl || '',
+                cardImage: cardUrl || '',
+                icon: iconUrl || '',
+                gameplayVideo: gameplayVideoUrl || '',
                 screenshots: screenshotUrls,
                 // Ensure legacy field is filled if needed, or rely on new fields
                 downloadLink: formData.downloadLinkPC || formData.downloadLinkAndroid || '',
@@ -281,12 +281,9 @@ export default function GameForm({ initialData }: GameFormProps) {
                                 <div className="flex items-center gap-4">
                                     {(formData.cardImage || cardFile) ? (
                                         <div className="relative w-16 h-20 rounded bg-black/40 overflow-hidden shrink-0 border border-white/10 shadow-lg">
-                                            {/* Preview: prioritizing local file blob if needed, but for now assuming we just show what we have */}
+                                            {/* Preview: prioritizing local file blob if needed */}
                                             {cardFile ? (
-                                                // Ideally we'd create a local object URL for preview, but let's just show a placeholder icon or simple text if complex
-                                                <div className="w-full h-full flex items-center justify-center bg-zinc-800">
-                                                    <span className="text-[9px] text-center px-1">Selected File</span>
-                                                </div>
+                                                <Image src={URL.createObjectURL(cardFile)} alt="preview" fill className="object-cover" />
                                             ) : (
                                                 <Image src={formData.cardImage!} alt="card" fill className="object-cover" />
                                             )}

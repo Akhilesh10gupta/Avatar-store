@@ -160,7 +160,7 @@ const GameCard = ({ game, className, variant = 'default', rank }: GameCardProps)
             <div className="relative rounded-xl bg-card border border-border/50 hover:border-primary/50 hover:shadow-[0_0_25px_-5px_rgba(139,92,246,0.3)] transition-all duration-300 h-full flex flex-col cursor-pointer">
                 {rank && <CyberBadge rank={rank} />}
                 {/* Image Container */}
-                <div className="aspect-[3/4] relative overflow-hidden rounded-t-xl">
+                <div title={`Source: ${game.cardImage ? 'Uploaded Card' : 'AI Generated (Cover)'}\nURL: ${imageUrl}`} className="aspect-[3/4] relative overflow-hidden rounded-t-xl">
                     <Image
                         src={imageUrl}
                         alt={game.title}
