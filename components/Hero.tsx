@@ -12,30 +12,28 @@ import { cn } from '@/lib/utils';
 
 
 interface HeroProps {
-    games: Game[];
+    latestGames: Game[];
+    popularGames: Game[];
 }
 
-const Hero = ({ games }: HeroProps) => {
+const Hero = ({ latestGames = [], popularGames = [] }: HeroProps) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [activeMobileIndex, setActiveMobileIndex] = useState(0);
     const [isAutoPlaying, setIsAutoPlaying] = useState(true);
 
-    // Filter games to ensure we have content, or use a fallback if empty
-    // Logic: Show 3 Latest + 3 Top Rated
+    // Logic: Show 3 Latest + 3 Popular (Derived from downloads)
     const logicGames = (() => {
-        if (games.length === 0) return [];
+        if (!latestGames.length && !popularGames.length) return [];
 
-        // 1. Get 3 Latest (Assumed sorted by createdAt desc from parent)
-        const latest = games.slice(0, 3);
+        // 1. Get 3 Latest (New Arrivals)
+        const latest = latestGames.slice(0, 3);
 
-        // 2. Get 3 Top Rated (Filter out games already in latest to avoid dups)
-        // Clone and sort by rating
-        const rated = [...games]
+        // 2. Get 3 Popular (Most Downloaded), avoiding duplicates from Latest
+        const popular = popularGames
             .filter(g => !latest.some(l => l.id === g.id))
-            .sort((a, b) => (b.rating || 0) - (a.rating || 0))
             .slice(0, 3);
 
-        return [...latest, ...rated];
+        return [...latest, ...popular];
     })();
 
     const heroGames = logicGames;
