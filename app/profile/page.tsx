@@ -200,8 +200,8 @@ export default function ProfilePage() {
                             </button>
                             <Link href="/admin">
                                 <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-zinc-400 hover:text-white hover:bg-white/5 font-bold text-sm transition-all">
-                                    <Settings className="w-4 h-4 ml-1" />
-                                    SETTINGS
+                                    <LayoutDashboard className="w-4 h-4 ml-1" />
+                                    DASHBOARD
                                 </button>
                             </Link>
                         </div>

@@ -50,7 +50,8 @@ export default function HelpCenter() {
                     title: "How to Upload",
                     icon: Upload,
                     steps: [
-                        "Sign in and click your profile avatar -> Admin Dashboard.",
+                        "**Sign in** or **Create an account** to get started.",
+                        "Click your avatar to open your **Profile**, then click the **Dashboard** button.",
                         "Click 'Add New Game' in the top right.",
                         "Fill in metadata: Title, Genre, Description, and Cover Art.",
                         "Add your download links (Google Drive, Itch.io, etc.).",
@@ -189,7 +190,11 @@ export default function HelpCenter() {
                                                             <div className="w-6 h-6 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-xs font-mono text-primary shrink-0 mt-0.5">
                                                                 {sIdx + 1}
                                                             </div>
-                                                            <p className="text-white/80">{step}</p>
+                                                            <p className="text-white/80">
+                                                                {step.split('**').map((part, i) => (
+                                                                    i % 2 === 1 ? <span key={i} className="text-white font-bold">{part}</span> : part
+                                                                ))}
+                                                            </p>
                                                         </div>
                                                     ))}
                                                 </div>
