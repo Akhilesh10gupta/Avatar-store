@@ -1,8 +1,9 @@
 'use client';
 
 import { Button } from "@/components/ui/Button";
-import { incrementDownload } from "@/lib/firestore";
+import { incrementDownload, addUserXP, incrementUserDownload } from "@/lib/firestore";
 import { Monitor, Smartphone } from "lucide-react";
+import { useAuth } from "@/components/AuthProvider";
 
 interface DownloadButtonProps {
     gameId: string;
@@ -11,8 +12,14 @@ interface DownloadButtonProps {
 }
 
 export default function DownloadButton({ gameId, href, platform }: DownloadButtonProps) {
+    const { user } = useAuth();
+
     const handleClick = () => {
         incrementDownload(gameId);
+        if (user) {
+            addUserXP(user.uid, 50, 'Download Game'); // 50 XP for download
+            incrementUserDownload(user.uid);
+        }
     };
 
     return (

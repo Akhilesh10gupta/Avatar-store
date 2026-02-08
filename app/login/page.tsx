@@ -24,7 +24,7 @@ export default function Login() {
     const [loading, setLoading] = useState(false);
     const router = useRouter();
     const searchParams = useSearchParams();
-    const redirectPath = searchParams.get('redirect') || '/admin';
+    const redirectPath = searchParams.get('redirect') || '/profile';
 
     const [isResetting, setIsResetting] = useState(false);
     const [resetEmail, setResetEmail] = useState('');

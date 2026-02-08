@@ -12,14 +12,13 @@ A premium, modern game distribution platform built with **Next.js 14**, **Tailwi
 *   **Responsive Design**: Fully optimized UI for Desktops, Tablets, and Mobile devices.
 *   **Smart Search**: Real-time searching and filtering by genre/platform.
 *   **Dual Platform Support**: Clear distinction and download links for **PC** and **Android** versions.
-
-### for Users
-*   **Epic-Style Hero Carousel**: Interactive, auto-rotating hero section with progress fill animations and immersive visuals.
-*   **Universal Video Support**: Watch gameplay trailers via direct upload, YouTube videos, or **YouTube Shorts**.
-*   **Responsive Design**: Fully optimized UI for Desktops, Tablets, and Mobile devices.
-*   **Smart Search**: Real-time searching and filtering by genre/platform.
-*   **Dual Platform Support**: Clear distinction and download links for **PC** and **Android** versions.
 *   **Email Notifications**: Welcome emails triggers for new signups and newsletter subscriptions.
+
+### 🎮 Gamification & Social
+*   **XP & Leveling System**: Earn XP by downloading games, writing reviews, and engaging with the community.
+*   **Interactive Profile**: Fully immersive **Cyber/Sci-Fi** profile page with holographic avatar, particle backgrounds, and glassmorphism UI.
+*   **Badges & Achievements**: Unlockable 3D-style badges for milestones (e.g., "Pioneer", "Critic", "Influencer").
+*   **Real-time Activity Feed**: deep-linked notification system for tracking comments, reviews, and posts.
 
 ### for Admins
 *   **Secure Dashboard**: Protected admin panel with Firebase Authentication.
@@ -31,8 +30,8 @@ A premium, modern game distribution platform built with **Next.js 14**, **Tailwi
 
 ## 🛠️ Tech Stack
 
-*   **Framework**: [Next.js 16](https://nextjs.org/) (App Router, Server Components)
-*   **Styling**: [Tailwind CSS v4](https://tailwindcss.com/) + CSS Variables
+*   **Framework**: [Next.js 14](https://nextjs.org/) (App Router, Server Components)
+*   **Styling**: [Tailwind CSS](https://tailwindcss.com/) + CSS Variables
 *   **Animations**: [Framer Motion](https://www.framer.com/motion/)
 *   **Database**: Firebase Firestore
 *   **Auth**: Firebase Authentication
@@ -89,6 +88,7 @@ A premium, modern game distribution platform built with **Next.js 14**, **Tailwi
 ├── app/                  # Next.js App Router pages
 │   ├── admin/            # Protected admin routes
 │   ├── game/[id]/        # Game details page
+│   ├── profile/          # User profile & gamification
 │   ├── globals.css       # Global styles & Tailwind
 │   └── layout.tsx        # Root layout with Navbar/Footer
 ├── components/           # Reusable UI components
@@ -99,6 +99,7 @@ A premium, modern game distribution platform built with **Next.js 14**, **Tailwi
 ├── lib/                  # Utilities and Services
 │   ├── firebase.ts       # Firebase config
 │   ├── firestore.ts      # Database operations
+│   ├── gamification.ts   # XP & Leveling logic
 │   ├── cloudinary.ts     # Image optimization helpers
 │   └── youtube.ts        # YouTube URL parsing
 └── public/               # Static assets

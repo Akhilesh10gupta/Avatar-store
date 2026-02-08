@@ -133,11 +133,11 @@ export default function ProfileManager() {
     };
 
     return (
-        <div className="bg-card border border-border rounded-xl p-6 mb-8">
-            <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
+        <div className="w-full">
+            {/* <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
                 <UserIcon className="w-5 h-5 text-primary" />
                 Profile Settings
-            </h2>
+            </h2> */}
 
             {isSuperAdmin && (
                 <div className="mb-8 p-4 bg-gradient-to-r from-red-500/10 to-orange-500/10 border border-red-500/20 rounded-xl flex items-center justify-between">
@@ -215,13 +215,13 @@ export default function ProfileManager() {
                             <p className="text-xs text-muted-foreground">Email cannot be changed.</p>
                         </div>
 
-                        <div className="flex items-center gap-4 pt-2">
-                            <Button type="submit" isLoading={loading} disabled={isUploading}>
+                        <div className="flex flex-col gap-3 pt-2">
+                            <Button type="submit" isLoading={loading} disabled={isUploading} className="w-full h-11">
                                 <Save className="w-4 h-4 mr-2" />
                                 Save Changes
                             </Button>
                             {message && (
-                                <p className={`text-sm ${message.includes('success') ? 'text-green-500' : 'text-red-500'}`}>
+                                <p className={`text-sm text-center ${message.includes('success') ? 'text-green-500' : 'text-red-500'}`}>
                                     {message}
                                 </p>
                             )}

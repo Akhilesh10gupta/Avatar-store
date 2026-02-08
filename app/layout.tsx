@@ -77,6 +77,7 @@ import { InstallProvider } from '@/components/InstallProvider'
 import Footer from '@/components/Footer'
 import BottomNav from '@/components/BottomNav'
 import InstallPrompt from '@/components/InstallPrompt'
+import XPToast from '@/components/XPToast'
 
 export default function RootLayout({
   children,
@@ -86,6 +87,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${outfit.className} bg-background text-foreground antialiased min-h-screen flex flex-col pb-16 md:pb-0`}>
+        {/* ... schema script omitted for brevity ... */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -111,6 +113,7 @@ export default function RootLayout({
             <Footer />
             <BottomNav />
             <InstallPrompt />
+            <XPToast />
           </InstallProvider>
         </AuthProvider>
       </body>

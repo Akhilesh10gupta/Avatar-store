@@ -15,7 +15,7 @@ const Navbar = () => {
     const { user, loading } = useAuth();
 
     // Determine profile link based on auth state
-    const profileLink = user ? '/admin' : '/login';
+    const profileLink = user ? '/profile' : '/login';
 
     const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter' && searchQuery.trim()) {

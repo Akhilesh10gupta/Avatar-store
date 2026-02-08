@@ -18,7 +18,8 @@ import {
     arrayUnion,
     arrayRemove,
     setDoc,
-    onSnapshot
+    onSnapshot,
+    getCountFromServer
 } from "firebase/firestore";
 
 // ... (Interfaces omitted, assuming they match file) ...
@@ -375,24 +376,7 @@ export const getPosts = async () => {
     }
 };
 
-export const getUserPosts = async (userId: string) => {
-    try {
-        const q = query(
-            collection(db, POSTS_COLLECTION),
-            where("userId", "==", userId)
-        );
-        const querySnapshot = await getDocs(q);
-        const posts = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Post));
 
-        // Sort client-side to avoid needing a composite index
-        return posts.sort((a, b) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        );
-    } catch (e) {
-        console.error("Error fetching user posts:", e);
-        return [];
-    }
-};
 
 export const addComment = async (comment: Omit<Comment, "id">) => {
     try {
@@ -453,6 +437,65 @@ export const getPostComments = async (postId: string, lastDoc: any = null) => {
     } catch (error) {
         console.error("Error getting comments: ", error);
         return { comments: [], lastDoc: null };
+    }
+};
+
+export const getRecentCommentsOnUserPosts = async (userId: string, limitCount: number = 10) => {
+    try {
+        // 1. Get user's recent posts
+        const posts = await getUserPosts(userId, 10);
+        if (posts.length === 0) return [];
+
+        // 2. Fetch recent comments for these posts
+        // We have to query individually or use 'in' if posts < 10 (firebase limit is 10 for 'in' usually 30)
+        // Best approach for now: Promise.all of getPostComments, but optimized.
+
+        const commentsPromises = posts.map(async (post) => {
+            if (!post.id) return [];
+            // We only want comments NOT by the author (notifications)
+            const q = query(
+                collection(db, COMMENTS_COLLECTION),
+                where("postId", "==", post.id),
+                where("userId", "!=", userId), // Check index support for this
+                orderBy("userId"), // Firestore requires orderBy on inequity filter field
+                orderBy("createdAt", "desc"),
+                limit(5)
+            );
+
+            // If the complex query fails due to index, fallback to creating it or simple query
+            try {
+                const snapshot = await getDocs(q);
+                return snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data(),
+                    postTitle: post.content.substring(0, 30) // Pass context
+                }));
+            } catch (e) {
+                // Fallback: fetch all and filter
+                const simpleQ = query(
+                    collection(db, COMMENTS_COLLECTION),
+                    where("postId", "==", post.id),
+                    orderBy("createdAt", "desc"),
+                    limit(10)
+                );
+                const snap = await getDocs(simpleQ);
+                return snap.docs
+                    .map(doc => ({ id: doc.id, ...doc.data(), postTitle: post.content.substring(0, 30) }))
+                    .filter((c: any) => c.userId !== userId);
+            }
+        });
+
+        const commentsArrays = await Promise.all(commentsPromises);
+        const allComments = commentsArrays.flat();
+
+        // 3. Sort by createdAt desc
+        return allComments.sort((a: any, b: any) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        ).slice(0, limitCount);
+
+    } catch (e) {
+        console.error("Error fetching comments on user posts:", e);
+        return [];
     }
 };
 
@@ -708,6 +751,8 @@ export const getContactMessages = async () => {
 
 const USERS_COLLECTION = "users";
 
+import { getLevel } from "./gamification";
+
 export interface UserProfile {
     id: string;
     email: string;
@@ -715,6 +760,8 @@ export interface UserProfile {
     photoURL?: string;
     createdAt?: string;
     lastLogin?: string;
+    xp?: number;
+    level?: number;
 }
 
 export const syncUser = async (user: any) => {
@@ -730,19 +777,63 @@ export const syncUser = async (user: any) => {
                 displayName: user.displayName || '',
                 photoURL: user.photoURL || '',
                 createdAt: new Date().toISOString(),
-                lastLogin: new Date().toISOString()
+                lastLogin: new Date().toISOString(),
+                xp: 0,
+                level: 1
             });
         } else {
-            // Update last login
+            // Update last login & ensure XP/Level exist
+            const data = userDoc.data();
             await updateDoc(userRef, {
                 lastLogin: new Date().toISOString(),
-                email: user.email, // Sync these just in case
-                displayName: user.displayName || userDoc.data().displayName,
-                photoURL: user.photoURL || userDoc.data().photoURL
+                email: user.email,
+                displayName: user.displayName || data.displayName,
+                photoURL: user.photoURL || data.photoURL,
+                xp: data.xp || 0,
+                level: data.level || 1
             });
         }
     } catch (e) {
         console.error("Error syncing user:", e);
+    }
+};
+
+export const addUserXP = async (userId: string, amount: number, source: string = 'Activity') => {
+    try {
+        const userRef = doc(db, USERS_COLLECTION, userId);
+
+        await runTransaction(db, async (transaction) => {
+            const userDoc = await transaction.get(userRef);
+            if (!userDoc.exists()) throw new Error("User does not exist");
+
+            const currentXP = userDoc.data().xp || 0;
+            const currentLevel = userDoc.data().level || 1;
+
+            const newXP = currentXP + amount;
+            const newLevelInfo = getLevel(newXP);
+
+            transaction.update(userRef, {
+                xp: newXP,
+                level: newLevelInfo.level
+            });
+
+            // Dispatch event for UI feedback
+            if (typeof window !== 'undefined') {
+                const eventDetail: any = {
+                    amount: amount,
+                    source: source,
+                    newLevel: newLevelInfo.level > currentLevel ? newLevelInfo.level : undefined,
+                    newTitle: newLevelInfo.level > currentLevel ? newLevelInfo.title : undefined
+                };
+                window.dispatchEvent(new CustomEvent('xp-gained', { detail: eventDetail }));
+            }
+
+            if (newLevelInfo.level > currentLevel) {
+                console.log(`User ${userId} leveled up to ${newLevelInfo.level}!`);
+            }
+        });
+    } catch (e) {
+        console.error("Error adding XP:", e);
     }
 };
 
@@ -808,4 +899,97 @@ export const subscribeToVisitorCount = (callback: (count: number) => void) => {
     }, (error) => {
         console.error("Error subscribing to visitor count:", error);
     });
+};
+
+export const incrementUserDownload = async (userId: string) => {
+    try {
+        const userRef = doc(db, USERS_COLLECTION, userId);
+        await updateDoc(userRef, {
+            downloadsCount: increment(1)
+        });
+    } catch (e) {
+        console.error("Error incrementing user downloads:", e);
+    }
+};
+
+export const getUserReviewCount = async (userId: string) => {
+    try {
+        const q = query(collection(db, REVIEWS_COLLECTION), where("userId", "==", userId));
+        // Use count() for efficiency
+        const snapshot = await getCountFromServer(q);
+        return snapshot.data().count;
+    } catch (e) {
+        console.error("Error fetching user review count:", e);
+        return 0;
+    }
+};
+
+export const getUserTotalLikes = async (userId: string) => {
+    try {
+        // Sum likes from posts
+        const postsQ = query(collection(db, POSTS_COLLECTION), where("userId", "==", userId));
+        const postsSnap = await getDocs(postsQ);
+        let totalLikes = 0;
+        postsSnap.forEach(doc => {
+            const data = doc.data();
+            if (data.likes && Array.isArray(data.likes)) {
+                totalLikes += data.likes.length;
+            }
+        });
+        return totalLikes;
+    } catch (e) {
+        console.error("Error fetching user total likes:", e);
+        return 0;
+    }
+};
+
+export const getUserPosts = async (userId: string, limitCount: number = 20) => {
+    try {
+        const q = query(
+            collection(db, POSTS_COLLECTION),
+            where("userId", "==", userId),
+            orderBy("createdAt", "desc"),
+            limit(limitCount)
+        );
+        const snapshot = await getDocs(q);
+        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Post));
+    } catch (e) {
+        console.error("Error fetching user posts:", e);
+        try {
+            // Fallback
+            const q = query(collection(db, POSTS_COLLECTION), where("userId", "==", userId), limit(limitCount));
+            const snapshot = await getDocs(q);
+            // Client side sort
+            return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Post))
+                .sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        } catch (e2) {
+            return [];
+        }
+    }
+}
+
+export const getUserReviews = async (userId: string, limitCount: number = 20) => {
+    try {
+        const q = query(
+            collection(db, REVIEWS_COLLECTION),
+            where("userId", "==", userId),
+            orderBy("createdAt", "desc"),
+            limit(limitCount)
+        );
+        const snapshot = await getDocs(q);
+        const reviews = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Review));
+
+        return reviews.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    } catch (e) {
+        console.error("Error fetching user reviews:", e);
+        try {
+            // Fallback attempt without orderBy
+            const q = query(collection(db, REVIEWS_COLLECTION), where("userId", "==", userId), limit(limitCount));
+            const snapshot = await getDocs(q);
+            const reviews = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Review));
+            return reviews.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        } catch (e2) {
+            return [];
+        }
+    }
 };

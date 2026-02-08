@@ -129,6 +129,17 @@ export default function PostCard({ post }: PostCardProps) {
         };
     }, []);
 
+    // Check for hash to auto-open comments (Instagram style deep linking)
+    useEffect(() => {
+        if (typeof window !== 'undefined' && window.location.hash === `#${post.id}`) {
+            setShowComments(true);
+            // Optional: Scroll into view smoothly after a short delay to ensure rendering
+            setTimeout(() => {
+                document.getElementById(post.id!)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 500);
+        }
+    }, [post.id]);
+
     // Sync local state with prop when it updates
     useEffect(() => {
         setCommentCount(post.commentCount || 0);
@@ -205,6 +216,7 @@ export default function PostCard({ post }: PostCardProps) {
 
     return (
         <motion.div
+            id={post.id}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="bg-[#121212] border border-white/5 rounded-2xl overflow-hidden hover:border-white/10 transition-all relative"

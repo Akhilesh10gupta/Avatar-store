@@ -20,7 +20,7 @@ export default function Signup() {
 
     const router = useRouter();
     const searchParams = useSearchParams();
-    const redirectPath = searchParams.get('redirect') || '/admin';
+    const redirectPath = searchParams.get('redirect') || '/profile';
 
     const sendWelcomeEmail = async (userEmail: string) => {
         try {

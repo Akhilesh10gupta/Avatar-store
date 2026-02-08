@@ -265,7 +265,7 @@ export default async function GameDetails({ params }: { params: Promise<{ id: st
             }
 
             {/* User Reviews */}
-            <section className="bg-card rounded-2xl p-8 border border-border/50">
+            <section id="reviews" className="bg-card rounded-2xl p-8 border border-border/50">
                 <ReviewSection gameId={game.id!} />
             </section>
         </div>

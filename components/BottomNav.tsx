@@ -12,7 +12,7 @@ export default function BottomNav() {
     const { user } = useAuth();
 
     // Determine profile link based on auth state
-    const profileLink = user ? '/admin' : '/login';
+    const profileLink = user ? '/profile' : '/login';
 
     const navItems = [
         {

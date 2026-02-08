@@ -5,7 +5,7 @@ import { getGames, deleteGame, getUserGames, getUserPosts, Game, Post } from '@/
 import { Button } from '@/components/ui/Button';
 import Link from 'next/link';
 import PostCard from '@/components/PostCard';
-import { Plus, Pencil, Trash2, ExternalLink, Heart, MessageCircle, Gamepad2, Grid, LayoutGrid, LogOut, X } from 'lucide-react';
+import { Plus, Pencil, Trash2, ExternalLink, Heart, MessageCircle, Gamepad2, Grid, LayoutGrid, LogOut, X, User as UserIcon } from 'lucide-react';
 import Image from 'next/image';
 import ProfileManager from '@/components/ProfileManager';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -103,10 +103,16 @@ export default function AdminDashboard() {
             <div>
                 <div className="mb-6">
                     <Button variant="ghost" onClick={() => setShowSettings(false)} className="pl-0 hover:bg-transparent">
-                        ← Back to Profile
+                        ← Back to Dashboard
                     </Button>
                 </div>
-                <ProfileManager />
+                <div className="bg-card border border-border rounded-xl p-6">
+                    <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
+                        <UserIcon className="w-5 h-5 text-primary" />
+                        Profile Settings
+                    </h2>
+                    <ProfileManager />
+                </div>
             </div>
         );
     }
@@ -114,14 +120,14 @@ export default function AdminDashboard() {
     return (
         <div>
             {/* CYBER/GAMING PROFILE HEADER */}
-            <div className="relative overflow-hidden rounded-3xl bg-black/40 border border-white/10 p-6 md:p-10 mb-8 md:mb-12 backdrop-blur-md animate-in fade-in slide-in-from-top-4 group">
+            <div className="relative overflow-hidden rounded-3xl bg-black/40 border border-white/10 p-4 md:p-10 mb-8 md:mb-12 backdrop-blur-md animate-in fade-in slide-in-from-top-4 group">
                 {/* Grid Background Effect */}
                 <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
 
                 {/* Ambient Glow */}
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-lg h-32 bg-primary/20 blur-[100px] rounded-full pointer-events-none" />
 
-                <div className="relative flex flex-col md:flex-row items-center gap-8 md:gap-12">
+                <div className="relative flex flex-col md:flex-row items-center gap-6 md:gap-12">
 
                     {/* CYBER CIRCLE AVATAR */}
                     <div className="relative shrink-0 group/avatar">
@@ -129,7 +135,7 @@ export default function AdminDashboard() {
                         <div className="absolute -inset-2 border border-primary/40 border-t-primary border-r-primary rounded-full animate-spin-slow pointer-events-none" style={{ animationDuration: '6s' }} />
                         <div className="absolute -inset-1 border border-white/20 rounded-full pointer-events-none" />
 
-                        <div className="relative w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden border-2 border-primary/50 box-content shadow-[0_0_20px_rgba(var(--primary-rgb),0.5)] bg-zinc-900 z-10">
+                        <div className="relative w-24 h-24 md:w-40 md:h-40 rounded-full overflow-hidden border-2 border-primary/50 box-content shadow-[0_0_20px_rgba(var(--primary-rgb),0.5)] bg-zinc-900 z-10">
                             {user.photoURL ? (
                                 <Image
                                     src={user.photoURL}
@@ -139,13 +145,13 @@ export default function AdminDashboard() {
                                 />
                             ) : (
                                 <div className="w-full h-full flex items-center justify-center bg-zinc-800 text-white">
-                                    <span className="text-4xl md:text-5xl font-bold">{(user.displayName || '?').charAt(0).toUpperCase()}</span>
+                                    <span className="text-3xl md:text-5xl font-bold">{(user.displayName || '?').charAt(0).toUpperCase()}</span>
                                 </div>
                             )}
                         </div>
 
                         {/* Status Badge */}
-                        <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 py-1 px-4 bg-primary text-white border border-primary/50 rounded-full text-[10px] font-black uppercase tracking-widest shadow-[0_0_15px_rgba(var(--primary-rgb),0.6)] z-20">
+                        <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 py-1 px-3 md:px-4 bg-primary text-white border border-primary/50 rounded-full text-[8px] md:text-[10px] font-black uppercase tracking-widest shadow-[0_0_15px_rgba(var(--primary-rgb),0.6)] z-20">
                             Creator
                         </div>
                     </div>
@@ -162,32 +168,40 @@ export default function AdminDashboard() {
                         </div>
 
                         {/* HUD Stats Row */}
-                        <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 mb-8 w-full">
-                            <div className="flex flex-col items-center justify-center min-w-[100px] p-3 rounded-2xl bg-white/5 border border-white/10 hover:border-primary/50 hover:bg-white/10 transition-all group/stat">
-                                <span className="text-2xl font-bold text-white group-hover/stat:text-primary transition-colors">{games.length}</span>
+                        <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 md:gap-4 mb-8 w-full">
+                            <div className="flex flex-col items-center justify-center min-w-[80px] md:min-w-[100px] p-2 md:p-3 rounded-2xl bg-white/5 border border-white/10 hover:border-primary/50 hover:bg-white/10 transition-all group/stat">
+                                <span className="text-xl md:text-2xl font-bold text-white group-hover/stat:text-primary transition-colors">{games.length}</span>
                                 <span className="text-[10px] uppercase tracking-wider text-muted-foreground">Games</span>
                             </div>
                             <div className="w-px h-10 bg-white/10 hidden md:block" />
-                            <div className="flex flex-col items-center justify-center min-w-[100px] p-3 rounded-2xl bg-white/5 border border-white/10 hover:border-pink-500/50 hover:bg-white/10 transition-all group/stat">
-                                <span className="text-2xl font-bold text-white group-hover/stat:text-pink-500 transition-colors">{posts.length}</span>
+                            <div className="flex flex-col items-center justify-center min-w-[80px] md:min-w-[100px] p-2 md:p-3 rounded-2xl bg-white/5 border border-white/10 hover:border-pink-500/50 hover:bg-white/10 transition-all group/stat">
+                                <span className="text-xl md:text-2xl font-bold text-white group-hover/stat:text-pink-500 transition-colors">{posts.length}</span>
                                 <span className="text-[10px] uppercase tracking-wider text-muted-foreground">Posts</span>
                             </div>
                         </div>
 
                         {/* Action Buttons */}
-                        <div className="flex items-center gap-3 w-full md:w-auto mt-2">
-                            <Button className="flex-1 md:flex-none h-11 px-6 font-bold bg-primary text-white hover:bg-primary/90 rounded-xl shadow-[0_0_20px_rgba(var(--primary-rgb),0.4)] hover:shadow-[0_0_30px_rgba(var(--primary-rgb),0.6)] transition-all whitespace-nowrap" onClick={() => setShowSettings(true)}>
-                                <Pencil className="w-4 h-4 mr-2" />
-                                Edit Profile
-                            </Button>
-                            <Button variant="secondary" className="flex-1 md:flex-none h-11 px-6 font-bold bg-white/5 text-white border border-white/10 hover:bg-white/10 hover:border-white/30 rounded-xl whitespace-nowrap" onClick={async () => {
-                                const { auth } = await import('@/lib/firebase');
-                                auth.signOut();
-                                window.location.href = '/login';
-                            }}>
-                                <LogOut className="w-4 h-4 mr-2" />
-                                Logout
-                            </Button>
+                        <div className="flex flex-col md:flex-row items-stretch md:items-center gap-3 w-full md:w-auto mt-2">
+                            <Link href="/profile" className="w-full md:w-auto">
+                                <Button variant="outline" className="w-full md:w-auto h-11 px-6 font-bold bg-white/5 text-white border border-white/10 hover:bg-white/10 hover:border-white/30 rounded-xl whitespace-nowrap">
+                                    <UserIcon className="w-4 h-4 mr-2" />
+                                    View Profile
+                                </Button>
+                            </Link>
+                            <div className="flex gap-3 w-full md:w-auto">
+                                <Button className="flex-1 md:flex-none h-11 px-6 font-bold bg-primary text-white hover:bg-primary/90 rounded-xl shadow-[0_0_20px_rgba(var(--primary-rgb),0.4)] hover:shadow-[0_0_30px_rgba(var(--primary-rgb),0.6)] transition-all whitespace-nowrap" onClick={() => setShowSettings(true)}>
+                                    <Pencil className="w-4 h-4 mr-2" />
+                                    Edit
+                                </Button>
+                                <Button variant="secondary" className="flex-1 md:flex-none h-11 px-6 font-bold bg-white/5 text-white border border-white/10 hover:bg-white/10 hover:border-white/30 rounded-xl whitespace-nowrap" onClick={async () => {
+                                    const { auth } = await import('@/lib/firebase');
+                                    auth.signOut();
+                                    window.location.href = '/login';
+                                }}>
+                                    <LogOut className="w-4 h-4 mr-2" />
+                                    Logout
+                                </Button>
+                            </div>
                         </div>
                     </div>
                 </div>
