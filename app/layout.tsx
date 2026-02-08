@@ -57,12 +57,26 @@ export const metadata: Metadata = {
   verification: {
     google: 'AzH2NAZjJGFIpoQRb25deOZhMGR0RRCKiDc4W18mChE',
   },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Avatar Play",
+  },
+  formatDetection: {
+    telephone: false,
+  },
 }
 
+export const viewport = {
+  themeColor: "#050505",
+};
+
 import { AuthProvider } from '@/components/AuthProvider'
+import { InstallProvider } from '@/components/InstallProvider'
 
 import Footer from '@/components/Footer'
 import BottomNav from '@/components/BottomNav'
+import InstallPrompt from '@/components/InstallPrompt'
 
 export default function RootLayout({
   children,
@@ -89,12 +103,15 @@ export default function RootLayout({
           }}
         />
         <AuthProvider>
-          <Navbar />
-          <main className="flex-grow container mx-auto px-4 py-8">
-            {children}
-          </main>
-          <Footer />
-          <BottomNav />
+          <InstallProvider>
+            <Navbar />
+            <main className="flex-grow container mx-auto px-4 py-8">
+              {children}
+            </main>
+            <Footer />
+            <BottomNav />
+            <InstallPrompt />
+          </InstallProvider>
         </AuthProvider>
       </body>
     </html>

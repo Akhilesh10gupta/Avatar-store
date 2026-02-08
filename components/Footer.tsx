@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { Gamepad2, Twitter, Facebook, Instagram, Youtube, Mail, ArrowRight, Users } from 'lucide-react';
 import { useState } from 'react';
 import VisitorCounter from './VisitorCounter';
+import { useInstall } from './InstallProvider';
 
 export default function Footer() {
     const [email, setEmail] = useState('');
@@ -106,6 +107,7 @@ export default function Footer() {
                                     </Link>
                                 </li>
                             ))}
+                            <InstallFooterButton />
                         </ul>
                     </div>
 
@@ -172,5 +174,26 @@ export default function Footer() {
                 </div>
             </div>
         </footer>
+    );
+}
+
+function InstallFooterButton() {
+    const { isInstallable, handleInstallClick } = useInstall();
+
+    if (!isInstallable) return null;
+
+    return (
+        <li>
+            <button
+                onClick={handleInstallClick}
+                className="hover:text-white transition-all duration-300 flex items-center gap-2 group hover:translate-x-1 w-full text-left"
+            >
+                <span className="w-1.5 h-1.5 rounded-full bg-white/10 group-hover:bg-primary group-hover:shadow-[0_0_10px_currentColor] transition-all"></span>
+                <span className="flex items-center gap-2">
+                    <Gamepad2 className="w-4 h-4 text-primary" />
+                    Install App
+                </span>
+            </button>
+        </li>
     );
 }
