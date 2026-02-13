@@ -24,14 +24,40 @@ export default function CommunityFeed() {
     const [isCheckingSafety, setIsCheckingSafety] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
+    // Pagination State
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(true);
+    const POSTS_PER_PAGE = 10;
+
     useEffect(() => {
-        loadPosts();
+        loadPosts(true);
     }, []);
 
-    const loadPosts = async () => {
-        const fetchedPosts = await getPostsAction();
-        setPosts(fetchedPosts);
-        setLoading(false);
+    const loadPosts = async (reset: boolean = false) => {
+        if (reset) {
+            setLoading(true);
+            setPage(1); // Reset page state
+        }
+
+        const currentPage = reset ? 1 : page + 1;
+        const fetchedPosts = await getPostsAction(currentPage, POSTS_PER_PAGE);
+
+        if (reset) {
+            setPosts(fetchedPosts);
+            setHasMore(fetchedPosts.length === POSTS_PER_PAGE);
+            setLoading(false);
+        } else {
+            setPosts(prev => [...prev, ...fetchedPosts]);
+            setHasMore(fetchedPosts.length === POSTS_PER_PAGE);
+            // Only update page if we successfully fetched more
+            if (fetchedPosts.length > 0) {
+                setPage(currentPage);
+            }
+        }
+    };
+
+    const handleLoadMore = () => {
+        loadPosts(false);
     };
 
     const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -58,7 +84,6 @@ export default function CommunityFeed() {
         setImageUrls([]);
         if (fileInputRef.current) fileInputRef.current.value = '';
     };
-
 
     const handleCreatePost = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -114,7 +139,7 @@ export default function CommunityFeed() {
 
             setNewPostContent('');
             clearMedia();
-            await loadPosts(); // Refresh feed
+            await loadPosts(true); // Refresh feed and reset pagination
         } catch (error) {
             console.error("Failed to create post:", error);
             alert("Failed to create post. Please try again.");
@@ -123,7 +148,7 @@ export default function CommunityFeed() {
         }
     };
 
-    if (loading) {
+    if (loading && page === 1) {
         return (
             <div className="py-12">
                 <GameLoader />
@@ -133,8 +158,6 @@ export default function CommunityFeed() {
 
     return (
         <div className="max-w-2xl mx-auto space-y-4">
-
-
             {/* Create Post Widget */}
             <div className="bg-[#121212] border border-white/5 rounded-2xl p-4 md:p-6 shadow-xl">
                 {user ? (
@@ -256,6 +279,25 @@ export default function CommunityFeed() {
                     <PostCard key={post.id} post={post} />
                 ))}
             </div>
+
+            {/* Load More Button */}
+            {!loading && hasMore && (
+                <div className="flex justify-center pt-4 pb-8">
+                    <Button
+                        variant="outline"
+                        onClick={handleLoadMore}
+                        className="min-w-[150px]"
+                    >
+                        Load More
+                    </Button>
+                </div>
+            )}
+
+            {!loading && !hasMore && posts.length > 0 && (
+                <div className="text-center text-muted-foreground text-sm py-8">
+                    You've reached the end.
+                </div>
+            )}
         </div>
     );
 }

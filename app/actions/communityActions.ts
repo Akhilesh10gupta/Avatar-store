@@ -17,13 +17,18 @@ const sanitizeDoc = (doc: any) => {
 
 // --- Posts ---
 
-export async function getPostsAction() {
+export async function getPostsAction(page: number = 1, limit: number = 10) {
     try {
         const snapshot = await adminDb.collection("posts").get();
         const posts = snapshot.docs.map(doc => sanitizeDoc(doc) as Post);
 
         // Sort in-memory: Newest first
-        return posts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        posts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+        // Pagination (slice)
+        const startIndex = (page - 1) * limit;
+        const endIndex = startIndex + limit;
+        return posts.slice(startIndex, endIndex);
     } catch (error) {
         console.error("Error fetching posts:", error);
         return [];
