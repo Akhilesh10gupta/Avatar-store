@@ -5,7 +5,7 @@ import { useAuth } from '@/components/AuthProvider';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Bot, User, Send, MessageSquare, CheckCircle, HelpCircle, Mail, ChevronRight } from 'lucide-react';
-import { addContactMessage } from '@/lib/firestore';
+import { submitContactMessageAction } from '@/app/actions/contactActions';
 
 // --- Support Bot Logic ---
 
@@ -221,7 +221,7 @@ export default function ContactPage() {
         e.preventDefault();
         setFormLoading(true);
         try {
-            await addContactMessage({ name, email, subject, message });
+            await submitContactMessageAction({ name, email, subject, message });
             setFormSuccess(true);
             setMessages(prev => [...prev, {
                 id: Date.now().toString(),

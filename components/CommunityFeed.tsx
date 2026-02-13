@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { getPosts, addPost, Post } from '@/lib/firestore';
+import { getPostsAction, addPostAction } from '@/app/actions/communityActions';
+import { Post } from '@/lib/firestore';
 import PostCard from './PostCard';
 import { Plus, UserCircle, Image as ImageIcon, Loader2, Link as LinkIcon, X, ShieldCheck, Send } from 'lucide-react';
 import { useAuth } from '@/components/AuthProvider';
@@ -28,7 +29,7 @@ export default function CommunityFeed() {
     }, []);
 
     const loadPosts = async () => {
-        const fetchedPosts = await getPosts();
+        const fetchedPosts = await getPostsAction();
         setPosts(fetchedPosts);
         setLoading(false);
     };
@@ -86,7 +87,7 @@ export default function CommunityFeed() {
 
             const finalImageUrls = [...imageUrls, ...uploadedUrls];
 
-            await addPost({
+            await addPostAction({
                 userId: user.uid,
                 userName: user.displayName || 'Anonymous',
                 userAvatar: user.photoURL || null,

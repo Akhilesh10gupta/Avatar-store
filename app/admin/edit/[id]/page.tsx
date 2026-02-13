@@ -4,7 +4,8 @@ import GameForm from '@/components/GameForm';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState, use } from 'react';
-import { getGameById, Game } from '@/lib/firestore';
+import { getGameByIdAction } from '@/app/actions/gameActions';
+import { Game } from '@/lib/firestore';
 import { Loader2 } from 'lucide-react';
 
 export default function EditGamePage({ params }: { params: Promise<{ id: string }> }) {
@@ -14,7 +15,7 @@ export default function EditGamePage({ params }: { params: Promise<{ id: string 
 
     useEffect(() => {
         const fetchGame = async () => {
-            const data = await getGameById(id);
+            const data = await getGameByIdAction(id);
             setGame(data);
             setLoading(false);
         };

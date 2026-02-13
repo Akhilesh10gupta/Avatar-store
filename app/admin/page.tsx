@@ -1,7 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { getGames, deleteGame, getUserGames, getUserPosts, Game, Post } from '@/lib/firestore';
+import { Game, Post } from '@/lib/firestore';
+import { deleteGameAction, getUserGamesAction } from '@/app/actions/gameActions';
+import { getUserPostsAction, deletePostAction } from '@/app/actions/communityActions';
 import { Button } from '@/components/ui/Button';
 import Link from 'next/link';
 import PostCard from '@/components/PostCard';
@@ -33,8 +35,8 @@ export default function AdminDashboard() {
             if (user) {
                 try {
                     const [userGames, userPosts] = await Promise.all([
-                        getUserGames(user.uid),
-                        getUserPosts(user.uid)
+                        getUserGamesAction(user.uid),
+                        getUserPostsAction(user.uid)
                     ]);
                     setGames(userGames);
                     setPosts(userPosts);
@@ -74,7 +76,7 @@ export default function AdminDashboard() {
             await reauthenticateWithCredential(user, credential);
 
             // If auth successful, delete game
-            await deleteGame(gameToDelete.id);
+            await deleteGameAction(gameToDelete.id);
             setGames(prev => prev.filter(g => g.id !== gameToDelete.id));
             setGameToDelete(null); // Close modal
             alert("Game deleted successfully.");

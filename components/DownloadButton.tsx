@@ -1,7 +1,10 @@
 'use client';
 
 import { Button } from "@/components/ui/Button";
-import { incrementDownload, addUserXP, incrementUserDownload } from "@/lib/firestore";
+import { incrementDownloadAction } from "@/app/actions/gameActions";
+import { addUserXP, incrementUserDownload } from "@/lib/firestore"; // User stats might still be client-side allowed? Or need server action too?
+// User stats are likely in 'users' collection. Rules were "deny all". So these will fail too.
+// I need server actions for user stats too.
 import { Monitor, Smartphone } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
 
@@ -14,8 +17,8 @@ interface DownloadButtonProps {
 export default function DownloadButton({ gameId, href, platform }: DownloadButtonProps) {
     const { user } = useAuth();
 
-    const handleClick = () => {
-        incrementDownload(gameId);
+    const handleClick = async () => {
+        await incrementDownloadAction(gameId);
         if (user) {
             addUserXP(user.uid, 50, 'Download Game'); // 50 XP for download
             incrementUserDownload(user.uid);

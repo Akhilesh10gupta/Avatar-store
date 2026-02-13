@@ -3,7 +3,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@/components/AuthProvider';
 import { auth } from '@/lib/firebase';
-import { addComment, getPostComments, toggleLikeComment, Comment, deleteComment, updateComment } from '@/lib/firestore';
+import { addCommentAction, getPostCommentsAction, toggleLikeCommentAction, deleteCommentAction, updateCommentAction } from '@/app/actions/communityActions';
+import { Comment } from '@/lib/firestore';
 import { Button } from '@/components/ui/Button';
 import { Send, UserCircle, Heart, MessageCircle, CornerDownRight, MoreHorizontal, Pencil, Trash2 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
@@ -40,14 +41,14 @@ export default function CommentSection({ postId, postOwnerId, postOwnerAvatar, o
         if (!isInitial && !hasMore) return;
 
         // If initial load, start from null. Otherwise stick with current lastDoc
-        const currentLastDoc = isInitial ? null : lastDoc;
-        const { comments: newComments, lastDoc: newLastDoc } = await getPostComments(postId, currentLastDoc);
+        const currentLastDocId = isInitial ? undefined : lastDoc;
+        const { comments: newComments, lastDocId: newLastDocId } = await getPostCommentsAction(postId, currentLastDocId);
 
         if (newComments.length < 20) {
             setHasMore(false);
         }
 
-        setLastDoc(newLastDoc);
+        setLastDoc(newLastDocId);
         setComments(prev => isInitial ? newComments : [...prev, ...newComments]);
 
         if (onCommentsLoaded) {
@@ -77,7 +78,7 @@ export default function CommentSection({ postId, postOwnerId, postOwnerAvatar, o
         }));
 
         try {
-            await toggleLikeComment(commentId, user.uid);
+            await toggleLikeCommentAction(commentId, user.uid);
         } catch (error) {
             console.error("Failed to toggle like:", error);
             await loadComments(); // Revert on error
@@ -139,7 +140,7 @@ export default function CommentSection({ postId, postOwnerId, postOwnerAvatar, o
                 commentData.userAvatar = user.photoURL;
             }
 
-            await addComment(commentData);
+            await addCommentAction(commentData);
             console.log("Comment submitted successfully");
 
             if (parentId) {
@@ -167,7 +168,7 @@ export default function CommentSection({ postId, postOwnerId, postOwnerAvatar, o
         setComments(prev => prev.filter(c => c.id !== commentId));
 
         try {
-            await deleteComment(commentId, postId);
+            await deleteCommentAction(commentId, postId);
             if (onCommentsLoaded && comments.length > 0) onCommentsLoaded(comments.length - 1);
         } catch (error) {
             console.error("Failed to delete comment:", error);
@@ -188,7 +189,7 @@ export default function CommentSection({ postId, postOwnerId, postOwnerAvatar, o
                     : c
             ));
 
-            await updateComment(commentId, newContent);
+            await updateCommentAction(commentId, newContent);
         } catch (error) {
             console.error("Failed to update comment:", error);
             alert("Failed to update comment.");

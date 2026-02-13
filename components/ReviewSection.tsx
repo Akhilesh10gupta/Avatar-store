@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
-import { addReview, getGameReviews, updateReview, Review } from '@/lib/firestore';
+import { Review } from '@/lib/firestore';
+import { addReviewAction, getGameReviewsAction, updateReviewAction } from '@/app/actions/gameActions';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { useRouter, usePathname } from 'next/navigation';
@@ -26,7 +27,7 @@ export default function ReviewSection({ gameId }: { gameId: string }) {
         });
 
         // Fetch reviews
-        getGameReviews(gameId).then(fetchedReviews => {
+        getGameReviewsAction(gameId).then(fetchedReviews => {
             setReviews(fetchedReviews);
             setLoading(false);
         });
@@ -49,11 +50,11 @@ export default function ReviewSection({ gameId }: { gameId: string }) {
                 createdAt: new Date().toISOString()
             };
 
-            await addReview(reviewData);
+            await addReviewAction(reviewData);
             setNewReview('');
 
             // Refresh reviews
-            const updatedReviews = await getGameReviews(gameId);
+            const updatedReviews = await getGameReviewsAction(gameId);
             setReviews(updatedReviews);
         } catch (error) {
             console.error("Failed to post review:", error);
@@ -132,7 +133,7 @@ export default function ReviewSection({ gameId }: { gameId: string }) {
                             review={review}
                             currentUser={user}
                             onUpdate={async () => {
-                                const updatedReviews = await getGameReviews(gameId);
+                                const updatedReviews = await getGameReviewsAction(gameId);
                                 setReviews(updatedReviews);
                             }}
                         />
@@ -153,7 +154,7 @@ function ReviewItem({ review, currentUser, onUpdate }: { review: Review, current
         if (!review.id || !editContent.trim()) return;
         setIsSaving(true);
         try {
-            await updateReview(review.id, editContent.trim());
+            await updateReviewAction(review.id, editContent.trim());
             setIsEditing(false);
             onUpdate();
         } catch (error) {

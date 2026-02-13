@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Game, addGame, updateGame } from '@/lib/firestore';
+import { Game } from '@/lib/firestore';
+import { addGameAction, updateGameAction } from '@/app/actions/gameActions';
 import { uploadFile, uploadMultipleFiles } from '@/lib/storage';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -144,9 +145,9 @@ export default function GameForm({ initialData }: GameFormProps) {
             } as Game;
 
             if (initialData?.id) {
-                await updateGame(initialData.id, gameData);
+                await updateGameAction(initialData.id, gameData);
             } else {
-                await addGame(gameData);
+                await addGameAction(gameData);
             }
 
             router.push('/admin');

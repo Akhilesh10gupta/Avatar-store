@@ -1,4 +1,4 @@
-import { getGameById } from "@/lib/firestore";
+import { getGameByIdAdmin } from "@/lib/firestore-admin";
 import StarRating from "@/components/StarRating";
 import ReviewSection from "@/components/ReviewSection";
 import DownloadButton from "@/components/DownloadButton";
@@ -16,7 +16,7 @@ export const dynamic = 'force-dynamic';
 
 export default async function GameDetails({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
-    const game = await getGameById(id);
+    const game = await getGameByIdAdmin(id);
 
     if (!game) {
         return notFound();

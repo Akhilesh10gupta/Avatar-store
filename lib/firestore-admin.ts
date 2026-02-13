@@ -67,3 +67,19 @@ export const getMostDownloadedGamesAdmin = async () => {
         return [];
     }
 };
+
+export const getGameByIdAdmin = async (id: string) => {
+    try {
+        const doc = await adminDb.collection(GAMES_COLLECTION).doc(id).get();
+        if (doc.exists) {
+            return {
+                id: doc.id,
+                ...convertTimestamps(doc.data())
+            } as Game;
+        }
+        return null;
+    } catch (error) {
+        console.error(`Error fetching game ${id} (admin):`, error);
+        return null;
+    }
+};

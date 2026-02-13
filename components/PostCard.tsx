@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
-import { Post, toggleLikePost, deletePost, updatePost } from '@/lib/firestore';
+import { Post } from '@/lib/firestore';
+import { toggleLikePostAction, deletePostAction, updatePostAction } from '@/app/actions/communityActions';
 import { useAuth } from '@/components/AuthProvider';
 import { Heart, MessageCircle, UserCircle, Share2, MoreHorizontal, Pencil, Trash2, X, Check, Maximize2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
@@ -153,7 +154,7 @@ export default function PostCard({ post }: PostCardProps) {
         setLikeCount(prev => newIsLiked ? prev + 1 : prev - 1);
 
         try {
-            await toggleLikePost(post.id!, user.uid);
+            await toggleLikePostAction(post.id!, user.uid);
         } catch (error) {
             console.error("Error toggling like:", error);
             setIsLiked(!newIsLiked);
@@ -185,7 +186,7 @@ export default function PostCard({ post }: PostCardProps) {
 
         setIsDeleting(true);
         try {
-            await deletePost(post.id!);
+            await deletePostAction(post.id!);
             setIsDeleted(true); // Hide the card
         } catch (error) {
             console.error("Error deleting post:", error);
@@ -199,7 +200,7 @@ export default function PostCard({ post }: PostCardProps) {
 
         setIsSaving(true);
         try {
-            await updatePost(post.id!, editContent);
+            await updatePostAction(post.id!, editContent);
             setEditedContentDisplay(editContent);
             setUpdatedAtDisplay(new Date().toISOString());
             setIsEditing(false);

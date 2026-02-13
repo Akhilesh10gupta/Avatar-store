@@ -3,20 +3,14 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/components/AuthProvider';
 import {
-    getGames,
-    getAllGamesAdmin,
-    getContactMessages,
-    addSubscriber,
-    getSubscribers,
-    getAllUsers,
-    getPosts,
-    deleteGame,
-    deletePost,
-    Game,
-    ContactMessage,
-    UserProfile,
-    Post
-} from '@/lib/firestore';
+    getAllGamesAdminAction,
+    getContactMessagesAction,
+    getSubscribersAction,
+    getAllUsersAction
+} from '@/app/actions/adminActions';
+import { deleteGameAction } from '@/app/actions/gameActions';
+import { deletePostAction, getPostsAction } from '@/app/actions/communityActions';
+import { Game, ContactMessage, UserProfile, Post } from '@/lib/firestore';
 import { useRouter } from 'next/navigation';
 import { Monitor, Smartphone, Download, Star, Users, ArrowUpRight, ShieldAlert, Mail, User, Trash2 } from 'lucide-react';
 import Image from 'next/image';
@@ -29,11 +23,11 @@ const ADMIN_EMAILS = ['gakhilesh946@gmail.com'];
 export default function SuperAdminPage() {
     const { user, loading: authLoading } = useAuth();
     const router = useRouter();
-    const [games, setGames] = useState<Game[]>([]);
-    const [subscribers, setSubscribers] = useState<{ id: string, email: string, createdAt: string }[]>([]);
-    const [messages, setMessages] = useState<ContactMessage[]>([]);
-    const [users, setUsers] = useState<UserProfile[]>([]);
-    const [posts, setPosts] = useState<Post[]>([]);
+    const [games, setGames] = useState<any[]>([]);
+    const [subscribers, setSubscribers] = useState<any[]>([]);
+    const [messages, setMessages] = useState<any[]>([]);
+    const [users, setUsers] = useState<any[]>([]);
+    const [posts, setPosts] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 
     // Pagination State
@@ -64,11 +58,11 @@ export default function SuperAdminPage() {
             try {
                 // Parallel fetch
                 const [gamesData, subscribersData, messagesData, usersData, postsData] = await Promise.all([
-                    getAllGamesAdmin(),
-                    getSubscribers(),
-                    getContactMessages(),
-                    getAllUsers(),
-                    getPosts()
+                    getAllGamesAdminAction(),
+                    getSubscribersAction(),
+                    getContactMessagesAction(),
+                    getAllUsersAction(),
+                    getPostsAction()
                 ]);
 
                 setGames(gamesData);
@@ -78,9 +72,9 @@ export default function SuperAdminPage() {
                 setPosts(postsData);
 
                 // Calculate Stats
-                const totalDl = gamesData.reduce((acc, g) => acc + (g.downloadCount || 0), 0);
+                const totalDl = gamesData.reduce((acc: number, g: any) => acc + (g.downloadCount || 0), 0);
                 const avgR = gamesData.length > 0
-                    ? gamesData.reduce((acc, g) => acc + (g.rating || 0), 0) / gamesData.length
+                    ? gamesData.reduce((acc: number, g: any) => acc + (g.rating || 0), 0) / gamesData.length
                     : 0;
 
                 setStats({
@@ -108,7 +102,7 @@ export default function SuperAdminPage() {
     const handleDeleteGame = async (id: string, title: string) => {
         if (confirm(`SUPER ADMIN ACTION:\nAre you sure you want to PERMANENTLY DELETE the game "${title}"? This cannot be undone.`)) {
             try {
-                await deleteGame(id);
+                await deleteGameAction(id);
                 setGames(prev => prev.filter(g => g.id !== id));
                 alert("Game deleted successfully.");
             } catch (e) {
@@ -121,7 +115,7 @@ export default function SuperAdminPage() {
     const handleDeletePost = async (id: string) => {
         if (confirm("SUPER ADMIN ACTION:\nAre you sure you want to delete this post?")) {
             try {
-                await deletePost(id);
+                await deletePostAction(id);
                 setPosts(prev => prev.filter(p => p.id !== id));
                 alert("Post deleted successfully.");
             } catch (e) {

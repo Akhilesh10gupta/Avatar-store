@@ -3,7 +3,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
-import { syncUser } from '@/lib/firestore'; // Import syncUser
+import { syncUserAction } from '@/app/actions/userActions'; // Import syncUserAction
 import GameLoader from './GameLoader';
 
 interface AuthContextType {
@@ -26,7 +26,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
             setUser(user);
             if (user) {
-                await syncUser(user);
+                await syncUserAction({
+                    uid: user.uid,
+                    email: user.email,
+                    displayName: user.displayName,
+                    photoURL: user.photoURL
+                });
             }
             setLoading(false);
         });

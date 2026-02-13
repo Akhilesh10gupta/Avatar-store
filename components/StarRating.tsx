@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Star } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { submitRating, getUserRating } from '@/lib/firestore';
+import { submitRatingAction, getUserRatingAction } from '@/app/actions/gameActions';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { useRouter, usePathname } from 'next/navigation';
@@ -35,7 +35,7 @@ export default function StarRating({ gameId, initialRating = 0, initialRatingCou
             setUser(currentUser);
             if (currentUser) {
                 try {
-                    const existingRating = await getUserRating(gameId, currentUser.uid);
+                    const existingRating = await getUserRatingAction(gameId, currentUser.uid);
                     if (existingRating !== null) {
                         setUserRating(existingRating);
                         setHasRated(true);
@@ -69,7 +69,7 @@ export default function StarRating({ gameId, initialRating = 0, initialRatingCou
             setUserRating(value);
             setHasRated(true);
 
-            await submitRating(gameId, user.uid, value);
+            await submitRatingAction(gameId, user.uid, value);
 
             if (onRate) onRate(newAverage);
         } catch (error) {
