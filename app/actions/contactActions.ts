@@ -4,7 +4,7 @@ import { adminDb } from "@/lib/firebase-admin";
 
 export async function submitContactMessageAction(messageDefault: any) {
     try {
-        await adminDb.collection("messages").add({
+        await adminDb.collection("contact_messages").add({
             ...messageDefault,
             createdAt: new Date(),
             read: false,
