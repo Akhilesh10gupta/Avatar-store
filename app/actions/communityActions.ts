@@ -117,7 +117,7 @@ export async function getPostCommentsAction(postId: string, lastDocId?: string) 
 
 export async function addCommentAction(comment: any) {
     try {
-        await adminDb.runTransaction(async (t) => {
+        const newCommentId = await adminDb.runTransaction(async (t) => {
             const commentRef = adminDb.collection("comments").doc();
             const postRef = adminDb.collection("posts").doc(comment.postId);
 
@@ -133,7 +133,11 @@ export async function addCommentAction(comment: any) {
             t.update(postRef, {
                 commentCount: FieldValue.increment(1)
             });
+
+            return commentRef.id;
         });
+
+        return newCommentId;
     } catch (error) {
         console.error("Error adding comment:", error);
         throw new Error("Failed to add comment");

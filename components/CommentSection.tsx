@@ -140,18 +140,41 @@ export default function CommentSection({ postId, postOwnerId, postOwnerAvatar, o
                 commentData.userAvatar = user.photoURL;
             }
 
-            await addCommentAction(commentData);
-            console.log("Comment submitted successfully");
+            const newCommentId = await addCommentAction(commentData);
+            console.log("Comment submitted successfully, ID:", newCommentId);
+
+            // Optimistic Update
+            const newCommentObj: Comment = {
+                id: newCommentId,
+                postId,
+                userId: user.uid,
+                userName: user.displayName || 'Anonymous',
+                userAvatar: user.photoURL || undefined,
+                content: finalContent,
+                parentId: finalParentId || undefined,
+                createdAt: new Date().toISOString(),
+                likes: []
+            };
+
+            setComments(prev => [newCommentObj, ...prev]);
 
             if (parentId) {
                 setReplyContent('');
                 setReplyingTo(null);
+                // Manually expand the parent comment to show the new reply
+                if (finalParentId) {
+                    setExpandedComments(prev => {
+                        const newSet = new Set(prev);
+                        newSet.add(finalParentId!);
+                        return newSet;
+                    });
+                }
             } else {
                 setNewComment('');
             }
 
             if (onCommentAdded) onCommentAdded();
-            await loadComments();
+            // Don't call loadComments() to avoid overwriting our optimistic update or failing if !hasMore
         } catch (error) {
             console.error("Failed to post comment:", error);
             alert(`Failed to post comment. Please try again. Error: ${error}`);
