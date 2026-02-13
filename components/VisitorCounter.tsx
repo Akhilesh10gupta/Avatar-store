@@ -46,25 +46,30 @@ export default function VisitorCounter() {
     };
 
     useEffect(() => {
-        let unsubscribe: (() => void) | undefined;
+        let intervalId: NodeJS.Timeout;
 
         const initCounter = async () => {
             try {
-                const { subscribeToVisitorCount, incrementVisitorCount } = await import('@/lib/firestore');
+                // Dynamically import server actions to avoid build issues if wrapped oddly, though direct import is fine in Client Components usually if they are actions
+                const { getVisitorCountAction, incrementVisitorCountAction } = await import('@/app/actions/generalActions');
 
                 // 1. Check if new visitor and increment if needed
                 const hasVisited = sessionStorage.getItem('has_visited_site');
                 if (!hasVisited) {
-                    await incrementVisitorCount();
+                    await incrementVisitorCountAction();
                     sessionStorage.setItem('has_visited_site', 'true');
                 }
 
-                // 2. Subscribe to real-time updates
-                unsubscribe = subscribeToVisitorCount((realTimeCount) => {
-                    const totalCount = realTimeCount + 1500; // Add base offset
-                    setCount(totalCount);
-                    setIsLoading(false);
-                });
+                // 2. Fetch initial count
+                const count = await getVisitorCountAction();
+                setCount(count + 1500); // Add base offset
+                setIsLoading(false);
+
+                // 3. Simple polling for "live" updates (every 30s)
+                intervalId = setInterval(async () => {
+                    const latest = await getVisitorCountAction();
+                    setCount(latest + 1500);
+                }, 30000);
 
             } catch (error) {
                 console.error("Failed to init visitor counter:", error);
@@ -74,9 +79,9 @@ export default function VisitorCounter() {
 
         initCounter();
 
-        // Cleanup subscription on unmount
+        // Cleanup
         return () => {
-            if (unsubscribe) unsubscribe();
+            if (intervalId) clearInterval(intervalId);
         };
     }, []);
 
