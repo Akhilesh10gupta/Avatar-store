@@ -34,34 +34,13 @@ export default function ProfilePage() {
         const fetchUserData = async () => {
             if (user) {
                 try {
-                    const { db } = await import('@/lib/firebase');
-                    const { doc: firestoreDoc, getDoc: firestoreGetDoc } = await import('firebase/firestore');
-                    const { db: firestoreDb } = await import('@/lib/firebase');
+                    // Dynamically import server action
+                    const { getUserExtendedProfileAction } = await import('@/app/actions/userActions');
 
-                    const userRef = firestoreDoc(firestoreDb, 'users', user.uid);
-                    const userSnap = await firestoreGetDoc(userRef);
+                    const extendedProfile = await getUserExtendedProfileAction(user.uid);
 
-                    // Import new stats functions dynamically
-                    const { getUserReviewCount, getUserTotalLikes, getUserPosts, getUserReviews, getRecentCommentsOnUserPosts } = await import('@/lib/firestore');
-
-                    // Fetch all data in parallel with limits
-                    const [reviewsCount, totalLikes, recentPosts, recentReviews, recentCommentsOnPosts] = await Promise.all([
-                        getUserReviewCount(user.uid),
-                        getUserTotalLikes(user.uid),
-                        getUserPosts(user.uid, 10), // Limit to 10
-                        getUserReviews(user.uid, 10), // Limit to 10
-                        getRecentCommentsOnUserPosts(user.uid, 5) // Recent 5 comments on your posts
-                    ]);
-
-                    if (userSnap.exists()) {
-                        setUserProfile({
-                            ...userSnap.data(),
-                            reviewsCount,
-                            totalLikes,
-                            recentPosts,
-                            recentReviews,
-                            recentCommentsOnPosts
-                        });
+                    if (extendedProfile) {
+                        setUserProfile(extendedProfile);
                     }
                 } catch (e) {
                     console.error("Error fetching profile:", e);

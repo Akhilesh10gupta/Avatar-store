@@ -53,6 +53,21 @@ export default function ReviewSection({ gameId }: { gameId: string }) {
             await addReviewAction(reviewData);
             setNewReview('');
 
+            // Award XP
+            const { addUserXPAction } = await import('@/app/actions/userActions');
+            addUserXPAction(user.uid, 150).then((result: any) => {
+                if (result && typeof window !== 'undefined') {
+                    window.dispatchEvent(new CustomEvent('xp-gained', {
+                        detail: {
+                            amount: result.amount,
+                            source: 'Wrote Review',
+                            newLevel: result.newLevel,
+                            newTitle: result.newTitle
+                        }
+                    }));
+                }
+            });
+
             // Refresh reviews
             const updatedReviews = await getGameReviewsAction(gameId);
             setReviews(updatedReviews);

@@ -97,6 +97,21 @@ export default function CommunityFeed() {
                 createdAt: new Date().toISOString()
             });
 
+            // Award XP
+            const { addUserXPAction } = await import('@/app/actions/userActions');
+            addUserXPAction(user.uid, 50).then((result: any) => {
+                if (result && typeof window !== 'undefined') {
+                    window.dispatchEvent(new CustomEvent('xp-gained', {
+                        detail: {
+                            amount: result.amount,
+                            source: 'Created Post',
+                            newLevel: result.newLevel,
+                            newTitle: result.newTitle
+                        }
+                    }));
+                }
+            });
+
             setNewPostContent('');
             clearMedia();
             await loadPosts(); // Refresh feed

@@ -18,9 +18,20 @@ export default function DownloadButton({ gameId, href, platform }: DownloadButto
     const handleClick = async () => {
         await incrementDownloadAction(gameId);
         if (user) {
-            // Run in background to avoid blocking download
-            addUserXPAction(user.uid, 50);
+            // Run in background to avoid blocking download, but handle result for UI
             incrementUserDownloadAction(user.uid);
+            addUserXPAction(user.uid, 50).then((result: any) => {
+                if (result && typeof window !== 'undefined') {
+                    window.dispatchEvent(new CustomEvent('xp-gained', {
+                        detail: {
+                            amount: result.amount,
+                            source: 'Game Download',
+                            newLevel: result.newLevel,
+                            newTitle: result.newTitle
+                        }
+                    }));
+                }
+            });
         }
     };
 
