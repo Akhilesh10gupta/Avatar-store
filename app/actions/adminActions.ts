@@ -36,8 +36,15 @@ export async function getSubscribersAction() {
 
 export async function getContactMessagesAction() {
     try {
-        const snapshot = await adminDb.collection("contact_messages").orderBy("createdAt", "desc").get();
-        return snapshot.docs.map(doc => sanitize(doc));
+        const snapshot = await adminDb.collection("contact_messages").get(); // Remove orderBy to avoid index errors
+        const messages = snapshot.docs.map(doc => sanitize(doc));
+
+        // Sort in-memory: Newest first
+        return messages.sort((a: any, b: any) => {
+            const dateA = new Date(a.createdAt).getTime();
+            const dateB = new Date(b.createdAt).getTime();
+            return dateB - dateA;
+        });
     } catch (error) {
         console.error("Error fetching messages:", error);
         return [];
