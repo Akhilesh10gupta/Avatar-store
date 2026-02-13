@@ -2,7 +2,8 @@
 
 import { useEffect, useState, useMemo } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { getGames, Game } from '@/lib/firestore';
+import { Game } from '@/lib/firestore';
+import { fetchGamesAction } from '@/app/actions/gameActions';
 import GameCard from '@/components/GameCard';
 import GameLoader from '@/components/GameLoader';
 import { Search, X, Filter, SearchX } from 'lucide-react';
@@ -24,7 +25,7 @@ export default function BrowsePage() {
         const fetchGames = async () => {
             setLoading(true);
             try {
-                const allGames = await getGames();
+                const allGames = await fetchGamesAction();
                 setGames(allGames);
             } catch (error) {
                 console.error("Error fetching games:", error);

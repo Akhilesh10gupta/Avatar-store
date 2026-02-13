@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useState, useMemo } from 'react';
-import { getTopRatedGames, Game } from '@/lib/firestore';
+import { Game } from '@/lib/firestore';
+import { fetchTopRatedGamesAction } from '@/app/actions/gameActions';
 import GameCard from '@/components/GameCard';
 import GameLoader from '@/components/GameLoader';
 import { Trophy, Star, Search, X, SearchX } from 'lucide-react';
@@ -19,7 +20,7 @@ export default function TopRatedPage() {
         const fetchGames = async () => {
             setLoading(true);
             try {
-                const ratedGames = await getTopRatedGames();
+                const ratedGames = await fetchTopRatedGamesAction();
                 // Sync sorting with Home Page (Downloads -> Rating)
                 const sortedGames = [...ratedGames].sort((a, b) => {
                     const downloadsA = a.downloadCount || 0;

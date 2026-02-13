@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useState, useMemo } from 'react';
-import { getGames, Game } from '@/lib/firestore'; // getGames returns newest by default
+import { Game } from '@/lib/firestore'; // getGames returns newest by default
+import { fetchGamesAction } from '@/app/actions/gameActions';
 import GameCard from '@/components/GameCard';
 import GameLoader from '@/components/GameLoader';
 import { Sparkles, ArrowLeft, Search, X, SearchX } from 'lucide-react';
@@ -20,7 +21,7 @@ export default function NewArrivalsPage() {
             setLoading(true);
             try {
                 // getGames already fetches by createdAt desc
-                const allGames = await getGames();
+                const allGames = await fetchGamesAction();
                 setGames(allGames);
             } catch (error) {
                 console.error("Error fetching games:", error);

@@ -1,5 +1,5 @@
 import { MetadataRoute } from 'next'
-import { getGames } from '@/lib/firestore'
+import { getGamesAdmin } from '@/lib/firestore-admin'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const baseUrl = 'https://avatarplay.in'
@@ -31,7 +31,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // 2. Dynamic Game Routes
     let gameRoutes: MetadataRoute.Sitemap = []
     try {
-        const games = await getGames()
+        const games = await getGamesAdmin()
         gameRoutes = games.map((game) => ({
             url: `${baseUrl}/game/${game.id}`,
             lastModified: game.updatedAt ? new Date(game.updatedAt) : currentDate,

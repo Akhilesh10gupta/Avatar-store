@@ -1,5 +1,6 @@
 import Hero from "@/components/Hero";
 import { getGames, getTopRatedGames, getMostDownloadedGames, Game } from "@/lib/firestore";
+import { getGamesAdmin, getMostDownloadedGamesAdmin } from "@/lib/firestore-admin";
 import FeaturedGames from "@/components/FeaturedGames";
 import TopRatedGames from "@/components/TopRatedGames";
 
@@ -35,8 +36,8 @@ export default async function Home() {
 
   try {
     const [latest, popular] = await Promise.all([
-      getGames(),
-      getMostDownloadedGames()
+      getGamesAdmin(),
+      getMostDownloadedGamesAdmin()
     ]);
     games = latest;
     popularGames = popular;
