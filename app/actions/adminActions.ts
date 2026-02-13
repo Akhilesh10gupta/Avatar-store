@@ -54,7 +54,14 @@ export async function getContactMessagesAction() {
 export async function getAllUsersAction() {
     try {
         const snapshot = await adminDb.collection("users").get();
-        return snapshot.docs.map(doc => sanitize(doc));
+        const users = snapshot.docs.map(doc => sanitize(doc));
+
+        // Sort in-memory: Recent login first
+        return users.sort((a: any, b: any) => {
+            const dateA = a.lastLogin ? new Date(a.lastLogin).getTime() : 0;
+            const dateB = b.lastLogin ? new Date(b.lastLogin).getTime() : 0;
+            return dateB - dateA;
+        });
     } catch (error) {
         console.error("Error fetching users:", error);
         return [];
