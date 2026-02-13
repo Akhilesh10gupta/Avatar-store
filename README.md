@@ -18,7 +18,7 @@ A premium, modern game distribution platform built with **Next.js 14**, **Tailwi
 *   **XP & Leveling System**: Earn XP by downloading games, writing reviews, and engaging with the community.
 *   **Interactive Profile**: Fully immersive **Cyber/Sci-Fi** profile page with holographic avatar, particle backgrounds, and glassmorphism UI.
 *   **Badges & Achievements**: Unlockable 3D-style badges for milestones (e.g., "Pioneer", "Critic", "Influencer").
-*   **Real-time Activity Feed**: deep-linked notification system for tracking comments, reviews, and posts..
+*   **Real-time Activity Feed**: deep-linked notification system for tracking comments, reviews, and posts.
 
 ### for Admins
 *   **Secure Dashboard**: Protected admin panel with Firebase Authentication.
