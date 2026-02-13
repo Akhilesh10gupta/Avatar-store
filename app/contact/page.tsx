@@ -250,7 +250,7 @@ export default function ContactPage() {
                 <div className={`flex flex-col lg:flex-row gap-8 items-start justify-center transition-all duration-500`}>
 
                     {/* Chat Bot Window */}
-                    <div className={`w-full transition-all duration-500 bg-card border border-white/10 rounded-2xl overflow-hidden flex flex-col h-[600px] shadow-2xl ${showForm ? 'lg:w-1/3 opacity-80 hover:opacity-100' : 'lg:max-w-2xl lg:mx-auto'
+                    <div className={`w-full transition-all duration-500 bg-card border border-white/10 rounded-2xl overflow-hidden flex flex-col h-[600px] shadow-2xl ${(showForm || formSuccess) ? 'lg:w-1/3 opacity-80 hover:opacity-100' : 'lg:max-w-2xl lg:mx-auto'
                         }`}>
                         {/* Bot Header */}
                         <div className="bg-white/5 p-4 border-b border-white/10 flex items-center gap-3 shrink-0">
