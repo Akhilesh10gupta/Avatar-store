@@ -16,8 +16,18 @@ export default function Footer() {
 
         setStatus('loading');
         try {
-            const { addSubscriber } = await import('@/lib/firestore');
-            await addSubscriber(email);
+            const { subscribeAction } = await import('@/app/actions/generalActions');
+            const result = await subscribeAction(email);
+
+            if (!result.success) {
+                if (result.message === "Already subscribed") {
+                    setStatus('success');
+                    setEmail('');
+                    setTimeout(() => setStatus('idle'), 3000);
+                    return;
+                }
+                throw new Error(result.message);
+            }
 
             // Send welcome email
             await fetch('/api/send-email', {

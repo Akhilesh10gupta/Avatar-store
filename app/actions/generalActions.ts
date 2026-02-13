@@ -33,3 +33,26 @@ export async function incrementVisitorCountAction() {
         console.error("Error incrementing visitor count:", error);
     }
 }
+
+export async function subscribeAction(email: string) {
+    if (!email) return { success: false, message: "Email is required" };
+
+    try {
+        const subscribersRef = adminDb.collection("subscribers");
+        const existing = await subscribersRef.where("email", "==", email).get();
+
+        if (!existing.empty) {
+            return { success: true, message: "Already subscribed" }; // Treat as success to user
+        }
+
+        await subscribersRef.add({
+            email,
+            createdAt: new Date().toISOString()
+        });
+
+        return { success: true };
+    } catch (error) {
+        console.error("Subscription error:", error);
+        return { success: false, message: "Failed to subscribe" };
+    }
+}
