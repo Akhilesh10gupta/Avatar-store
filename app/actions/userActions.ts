@@ -43,3 +43,39 @@ export async function syncUserProfileAction(uid: string, data: { userName?: stri
         throw new Error("Failed to update profile");
     }
 }
+
+export async function incrementUserDownloadAction(uid: string) {
+    try {
+        const { FieldValue } = await import('firebase-admin/firestore');
+        await adminDb.collection("users").doc(uid).update({
+            downloads: FieldValue.increment(1)
+        });
+    } catch (error) {
+        console.error("Error incrementing user download:", error);
+    }
+}
+
+export async function addUserXPAction(uid: string, amount: number) {
+    try {
+        const userRef = adminDb.collection("users").doc(uid);
+        await adminDb.runTransaction(async (t) => {
+            const doc = await t.get(userRef);
+            if (!doc.exists) return;
+
+            const currentXP = doc.data()?.xp || 0;
+            const newXP = currentXP + amount;
+
+            // Simple level up logic: Level = 1 + floor(XP / 1000)
+            const newLevel = 1 + Math.floor(newXP / 1000);
+
+            t.update(userRef, {
+                xp: newXP,
+                level: newLevel
+            });
+        });
+    } catch (error) {
+        console.error("Error adding user XP:", error);
+    }
+}
+
+
