@@ -162,6 +162,7 @@ const docToGame = (doc: any): Game => {
         id: doc.id,
         ...data,
         createdAt: data.createdAt?.toDate ? data.createdAt.toDate().toISOString() : data.createdAt,
+        updatedAt: data.updatedAt?.toDate ? data.updatedAt.toDate().toISOString() : data.updatedAt,
     } as Game;
 };
 

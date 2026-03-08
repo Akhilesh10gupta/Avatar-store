@@ -102,11 +102,21 @@ export async function getUserExtendedProfileAction(uid: string) {
 
         // 2. Map & Sort In-Memory
         const reviews = reviewsSnap.docs
-            .map(doc => ({ id: doc.id, ...doc.data(), createdAt: doc.data().createdAt?.toDate ? doc.data().createdAt.toDate().toISOString() : doc.data().createdAt }))
+            .map(doc => ({ 
+                id: doc.id, 
+                ...doc.data(), 
+                createdAt: doc.data().createdAt?.toDate ? doc.data().createdAt.toDate().toISOString() : doc.data().createdAt,
+                updatedAt: doc.data().updatedAt?.toDate ? doc.data().updatedAt.toDate().toISOString() : doc.data().updatedAt 
+            }))
             .sort((a, b) => getDate(b.createdAt).getTime() - getDate(a.createdAt).getTime());
 
         const posts = postsSnap.docs
-            .map(doc => ({ id: doc.id, ...doc.data(), createdAt: doc.data().createdAt?.toDate ? doc.data().createdAt.toDate().toISOString() : doc.data().createdAt }))
+            .map(doc => ({ 
+                id: doc.id, 
+                ...doc.data(), 
+                createdAt: doc.data().createdAt?.toDate ? doc.data().createdAt.toDate().toISOString() : doc.data().createdAt,
+                updatedAt: doc.data().updatedAt?.toDate ? doc.data().updatedAt.toDate().toISOString() : doc.data().updatedAt 
+            }))
             .sort((a, b) => getDate(b.createdAt).getTime() - getDate(a.createdAt).getTime());
 
         // 3. Calculate Stats
@@ -140,7 +150,12 @@ export async function getUserExtendedProfileAction(uid: string) {
                     .get(); // No orderBy to avoid index
 
                 recentCommentsOnPosts = commentsOnPostsSnap.docs
-                    .map(doc => ({ id: doc.id, ...doc.data(), createdAt: doc.data().createdAt?.toDate ? doc.data().createdAt.toDate().toISOString() : doc.data().createdAt }))
+                    .map(doc => ({ 
+                        id: doc.id, 
+                        ...doc.data(), 
+                        createdAt: doc.data().createdAt?.toDate ? doc.data().createdAt.toDate().toISOString() : doc.data().createdAt,
+                        updatedAt: doc.data().updatedAt?.toDate ? doc.data().updatedAt.toDate().toISOString() : doc.data().updatedAt 
+                    }))
                     .filter((c: any) => c.userId !== uid) // Filter out self-comments
                     .sort((a, b) => getDate(b.createdAt).getTime() - getDate(a.createdAt).getTime())
                     .slice(0, 5);

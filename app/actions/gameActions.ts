@@ -179,6 +179,7 @@ export async function getUserGamesAction(userId: string) {
             id: doc.id,
             ...doc.data(),
             createdAt: (doc.data().createdAt?.toDate ? doc.data().createdAt.toDate().toISOString() : doc.data().createdAt) || new Date().toISOString(),
+            updatedAt: (doc.data().updatedAt?.toDate ? doc.data().updatedAt.toDate().toISOString() : doc.data().updatedAt),
         } as any));
 
         return games.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());

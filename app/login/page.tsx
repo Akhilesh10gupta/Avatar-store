@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
+import { signInWithEmailAndPassword, signInWithPopup, fetchSignInMethodsForEmail, linkWithCredential, OAuthProvider } from 'firebase/auth';
 import { auth, googleProvider } from '@/lib/firebase';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
@@ -22,6 +22,8 @@ export default function Login() {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [pendingCredential, setPendingCredential] = useState<any>(null);
+    const [pendingEmail, setPendingEmail] = useState('');
     const router = useRouter();
     const searchParams = useSearchParams();
     const redirectPath = searchParams.get('redirect') || '/profile';
@@ -91,19 +93,65 @@ export default function Login() {
                     return; // Redirecting...
                 } catch (redirectError: any) {
                     console.error("Redirect failed:", redirectError);
+                    if (redirectError.code === 'auth/account-exists-with-different-credential') {
+                        handleAccountExistsError(redirectError);
+                        return;
+                    }
                     setError(`Sign in failed: ${redirectError.message}`);
                 }
             }
         } catch (err: any) {
             console.error(err);
+            if (err.code === 'auth/account-exists-with-different-credential') {
+                handleAccountExistsError(err);
+                return;
+            }
             setError(`System error: ${err.message}`);
         } finally {
-            // Only stop loading if we didn't initiate a fallback redirect (if we returned early, we returned)
-            // But if we are here and redirecting, we want to keep loading state? 
-            // Actually, if signInWithRedirect succeeded, we "return" inside the try block above.
-            // If we are here, either everything finished (popup success) -> router push -> component unmount likely.
-            // Or both failed. Or popup closed. 
-            // So setting false here is safe for the "failure" or "popup closed" cases.
+            // Only stop loading if we didn't initiate a fallback redirect
+            if (!pendingCredential) {
+                setLoading(false);
+            }
+        }
+    };
+
+    const handleAccountExistsError = async (err: any) => {
+        const email = err.customData.email;
+        const credential = OAuthProvider.credentialFromError(err);
+        
+        if (email && credential) {
+            setPendingEmail(email);
+            setPendingCredential(credential);
+            setError(`An account already exists with ${email}. Please enter your password to link your Google account.`);
+        } else {
+            setError('Failed to link account. Please try logging in with your email and password.');
+        }
+    };
+
+    const handleLinkAccount = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setLoading(true);
+        setError('');
+
+        try {
+            // 1. Sign in with the existing email/password
+            const result = await signInWithEmailAndPassword(auth, pendingEmail, password);
+            
+            // 2. Link the pending Google credential
+            if (pendingCredential) {
+                await linkWithCredential(result.user, pendingCredential);
+                console.log("Accounts successfully linked!");
+            }
+            
+            router.push(redirectPath);
+        } catch (err: any) {
+            console.error("Error linking account:", err);
+            if (err.code === 'auth/wrong-password') {
+                setError('Incorrect password. Please try again.');
+            } else {
+                setError('Failed to link accounts. Please try logging in normally.');
+            }
+        } finally {
             setLoading(false);
         }
     };
@@ -179,6 +227,73 @@ export default function Login() {
                                 className="text-sm text-primary hover:underline"
                             >
                                 Back to Login
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        );
+    }
+
+    if (pendingCredential) {
+        return (
+            <div className="min-h-[80vh] flex items-center justify-center">
+                <div className="w-full max-w-md p-8 bg-card rounded-2xl border border-border shadow-2xl animate-in fade-in zoom-in-95 duration-300">
+                    <div className="flex flex-col items-center mb-8 space-y-2">
+                        <div className="bg-primary/20 p-3 rounded-full">
+                            <ShieldCheck className="w-8 h-8 text-primary" />
+                        </div>
+                        <h1 className="text-2xl font-bold">Link Account</h1>
+                        <p className="text-muted-foreground text-sm text-center">
+                            An account already exists with <strong>{pendingEmail}</strong>. Please enter your password to link your Google account.
+                        </p>
+                    </div>
+
+                    <form onSubmit={handleLinkAccount} className="space-y-4">
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium">Password</label>
+                            <div className="relative">
+                                <Input
+                                    type={showPassword ? "text" : "password"}
+                                    placeholder="••••••••"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    required
+                                    className="pr-10"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                                >
+                                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                </button>
+                            </div>
+                        </div>
+
+                        {error && (
+                            <div className="flex items-center gap-2 text-destructive text-sm bg-destructive/10 p-3 rounded-lg">
+                                <AlertCircle className="w-4 h-4" />
+                                {error}
+                            </div>
+                        )}
+
+                        <Button type="submit" className="w-full" isLoading={loading}>
+                            Link Accounts & Sign In
+                        </Button>
+
+                        <div className="text-center">
+                            <button
+                                type="button"
+                                onClick={() => { 
+                                    setPendingCredential(null); 
+                                    setPendingEmail(''); 
+                                    setError(''); 
+                                    setPassword('');
+                                }}
+                                className="text-sm text-primary hover:underline"
+                            >
+                                Cancel
                             </button>
                         </div>
                     </form>
