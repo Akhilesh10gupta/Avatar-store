@@ -190,7 +190,7 @@ function ReviewItem({ review, currentUser, onUpdate }: { review: Review, current
                     <UserCircle className="w-6 h-6 text-muted-foreground" />
                 )}
             </div>
-            <div className="flex-1 space-y-1">
+            <div className="flex-1 space-y-1 min-w-0">
                 <div className="flex items-center justify-between">
                     <h4 className="font-semibold text-sm">{review.userName}</h4>
                     <div className="flex items-center gap-2">
@@ -238,7 +238,7 @@ function ReviewItem({ review, currentUser, onUpdate }: { review: Review, current
                         </div>
                     </div>
                 ) : (
-                    <p className="text-sm text-foreground/90 leading-relaxed whitespace-pre-wrap">
+                    <p className="text-sm text-foreground/90 leading-relaxed whitespace-pre-wrap break-words break-all">
                         {review.content}
                     </p>
                 )}
