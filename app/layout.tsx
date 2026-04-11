@@ -65,6 +65,9 @@ export const metadata: Metadata = {
   formatDetection: {
     telephone: false,
   },
+  other: {
+    "google-adsense-account": "ca-pub-8663470554199300"
+  }
 }
 
 export const viewport = {
@@ -78,6 +81,7 @@ import Footer from '@/components/Footer'
 import BottomNav from '@/components/BottomNav'
 import InstallPrompt from '@/components/InstallPrompt'
 import XPToast from '@/components/XPToast'
+import Script from 'next/script'
 
 export default function RootLayout({
   children,
@@ -86,6 +90,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8663470554199300"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
+      </head>
       <body className={`${outfit.className} bg-background text-foreground antialiased min-h-screen flex flex-col pb-16 md:pb-0`}>
         {/* ... schema script omitted for brevity ... */}
         <script
