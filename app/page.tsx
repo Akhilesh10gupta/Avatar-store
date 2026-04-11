@@ -3,6 +3,7 @@ import { getGames, getTopRatedGames, getMostDownloadedGames, Game } from "@/lib/
 import { getGamesAdmin, getMostDownloadedGamesAdmin } from "@/lib/firestore-admin";
 import FeaturedGames from "@/components/FeaturedGames";
 import TopRatedGames from "@/components/TopRatedGames";
+import AdBanner from "@/components/AdBanner";
 
 // Dummy data for initial render if DB is empty
 export const dynamic = 'force-dynamic';
@@ -54,6 +55,11 @@ export default async function Home() {
   return (
     <div className="flex flex-col gap-12 pb-16">
       <Hero latestGames={displayGames} popularGames={displayPopular} />
+
+      {/* Top Banner Ad */}
+      <div className="container mx-auto px-4 max-w-5xl">
+        <AdBanner />
+      </div>
 
       {/* Featured Games Section */}
       <FeaturedGames games={displayGames} />
