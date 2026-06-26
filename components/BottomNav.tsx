@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Gamepad2, Users, UserCircle } from 'lucide-react';
+import { Home, Gamepad2, Users, UserCircle, Newspaper } from 'lucide-react';
 import { useAuth } from '@/components/AuthProvider';
 import { cn } from '@/lib/utils';
 import { UserAvatar } from '@/components/UserAvatar';
@@ -22,11 +22,13 @@ export default function BottomNav() {
         },
         {
             label: 'Games',
-            href: '/browse', // Or '/' if games are on home, but let's use browse for clarity? Or maybe '/' is store.
-            // Let's stick to what Navbar had: Store -> '/', Browse -> '/browse'
-            // User requested: "Home, Games, Community, Profile"
-            // Let's map Home -> /, Games -> /browse
+            href: '/browse',
             icon: Gamepad2
+        },
+        {
+            label: 'Blog',
+            href: '/blog',
+            icon: Newspaper
         },
         {
             label: 'Community',
@@ -36,7 +38,7 @@ export default function BottomNav() {
         {
             label: 'Profile',
             href: profileLink,
-            icon: UserCircle, // We'll conditionally replace this
+            icon: UserCircle,
             isProfile: true
         }
     ];
