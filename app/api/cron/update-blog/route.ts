@@ -35,17 +35,24 @@ export async function GET(request: NextRequest) {
         const existingPosts = await getBlogPostsAdmin();
         const existingTitles = existingPosts.slice(0, 10).map(p => p.title).join(", ");
 
+        // Check for custom topic override parameter
+        const customTopic = request.nextUrl.searchParams.get("topic");
+        
+        const topicInstruction = customTopic
+            ? `1. You MUST write the article specifically about this topic: "${customTopic}". Focus all headings, paragraphs, and lists on this theme.`
+            : `1. Brainstorm a major, highly trending topic in the gaming industry. Actively prioritize highly anticipated blockbuster game releases (such as GTA 6, upcoming sequels to major franchises), breakthrough industry announcements, next-gen hardware updates (like PS5 Pro, Switch 2), or major news surrounding massive popular games (like Fortnite, Cyberpunk, Minecraft).
+2. The topic MUST NOT duplicate or be too similar to these recent articles: [${existingTitles}].`;
+
         // 4. Brainstorm and Generate Article via Google Gemini REST API
         console.log("Generating gaming article using Gemini...");
         const prompt = `You are a professional, senior gaming journalist and technology expert writing for a premium, modern game distribution platform named "Avatar Play".
 Your task is to write a highly engaging, detailed, and SEO-optimized news article, game review, or technology insight.
 
 Instructions:
-1. Brainstorm a trending topic, technology shift, major game release, or culture review in the gaming industry.
-2. The topic MUST NOT duplicate or be too similar to these recent articles: [${existingTitles}].
+${topicInstruction}
 3. Write a comprehensive, rich article containing at least 600 words of actual reading content.
 4. Structure the article with a clear introduction, 2-3 detailed subheadings (heading), 4-6 rich paragraphs (paragraph), at least 1 detailed bulleted list (list) with 3-4 items, and 1 insightful blockquote (quote).
-5. The article must be highly informative, objective, and authoritative to comply with Google AdSense quality guidelines.
+5. AdSense Compliance: The article must be highly informative, objective, and authoritative. Write from an editorial, news, and review perspective. You MUST NEVER offer, mention, or suggest unauthorized or pirated download links of commercial/copyrighted games in the article.
 
 You MUST respond with a single, valid JSON object in the following format. Do not wrap the JSON in markdown code ticks (like \`\`\`json). The output must be pure, parsable JSON matching this schema:
 {
