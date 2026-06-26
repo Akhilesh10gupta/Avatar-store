@@ -88,6 +88,7 @@ export default function Footer() {
                                 { label: 'Browse Games', href: '/browse' },
                                 { label: 'Top Rated', href: '/top-rated' },
                                 { label: 'New Arrivals', href: '/new-arrivals' },
+                                { label: 'Gaming Blog', href: '/blog' },
                                 { label: 'Meet the Developer', href: '/developer' },
                             ].map((link, idx) => (
                                 <li key={idx}>

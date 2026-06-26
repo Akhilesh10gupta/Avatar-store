@@ -29,6 +29,34 @@ export default async function GameDetails({ params }: { params: Promise<{ id: st
             ? getAICardImage(game.coverImage, 1200, 1600)
             : 'https://images.unsplash.com/photo-1552820728-8b83bb6b773f?q=80&w=2070&auto=format&fit=crop';
 
+    const schemaData = {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": game.title,
+        "applicationCategory": "GameApplication",
+        "operatingSystem": game.platform === 'Both' ? 'Windows, Android' : game.platform,
+        "genre": game.genre,
+        "author": {
+            "@type": "Organization",
+            "name": game.developer || 'Indie Developer'
+        },
+        "description": game.description,
+        "screenshot": game.screenshots || [],
+        "image": coverUrl,
+        ...(game.ratingCount && game.ratingCount > 0 ? {
+            "aggregateRating": {
+                "@type": "AggregateRating",
+                "ratingValue": game.rating || 5,
+                "ratingCount": game.ratingCount
+            }
+        } : {}),
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        }
+    };
+
     return (
         <div className="space-y-8 animate-in fade-in duration-500">
             {/* Back Button */}
@@ -268,6 +296,12 @@ export default async function GameDetails({ params }: { params: Promise<{ id: st
             <section id="reviews" className="bg-card rounded-2xl p-8 border border-border/50">
                 <ReviewSection gameId={game.id!} />
             </section>
+
+            {/* JSON-LD Schema Markup for Google AI Search */}
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
+            />
         </div>
     );
 }

@@ -76,6 +76,36 @@ export default function PrivacyPolicy() {
                         </p>
                     </div>
                 </div>
+
+                <div className="space-y-4">
+                    <h2 className="text-2xl font-semibold flex items-center gap-2 text-foreground">
+                        <span className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary text-sm font-bold">5</span>
+                        Advertising & Cookies (Google AdSense)
+                    </h2>
+                    <p>
+                        We partner with third-party advertising networks, including **Google AdSense**, to serve relevant advertisements when you visit our website. To facilitate this, third-party vendors, including Google, use cookies to serve ads based on your prior visits to Avatar Play or other websites on the internet.
+                    </p>
+                    <p>
+                        Google's use of advertising cookies enables it and its partners to serve ads to our users based on their visits to our site and/or other sites on the Internet.
+                    </p>
+                    <p>
+                        You can manage your preferences or opt out of personalized advertising by visiting the following resources:
+                    </p>
+                    <ul className="list-disc pl-5 space-y-2 marker:text-primary">
+                        <li>
+                            To opt out of personalized Google advertising, visit the official 
+                            <a href="https://adssettings.google.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium ml-1">
+                                Google Ads Settings
+                            </a>.
+                        </li>
+                        <li>
+                            To opt out of a third-party vendor's use of cookies for personalized advertising, visit 
+                            <a href="https://www.aboutads.info" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium ml-1">
+                                About Ads Info
+                            </a>.
+                        </li>
+                    </ul>
+                </div>
             </section>
         </>
     )
