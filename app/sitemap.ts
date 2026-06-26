@@ -1,6 +1,6 @@
 import { MetadataRoute } from 'next'
 import { getGamesAdmin } from '@/lib/firestore-admin'
-import { blogPosts } from '@/lib/blogData'
+import { getBlogPostsAdmin } from '@/lib/firestore-blog'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const baseUrl = 'https://avatarplay.in'
@@ -45,12 +45,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
 
     // 3. Dynamic Blog Routes
-    const blogRoutes = blogPosts.map((post) => ({
-        url: `${baseUrl}/blog/${post.slug}`,
-        lastModified: new Date(post.date),
-        changeFrequency: 'weekly' as const,
-        priority: 0.7,
-    }))
+    let blogRoutes: MetadataRoute.Sitemap = []
+    try {
+        const posts = await getBlogPostsAdmin()
+        blogRoutes = posts.map((post) => {
+            const postDate = post.createdAt ? new Date(post.createdAt) : (post.date ? new Date(post.date) : currentDate);
+            return {
+                url: `${baseUrl}/blog/${post.slug}`,
+                lastModified: postDate,
+                changeFrequency: 'weekly' as const,
+                priority: 0.7,
+            };
+        })
+    } catch (error) {
+        console.error('Error generating sitemap for blogs:', error)
+    }
 
     return [...staticRoutes, ...gameRoutes, ...blogRoutes]
 }

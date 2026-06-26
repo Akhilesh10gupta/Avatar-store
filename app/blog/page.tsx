@@ -1,7 +1,7 @@
-import { blogPosts } from "@/lib/blogData";
+import { getBlogPostsPaginatedAdmin, getBlogPostsCountAdmin, seedInitialBlogPosts } from "@/lib/firestore-blog";
 import Link from "next/link";
 import Image from "next/image";
-import { Calendar, User, Clock, ChevronRight } from "lucide-react";
+import { Calendar, User, Clock, ChevronRight, ArrowLeft, ArrowRight } from "lucide-react";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -9,11 +9,42 @@ export const metadata: Metadata = {
     description: "Deep dives, expert insights, and late-breaking news from the gaming frontier. Read articles about game tech, retro revivals, cyber avatars, and industry trends.",
 };
 
-export default function BlogHome() {
-    const featuredPost = blogPosts[0];
-    const gridPosts = blogPosts.slice(1);
+// Next.js ISR: Revalidate the page once every hour in production
+export const revalidate = 3600;
 
-    // Helper to get category colors
+interface PageProps {
+    searchParams: Promise<{ page?: string }>;
+}
+
+export default async function BlogHome({ searchParams }: PageProps) {
+    const { page } = await searchParams;
+    const currentPage = parseInt(page || "1", 10);
+    const postsPerPage = 7; // 1 featured post + 6 grid posts
+
+    // 1. Fetch total count of posts using ultra-fast count aggregation
+    let totalPosts = await getBlogPostsCountAdmin();
+
+    // 2. Self-Healing Seeder fallback if database is completely empty
+    if (totalPosts === 0) {
+        console.log("No blog posts found in Firestore. Seeding database...");
+        await seedInitialBlogPosts();
+        totalPosts = await getBlogPostsCountAdmin();
+    }
+
+    // Calculate pagination math
+    const totalPages = Math.ceil(totalPosts / postsPerPage);
+    const offset = (currentPage - 1) * postsPerPage;
+
+    // 3. Fetch ONLY the posts required for this page
+    const posts = await getBlogPostsPaginatedAdmin(postsPerPage, offset);
+
+    // 4. Determine layouts based on current page
+    // On page 1: first post is featured (wide card), next 6 are in the grid.
+    // On page 2+: all N posts are rendered directly in the grid (no redundant massive featured card).
+    const featuredPost = currentPage === 1 ? posts[0] : null;
+    const gridPosts = currentPage === 1 ? posts.slice(1) : posts;
+
+    // Helper to get HSL tailored category styles
     const getCategoryStyles = (category: string) => {
         switch (category.toLowerCase()) {
             case 'technology':
@@ -43,7 +74,7 @@ export default function BlogHome() {
                 </p>
             </div>
 
-            {/* Featured Post */}
+            {/* Featured Post (Only rendered on Page 1) */}
             {featuredPost && (
                 <div className="group relative overflow-hidden rounded-2xl border border-white/5 bg-[#0a0a0a]/80 p-1 backdrop-blur-xl transition-all duration-500 hover:border-violet-500/30 hover:shadow-[0_0_30px_rgba(139,92,246,0.1)]">
                     <div className="absolute inset-0 bg-gradient-to-r from-violet-500/10 to-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
@@ -101,7 +132,7 @@ export default function BlogHome() {
             )}
 
             {/* Grid of Other Posts */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {gridPosts.map((post) => (
                     <div
                         key={post.slug}
@@ -158,6 +189,60 @@ export default function BlogHome() {
                     </div>
                 ))}
             </div>
+
+            {/* Empty State Fallback */}
+            {posts.length === 0 && (
+                <div className="text-center py-12 border border-white/5 bg-[#0a0a0a]/30 rounded-2xl">
+                    <p className="text-muted-foreground">No more articles found on this page.</p>
+                    {currentPage > 1 && (
+                        <Link href="/blog" className="mt-4 inline-flex text-sm text-primary hover:underline">
+                            Back to Page 1
+                        </Link>
+                    )}
+                </div>
+            )}
+
+            {/* Cyber-Themed Pagination Controls */}
+            {totalPages > 1 && (
+                <div className="flex items-center justify-center gap-6 pt-8 mt-12 border-t border-white/5">
+                    {/* Previous Button */}
+                    {currentPage > 1 ? (
+                        <Link
+                            href={`/blog?page=${currentPage - 1}`}
+                            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/10 bg-white/5 text-sm font-semibold text-white hover:border-violet-500/50 hover:bg-violet-500/10 hover:shadow-[0_0_15px_rgba(139,92,246,0.2)] transition-all duration-300 group"
+                        >
+                            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+                            Previous
+                        </Link>
+                    ) : (
+                        <span className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/5 bg-white/1 text-sm font-semibold text-white/20 cursor-not-allowed">
+                            <ArrowLeft className="w-4 h-4" />
+                            Previous
+                        </span>
+                    )}
+
+                    {/* Page Indicator */}
+                    <span className="text-sm font-semibold text-white/60 bg-[#0a0a0a] border border-white/10 px-4 py-2.5 rounded-xl backdrop-blur-md">
+                        Page <span className="text-violet-400">{currentPage}</span> of <span className="text-white">{totalPages}</span>
+                    </span>
+
+                    {/* Next Button */}
+                    {currentPage < totalPages ? (
+                        <Link
+                            href={`/blog?page=${currentPage + 1}`}
+                            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/10 bg-white/5 text-sm font-semibold text-white hover:border-violet-500/50 hover:bg-violet-500/10 hover:shadow-[0_0_15px_rgba(139,92,246,0.2)] transition-all duration-300 group"
+                        >
+                            Next
+                            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                        </Link>
+                    ) : (
+                        <span className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/5 bg-white/1 text-sm font-semibold text-white/20 cursor-not-allowed">
+                            Next
+                            <ArrowRight className="w-4 h-4" />
+                        </span>
+                    )}
+                </div>
+            )}
         </div>
     );
 }

@@ -14,6 +14,7 @@ export interface BlogPost {
   readTime: string;
   coverImage: string;
   content: BlogSection[];
+  createdAt?: string;
 }
 
 export const blogPosts: BlogPost[] = [

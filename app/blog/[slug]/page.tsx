@@ -1,4 +1,4 @@
-import { blogPosts } from "@/lib/blogData";
+import { getBlogPostBySlugAdmin, getBlogPostsAdmin } from "@/lib/firestore-blog";
 import Link from "next/link";
 import Image from "next/image";
 import { Calendar, User, Clock, ArrowLeft, ChevronRight } from "lucide-react";
@@ -9,9 +9,14 @@ interface RouteParams {
     params: Promise<{ slug: string }>;
 }
 
-// Generate static routes for all articles at build time
+// Next.js ISR settings for dynamic pages
+export const revalidate = 3600;
+export const dynamicParams = true; // Allow newly generated AI articles to be served on demand!
+
+// Generate static routes for all existing articles at build time
 export async function generateStaticParams() {
-    return blogPosts.map((post) => ({
+    const posts = await getBlogPostsAdmin();
+    return posts.map((post) => ({
         slug: post.slug,
     }));
 }
@@ -19,7 +24,7 @@ export async function generateStaticParams() {
 // Dynamic SEO metadata for each article
 export async function generateMetadata({ params }: RouteParams): Promise<Metadata> {
     const { slug } = await params;
-    const post = blogPosts.find((p) => p.slug === slug);
+    const post = await getBlogPostBySlugAdmin(slug);
     if (!post) {
         return {};
     }
@@ -39,7 +44,7 @@ export async function generateMetadata({ params }: RouteParams): Promise<Metadat
 
 export default async function BlogDetails({ params }: RouteParams) {
     const { slug } = await params;
-    const post = blogPosts.find((p) => p.slug === slug);
+    const post = await getBlogPostBySlugAdmin(slug);
 
     if (!post) {
         return notFound();
@@ -70,8 +75,9 @@ export default async function BlogDetails({ params }: RouteParams) {
         }
     };
 
-    // Get 2 related articles (excluding the current one)
-    const relatedPosts = blogPosts
+    // Get 2 related articles (excluding the current one) dynamically from Firestore
+    const posts = await getBlogPostsAdmin();
+    const relatedPosts = posts
         .filter((p) => p.slug !== slug)
         .slice(0, 2);
 
