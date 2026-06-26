@@ -28,6 +28,16 @@ A premium, modern game distribution platform built with **Next.js 14**, **Tailwi
 *   **Cloudinary Integration**: Automatic high-performance image hosting, smart cropping, and AI-based enhancements.
 *   **Mobile Admin**: Manage your store on-the-go with a mobile-optimized admin layout.
 
+### 📰 Autonomous AI Gaming Blog & GEO (AdSense Ready)
+*   **Gemini-Powered Articles**: Fully automated news engine that brainstorms and writes 600-word, high-quality, SEO-optimized articles about trending blockbusters (e.g., GTA 6), hardware trends, and technical updates.
+*   **Unsplash Image Search**: Dynamic integration with the Unsplash API to automatically find and link copyright-free, high-resolution cover images.
+*   **Custom Override Triggers**: Secure API endpoint `/api/cron/update-blog?topic=...` to force-generate an article on any specific topic instantly.
+*   **Server-Side Pagination**: High-performance offset pagination and Firestore count aggregation (`.count().get()`) keeping loading speeds fast and database reads minimal.
+*   **Generative Engine Optimization (GEO)**: Automated JSON-LD schema injection (`BlogPosting` and `SoftwareApplication`/`Game` schemas) for Google AI Overviews and Gemini citation optimization.
+*   **Vercel Cron Automation**: Configured daily midnight cron triggers via `vercel.json` for hands-free operations.
+*   **XML Sitemap Integration**: Automatically registers new AI articles dynamically in the XML sitemap for instant crawler discovery.
+*   **Mobile Bottom Navigation Bar**: A sleek 5-button bottom nav bar containing a dedicated newspaper icon for the blog.
+
 ## 🛠️ Tech Stack
 
 *   **Framework**: [Next.js 14](https://nextjs.org/) (App Router, Server Components)
@@ -73,6 +83,11 @@ A premium, modern game distribution platform built with **Next.js 14**, **Tailwi
     # Email Configuration
     EMAIL_USER=your_gmail_address
     EMAIL_PASS=your_16_char_app_password
+
+    # Google AdSense AI Blog Configuration
+    GEMINI_API_KEY=your_gemini_api_key
+    UNSPLASH_ACCESS_KEY=your_unsplash_access_key
+    CRON_SECRET=your_custom_cron_security_secret
     ```
 
 4.  **Run the development server**
