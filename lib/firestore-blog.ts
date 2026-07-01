@@ -10,6 +10,9 @@ const convertTimestamps = (data: any) => {
     if (result.createdAt && result.createdAt.toDate) {
         result.createdAt = result.createdAt.toDate().toISOString();
     }
+    if (result.updatedAt && result.updatedAt.toDate) {
+        result.updatedAt = result.updatedAt.toDate().toISOString();
+    }
     return result;
 };
 
