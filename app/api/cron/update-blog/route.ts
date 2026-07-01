@@ -109,6 +109,33 @@ You MUST respond with a single, valid JSON object in the following format. Do no
                 contents: [{ parts: [{ text: prompt }] }],
                 generationConfig: {
                     responseMimeType: "application/json",
+                    responseSchema: {
+                        type: "object",
+                        properties: {
+                            title: { type: "string" },
+                            description: { type: "string" },
+                            category: { type: "string", enum: ["Technology", "Culture", "Design", "Industry", "Security"] },
+                            slug: { type: "string" },
+                            readTime: { type: "string" },
+                            keywords: { type: "string" },
+                            content: {
+                                type: "array",
+                                items: {
+                                    type: "object",
+                                    properties: {
+                                        type: { type: "string", enum: ["heading", "paragraph", "list", "quote"] },
+                                        text: { type: "string" },
+                                        items: {
+                                            type: "array",
+                                            items: { type: "string" }
+                                        }
+                                    },
+                                    required: ["type"]
+                                }
+                            }
+                        },
+                        required: ["title", "description", "category", "slug", "readTime", "keywords", "content"]
+                    },
                     temperature: 0.7
                 }
             })
