@@ -141,3 +141,31 @@ export const seedInitialBlogPosts = async () => {
         return { success: false, error };
     }
 };
+
+// Update an existing blog post (server-side)
+export const updateBlogPostAdmin = async (id: string, postData: Partial<BlogPost>) => {
+    try {
+        const updateData: any = { ...postData };
+        if (updateData.id) delete updateData.id; // Prevent writing ID inside doc data
+        
+        await adminDb.collection(BLOG_COLLECTION).doc(id).update({
+            ...updateData,
+            updatedAt: new Date()
+        });
+        return { success: true };
+    } catch (error) {
+        console.error(`Error updating blog post ${id} (admin):`, error);
+        return { success: false, error };
+    }
+};
+
+// Delete a blog post (server-side)
+export const deleteBlogPostAdmin = async (id: string) => {
+    try {
+        await adminDb.collection(BLOG_COLLECTION).doc(id).delete();
+        return { success: true };
+    } catch (error) {
+        console.error(`Error deleting blog post ${id} (admin):`, error);
+        return { success: false, error };
+    }
+};

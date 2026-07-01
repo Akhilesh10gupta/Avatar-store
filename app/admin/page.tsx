@@ -7,7 +7,7 @@ import { getUserPostsAction, deletePostAction } from '@/app/actions/communityAct
 import { Button } from '@/components/ui/Button';
 import Link from 'next/link';
 import PostCard from '@/components/PostCard';
-import { Plus, Pencil, Trash2, ExternalLink, Heart, MessageCircle, Gamepad2, Grid, LayoutGrid, LogOut, X, User as UserIcon } from 'lucide-react';
+import { Plus, Pencil, Trash2, ExternalLink, Heart, MessageCircle, Gamepad2, Grid, LayoutGrid, LogOut, X, User as UserIcon, ShieldAlert } from 'lucide-react';
 import Image from 'next/image';
 import ProfileManager from '@/components/ProfileManager';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -190,11 +190,19 @@ export default function AdminDashboard() {
                                     View Profile
                                 </Button>
                             </Link>
-                            <div className="flex gap-3 w-full md:w-auto">
-                                <Button className="flex-1 md:flex-none h-11 px-6 font-bold bg-primary text-white hover:bg-primary/90 rounded-xl shadow-[0_0_20px_rgba(var(--primary-rgb),0.4)] hover:shadow-[0_0_30px_rgba(var(--primary-rgb),0.6)] transition-all whitespace-nowrap" onClick={() => setShowSettings(true)}>
-                                    <Pencil className="w-4 h-4 mr-2" />
-                                    Edit
-                                </Button>
+                             <div className="flex gap-3 w-full md:w-auto">
+                                 {user.email === 'gakhilesh946@gmail.com' && (
+                                     <Link href="/admin/super" className="w-full md:w-auto">
+                                         <Button className="w-full md:w-auto h-11 px-6 font-bold bg-red-500/10 text-red-500 border border-red-500/20 hover:bg-red-500/20 rounded-xl transition-all whitespace-nowrap">
+                                             <ShieldAlert className="w-4 h-4 mr-2" />
+                                             Super Admin
+                                         </Button>
+                                     </Link>
+                                 )}
+                                 <Button className="flex-1 md:flex-none h-11 px-6 font-bold bg-primary text-white hover:bg-primary/90 rounded-xl shadow-[0_0_20px_rgba(var(--primary-rgb),0.4)] hover:shadow-[0_0_30px_rgba(var(--primary-rgb),0.6)] transition-all whitespace-nowrap" onClick={() => setShowSettings(true)}>
+                                     <Pencil className="w-4 h-4 mr-2" />
+                                     Edit
+                                 </Button>
                                 <Button variant="secondary" className="flex-1 md:flex-none h-11 px-6 font-bold bg-white/5 text-white border border-white/10 hover:bg-white/10 hover:border-white/30 rounded-xl whitespace-nowrap" onClick={async () => {
                                     const { auth } = await import('@/lib/firebase');
                                     auth.signOut();

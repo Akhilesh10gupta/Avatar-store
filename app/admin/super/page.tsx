@@ -6,16 +6,20 @@ import {
     getAllGamesAdminAction,
     getContactMessagesAction,
     getSubscribersAction,
-    getAllUsersAction
+    getAllUsersAction,
+    getAllBlogPostsAdminAction,
+    updateBlogPostAdminAction,
+    deleteBlogPostAdminAction
 } from '@/app/actions/adminActions';
 import { deleteGameAction } from '@/app/actions/gameActions';
 import { deletePostAction, getPostsAction } from '@/app/actions/communityActions';
 import { Game, ContactMessage, UserProfile, Post } from '@/lib/firestore';
 import { useRouter } from 'next/navigation';
-import { Monitor, Smartphone, Download, Star, Users, ArrowUpRight, ShieldAlert, Mail, User, Trash2 } from 'lucide-react';
+import { Monitor, Smartphone, Download, Star, Users, ArrowUpRight, ShieldAlert, Mail, User, Trash2, Pencil, BookOpen, Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
 
 // ALLOWED ADMIN EMAILS
 const ADMIN_EMAILS = ['gakhilesh946@gmail.com'];
@@ -28,10 +32,22 @@ export default function SuperAdminPage() {
     const [messages, setMessages] = useState<any[]>([]);
     const [users, setUsers] = useState<any[]>([]);
     const [posts, setPosts] = useState<any[]>([]);
+    const [blogs, setBlogs] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 
+    // Blog Editing Modal State
+    const [editingBlog, setEditingBlog] = useState<any | null>(null);
+    const [editBlogForm, setEditBlogForm] = useState({
+        title: '',
+        description: '',
+        category: 'Technology',
+        coverImage: ''
+    });
+    const [blogImageFile, setBlogImageFile] = useState<File | null>(null);
+    const [savingBlog, setSavingBlog] = useState(false);
+
     // Pagination State
-    const [activeTab, setActiveTab] = useState<'games' | 'subscribers' | 'inbox' | 'users' | 'posts'>('games');
+    const [activeTab, setActiveTab] = useState<'games' | 'subscribers' | 'inbox' | 'users' | 'posts' | 'blogs'>('games');
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
 
@@ -57,12 +73,13 @@ export default function SuperAdminPage() {
         const load = async () => {
             try {
                 // Parallel fetch
-                const [gamesData, subscribersData, messagesData, usersData, postsData] = await Promise.all([
+                const [gamesData, subscribersData, messagesData, usersData, postsData, blogsData] = await Promise.all([
                     getAllGamesAdminAction(),
                     getSubscribersAction(),
                     getContactMessagesAction(),
                     getAllUsersAction(),
-                    getPostsAction()
+                    getPostsAction(),
+                    getAllBlogPostsAdminAction()
                 ]);
 
                 setGames(gamesData);
@@ -70,6 +87,7 @@ export default function SuperAdminPage() {
                 setMessages(messagesData);
                 setUsers(usersData);
                 setPosts(postsData);
+                setBlogs(blogsData);
 
                 // Calculate Stats
                 const totalDl = gamesData.reduce((acc: number, g: any) => acc + (g.downloadCount || 0), 0);
@@ -125,6 +143,53 @@ export default function SuperAdminPage() {
         }
     };
 
+    const handleDeleteBlog = async (id: string, title: string) => {
+        if (confirm(`SUPER ADMIN ACTION:\nAre you sure you want to delete the blog post "${title}"?`)) {
+            try {
+                await deleteBlogPostAdminAction(id);
+                setBlogs(prev => prev.filter(b => b.id !== id));
+                alert("Blog post deleted successfully.");
+            } catch (e) {
+                console.error(e);
+                alert("Failed to delete blog post.");
+            }
+        }
+    };
+
+    const handleSaveBlog = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!editingBlog) return;
+        setSavingBlog(true);
+        try {
+            let finalCoverUrl = editBlogForm.coverImage;
+            if (blogImageFile) {
+                const { uploadFile } = await import('@/lib/storage');
+                finalCoverUrl = await uploadFile(blogImageFile, 'blog_covers');
+            }
+
+            const updatedData = {
+                title: editBlogForm.title,
+                description: editBlogForm.description,
+                category: editBlogForm.category,
+                coverImage: finalCoverUrl
+            };
+
+            const result = await updateBlogPostAdminAction(editingBlog.id, updatedData);
+            if (result.success) {
+                setBlogs(prev => prev.map(b => b.id === editingBlog.id ? { ...b, ...updatedData } : b));
+                setEditingBlog(null);
+                alert("Blog post updated successfully!");
+            } else {
+                alert("Failed to update blog post.");
+            }
+        } catch (error) {
+            console.error("Error saving blog:", error);
+            alert("An error occurred while saving the blog.");
+        } finally {
+            setSavingBlog(false);
+        }
+    };
+
     if (authLoading || loading) return <div className="min-h-screen flex items-center justify-center text-white">Loading Dashboard...</div>;
 
     if (!user) return <div className="min-h-screen flex items-center justify-center text-white">Please log in.</div>;
@@ -161,7 +226,7 @@ export default function SuperAdminPage() {
 
                 {/* Tab Navigation */}
                 <div className="flex items-center gap-4 mb-8 border-b border-white/10 pb-1 overflow-x-auto">
-                    {['games', 'users', 'posts', 'subscribers', 'inbox'].map((tab) => (
+                    {['games', 'users', 'posts', 'blogs', 'subscribers', 'inbox'].map((tab) => (
                         <button
                             key={tab}
                             onClick={() => setActiveTab(tab as any)}
@@ -173,8 +238,9 @@ export default function SuperAdminPage() {
                                 {tab === 'games' ? games.length :
                                     tab === 'users' ? users.length :
                                         tab === 'posts' ? posts.length :
-                                            tab === 'subscribers' ? subscribers.length :
-                                                messages.length}
+                                            tab === 'blogs' ? blogs.length :
+                                                tab === 'subscribers' ? subscribers.length :
+                                                    messages.length}
                             </span>
                         </button>
                     ))}
@@ -192,12 +258,14 @@ export default function SuperAdminPage() {
                                     activeTab === 'games' ? games.length :
                                         activeTab === 'users' ? users.length :
                                             activeTab === 'subscribers' ? subscribers.length :
-                                                activeTab === 'posts' ? posts.length : messages.length
+                                                activeTab === 'blogs' ? blogs.length :
+                                                    activeTab === 'posts' ? posts.length : messages.length
                                 )} of {
                                     activeTab === 'games' ? games.length :
                                         activeTab === 'users' ? users.length :
                                             activeTab === 'subscribers' ? subscribers.length :
-                                                activeTab === 'posts' ? posts.length : messages.length
+                                                activeTab === 'blogs' ? blogs.length :
+                                                    activeTab === 'posts' ? posts.length : messages.length
                                 }
                             </span>
                         </div>
@@ -403,6 +471,67 @@ export default function SuperAdminPage() {
                                 </tbody>
                             </table>
                         )}
+
+                        {/* BLOGS TABLE */}
+                        {activeTab === 'blogs' && (
+                            <table className="w-full text-left text-sm">
+                                <thead className="bg-white/5 text-muted-foreground">
+                                    <tr>
+                                        <th className="p-4 uppercase">Cover</th>
+                                        <th className="p-4 uppercase">Title</th>
+                                        <th className="p-4 uppercase">Category</th>
+                                        <th className="p-4 uppercase">Date</th>
+                                        <th className="p-4 uppercase">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-white/5">
+                                    {getPaginatedData(blogs).map((blog) => (
+                                        <tr key={blog.id} className="hover:bg-white/5">
+                                            <td className="p-4">
+                                                <div className="relative w-16 h-10 rounded overflow-hidden border border-white/10 bg-[#050505] shrink-0">
+                                                    {blog.coverImage ? (
+                                                        <Image src={blog.coverImage} alt={blog.title} fill className="object-cover" />
+                                                    ) : (
+                                                        <div className="w-full h-full flex items-center justify-center text-[10px] text-muted-foreground">No image</div>
+                                                    )}
+                                                </div>
+                                            </td>
+                                            <td className="p-4 font-semibold max-w-xs truncate">{blog.title}</td>
+                                            <td className="p-4">
+                                                <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-primary/10 text-primary border border-primary/20">
+                                                    {blog.category}
+                                                </span>
+                                            </td>
+                                            <td className="p-4 text-white/70">{blog.date}</td>
+                                            <td className="p-4 flex gap-2">
+                                                <Button size="sm" variant="ghost" onClick={() => {
+                                                    setEditingBlog(blog);
+                                                    setEditBlogForm({
+                                                        title: blog.title || '',
+                                                        description: blog.description || '',
+                                                        category: blog.category || 'Technology',
+                                                        coverImage: blog.coverImage || ''
+                                                    });
+                                                    setBlogImageFile(null);
+                                                }}>
+                                                    <Pencil className="w-4 h-4 text-primary" />
+                                                </Button>
+                                                <Button size="sm" variant="danger" onClick={() => handleDeleteBlog(blog.id!, blog.title)}>
+                                                    <Trash2 className="w-4 h-4" />
+                                                </Button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                    {blogs.length === 0 && (
+                                        <tr>
+                                            <td colSpan={5} className="p-8 text-center text-muted-foreground">
+                                                No blog posts found.
+                                            </td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
+                        )}
                     </div>
 
                     {/* Pagination Controls */}
@@ -419,7 +548,9 @@ export default function SuperAdminPage() {
                                 (activeTab === 'games' ? games.length :
                                     activeTab === 'users' ? users.length :
                                         activeTab === 'subscribers' ? subscribers.length :
-                                            messages.length) / itemsPerPage
+                                            activeTab === 'blogs' ? blogs.length :
+                                                activeTab === 'posts' ? posts.length :
+                                                    messages.length) / itemsPerPage
                             ) || 1}
                         </span>
                         <Button
@@ -428,7 +559,9 @@ export default function SuperAdminPage() {
                                 activeTab === 'games' ? games.length :
                                     activeTab === 'users' ? users.length :
                                         activeTab === 'subscribers' ? subscribers.length :
-                                            messages.length
+                                            activeTab === 'blogs' ? blogs.length :
+                                                activeTab === 'posts' ? posts.length :
+                                                    messages.length
                             )}
                             onClick={() => setCurrentPage(p => p + 1)}
                         >
@@ -437,6 +570,124 @@ export default function SuperAdminPage() {
                     </div>
                 </div>
             </div>
+
+            {/* BLOG EDITING MODAL OVERLAY */}
+            {editingBlog && (
+                <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                    <div className="bg-[#0f0f11] border border-white/10 rounded-2xl max-w-xl w-full p-6 space-y-6 max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95">
+                        <div className="flex items-center justify-between border-b border-white/5 pb-4">
+                            <h3 className="text-lg font-bold flex items-center gap-2 text-white">
+                                <BookOpen className="w-5 h-5 text-primary" />
+                                Edit Blog Article Details
+                            </h3>
+                            <button 
+                                onClick={() => setEditingBlog(null)} 
+                                className="text-muted-foreground hover:text-white transition-colors"
+                            >
+                                <span className="text-xl">×</span>
+                            </button>
+                        </div>
+
+                        <form onSubmit={handleSaveBlog} className="space-y-4">
+                            <div className="space-y-2">
+                                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Article Title</label>
+                                <Input 
+                                    value={editBlogForm.title} 
+                                    onChange={(e) => setEditBlogForm(prev => ({ ...prev, title: e.target.value }))}
+                                    required 
+                                    className="bg-white/5 border-white/10 text-white"
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Category</label>
+                                <select 
+                                    value={editBlogForm.category}
+                                    onChange={(e) => setEditBlogForm(prev => ({ ...prev, category: e.target.value }))}
+                                    className="w-full h-10 rounded-lg bg-white/5 border border-white/10 text-white px-3 focus:outline-none focus:border-primary text-sm"
+                                >
+                                    {["Technology", "Culture", "Design", "Industry", "Security"].map(cat => (
+                                        <option key={cat} value={cat} className="bg-[#0f0f11]">{cat}</option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Description (SEO Summary)</label>
+                                <textarea 
+                                    value={editBlogForm.description}
+                                    onChange={(e) => setEditBlogForm(prev => ({ ...prev, description: e.target.value }))}
+                                    required
+                                    rows={3}
+                                    className="w-full rounded-lg bg-white/5 border border-white/10 text-white p-3 focus:outline-none focus:border-primary text-sm resize-none"
+                                />
+                            </div>
+
+                            <div className="space-y-4 border-t border-white/5 pt-4">
+                                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block">Cover Image Source</label>
+                                
+                                <div className="space-y-2">
+                                    <span className="text-[10px] text-muted-foreground">OPTION A: Paste a Direct Image URL (Google Images, Rockstar Games, etc.)</span>
+                                    <Input 
+                                        type="url"
+                                        placeholder="https://example.com/gta6-wallpaper.jpg"
+                                        value={editBlogForm.coverImage} 
+                                        onChange={(e) => setEditBlogForm(prev => ({ ...prev, coverImage: e.target.value }))}
+                                        className="bg-white/5 border-white/10 text-white"
+                                    />
+                                </div>
+
+                                <div className="relative flex items-center justify-center py-2">
+                                    <span className="bg-[#0f0f11] px-3 text-xs text-muted-foreground relative z-10 font-bold uppercase tracking-widest">Or</span>
+                                    <div className="absolute left-0 right-0 h-px bg-white/5" />
+                                </div>
+
+                                <div className="space-y-2">
+                                    <span className="text-[10px] text-muted-foreground">OPTION B: Upload a Local Image File (Saved to Cloudinary)</span>
+                                    <div className="flex items-center gap-3">
+                                        <label className="flex items-center gap-2 px-4 h-10 rounded-lg bg-primary/10 border border-primary/20 text-primary hover:bg-primary/20 cursor-pointer text-xs font-bold transition-all">
+                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                                            Choose File
+                                            <input 
+                                                type="file" 
+                                                accept="image/*"
+                                                onChange={(e) => {
+                                                    if (e.target.files && e.target.files.length > 0) {
+                                                        setBlogImageFile(e.target.files[0]);
+                                                    }
+                                                }}
+                                                className="hidden" 
+                                            />
+                                        </label>
+                                        <span className="text-xs text-muted-foreground truncate max-w-[200px]">
+                                            {blogImageFile ? blogImageFile.name : "No file selected"}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="flex justify-end gap-3 pt-6 border-t border-white/5">
+                                <Button 
+                                    type="button" 
+                                    variant="ghost" 
+                                    onClick={() => setEditingBlog(null)}
+                                >
+                                    Cancel
+                                </Button>
+                                <Button 
+                                    type="submit" 
+                                    disabled={savingBlog}
+                                    className="bg-primary text-white hover:bg-primary/90 font-bold"
+                                >
+                                    {savingBlog ? (
+                                        <span className="flex items-center gap-2"><Loader2 className="w-4 h-4 animate-spin" /> Saving...</span>
+                                    ) : "Save Changes"}
+                                </Button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </main>
     );
 }

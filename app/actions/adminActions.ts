@@ -67,3 +67,38 @@ export async function getAllUsersAction() {
         return [];
     }
 }
+
+// Blog Administration Server Actions
+export async function getAllBlogPostsAdminAction() {
+    try {
+        const { getBlogPostsAdmin } = await import("@/lib/firestore-blog");
+        const posts = await getBlogPostsAdmin();
+        return posts.map(p => ({
+            ...p,
+            createdAt: p.createdAt || new Date().toISOString()
+        }));
+    } catch (error) {
+        console.error("Error in getAllBlogPostsAdminAction:", error);
+        return [];
+    }
+}
+
+export async function updateBlogPostAdminAction(id: string, postData: any) {
+    try {
+        const { updateBlogPostAdmin } = await import("@/lib/firestore-blog");
+        return await updateBlogPostAdmin(id, postData);
+    } catch (error) {
+        console.error(`Error in updateBlogPostAdminAction for ${id}:`, error);
+        return { success: false, error: String(error) };
+    }
+}
+
+export async function deleteBlogPostAdminAction(id: string) {
+    try {
+        const { deleteBlogPostAdmin } = await import("@/lib/firestore-blog");
+        return await deleteBlogPostAdmin(id);
+    } catch (error) {
+        console.error(`Error in deleteBlogPostAdminAction for ${id}:`, error);
+        return { success: false, error: String(error) };
+    }
+}
