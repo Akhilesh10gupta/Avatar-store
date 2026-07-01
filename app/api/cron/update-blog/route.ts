@@ -3,20 +3,36 @@ import { createBlogPostAdmin, seedInitialBlogPosts, getBlogPostsAdmin } from "@/
 
 // Enforce dynamic rendering and disable caching for this cron endpoint
 export const dynamic = "force-dynamic";
+export const maxDuration = 60; // Allow up to 60 seconds for Gemini generation on Vercel Hobby tier
 
 export async function GET(request: NextRequest) {
     try {
-        // 1. Security Check
+        console.log("=== AI Blog Generator Cron Triggered ===");
         const authHeader = request.headers.get("authorization");
         const cronSecret = process.env.CRON_SECRET;
         const isDev = process.env.NODE_ENV === "development";
         const hasBypassParam = request.nextUrl.searchParams.get("bypass") === "true";
 
+        console.log(`Environment: ${process.env.NODE_ENV}`);
+        console.log(`Bypass parameter present: ${hasBypassParam}`);
+        console.log(`Cron Secret configured in env: ${!!cronSecret}`);
+        console.log(`Authorization Header present: ${!!authHeader}`);
+
         // Only enforce auth if not in development and no bypass parameter is present
         if (!isDev && !hasBypassParam) {
-            if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
-                return new NextResponse("Unauthorized", { status: 401 });
+            if (!cronSecret) {
+                console.error("Authentication Error: CRON_SECRET is not set in Vercel environment variables.");
+                return new NextResponse("Unauthorized: Missing CRON_SECRET", { status: 401 });
             }
+            if (authHeader !== `Bearer ${cronSecret}`) {
+                console.error("Authentication Error: Authorization header does not match CRON_SECRET.");
+                console.log(`Expected: Bearer ${cronSecret.substring(0, 5)}...`);
+                console.log(`Received: ${authHeader ? authHeader.substring(0, 15) : 'null'}...`);
+                return new NextResponse("Unauthorized: Token Mismatch", { status: 401 });
+            }
+            console.log("Authentication successful via Vercel Cron Secret.");
+        } else {
+            console.log("Bypassing authentication (Development mode or bypass parameter used).");
         }
 
         // 2. Ensure Database is Seeded First (Self-Healing)
@@ -50,8 +66,8 @@ Your task is to write a highly engaging, detailed, and SEO-optimized news articl
 
 Instructions:
 ${topicInstruction}
-3. Write a comprehensive, rich article containing at least 600 words of actual reading content.
-4. Structure the article with a clear introduction, 2-3 detailed subheadings (heading), 4-6 rich paragraphs (paragraph), at least 1 detailed bulleted list (list) with 3-4 items, and 1 insightful blockquote (quote).
+3. Write a comprehensive, rich article containing around 300 to 450 words of actual reading content.
+4. Structure the article with a clear introduction, 1-2 detailed subheadings (heading), 2-3 rich paragraphs (paragraph), at least 1 detailed bulleted list (list) with 3 items, and 1 insightful blockquote (quote).
 5. AdSense Compliance: The article must be highly informative, objective, and authoritative. Write from an editorial, news, and review perspective. You MUST NEVER offer, mention, or suggest unauthorized or pirated download links of commercial/copyrighted games in the article.
 
 You MUST respond with a single, valid JSON object in the following format. Do not wrap the JSON in markdown code ticks (like \`\`\`json). The output must be pure, parsable JSON matching this schema:
