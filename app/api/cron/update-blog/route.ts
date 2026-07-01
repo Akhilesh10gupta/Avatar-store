@@ -161,34 +161,48 @@ You MUST respond with a single, valid JSON object in the following format. Do no
             throw new Error("Invalid article structure returned by Gemini.");
         }
 
-        // 5. Fetch Cover Image from Unsplash REST API (Fail-safe)
+        // 5. Fetch Cover Image from Unsplash REST API (Fail-safe, multi-keyword backup)
         let coverImage = "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2070&auto=format&fit=crop"; // High-quality gaming fallback
         const unsplashAccessKey = process.env.UNSPLASH_ACCESS_KEY;
-        const searchKeywords = article.keywords || "gaming,cyberpunk";
+        
+        // Parse keywords: split by comma, clean whitespace, remove empty entries
+        const rawKeywords = article.keywords || "gaming";
+        const keywordArray = rawKeywords
+            .split(",")
+            .map((k: string) => k.trim())
+            .filter((k: string) => k.length > 0);
+
+        // Fallbacks: first keyword -> second keyword -> general gaming terms -> static fallback
+        const searchQueries = [...keywordArray, "gaming", "cyberpunk", "videogames"];
 
         if (unsplashAccessKey) {
-            try {
-                console.log(`Searching Unsplash for keywords: ${searchKeywords}`);
-                const unsplashUrl = `https://api.unsplash.com/search/photos?query=${encodeURIComponent(searchKeywords)}&per_page=1`;
-                const unsplashResponse = await fetch(unsplashUrl, {
-                    headers: {
-                        Authorization: `Client-ID ${unsplashAccessKey}`
-                    }
-                });
+            for (const query of searchQueries) {
+                try {
+                    console.log(`Searching Unsplash for query: "${query}"`);
+                    const unsplashUrl = `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&per_page=5&orientation=landscape`;
+                    const unsplashResponse = await fetch(unsplashUrl, {
+                        headers: {
+                            Authorization: `Client-ID ${unsplashAccessKey}`
+                        }
+                    });
 
-                if (unsplashResponse.ok) {
-                    const unsplashData = await unsplashResponse.json();
-                    if (unsplashData.results && unsplashData.results.length > 0) {
-                        coverImage = unsplashData.results[0].urls.regular;
-                        console.log("Found matching Unsplash image:", coverImage);
+                    if (unsplashResponse.ok) {
+                        const unsplashData = await unsplashResponse.json();
+                        if (unsplashData.results && unsplashData.results.length > 0) {
+                            // Pick a random image from the top 5 results to add even more variety!
+                            const randomIndex = Math.floor(Math.random() * Math.min(unsplashData.results.length, 5));
+                            coverImage = unsplashData.results[randomIndex].urls.regular;
+                            console.log(`Found matching Unsplash image for "${query}":`, coverImage);
+                            break; // Successfully found an image, break out of the fallback loop!
+                        } else {
+                            console.log(`No images found for "${query}" on Unsplash.`);
+                        }
                     } else {
-                        console.log("No images found on Unsplash. Using fallback.");
+                        console.log(`Unsplash API error for "${query}": ${unsplashResponse.status}`);
                     }
-                } else {
-                    console.log(`Unsplash API returned status: ${unsplashResponse.status}. Using fallback.`);
+                } catch (unsplashError) {
+                    console.error(`Error querying Unsplash for "${query}":`, unsplashError);
                 }
-            } catch (unsplashError) {
-                console.error("Error fetching image from Unsplash:", unsplashError);
             }
         } else {
             console.log("UNSPLASH_ACCESS_KEY is not configured. Using default fallback gaming image.");
