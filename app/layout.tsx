@@ -81,6 +81,7 @@ import Footer from '@/components/Footer'
 import BottomNav from '@/components/BottomNav'
 import InstallPrompt from '@/components/InstallPrompt'
 import XPToast from '@/components/XPToast'
+import CookieConsent from '@/components/CookieConsent'
 import Script from 'next/script'
 
 export default function RootLayout({
@@ -126,6 +127,7 @@ export default function RootLayout({
             <BottomNav />
             <InstallPrompt />
             <XPToast />
+            <CookieConsent />
           </InstallProvider>
         </AuthProvider>
       </body>

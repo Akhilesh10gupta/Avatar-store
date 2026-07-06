@@ -62,12 +62,17 @@ export async function GET(request: NextRequest) {
         // 4. Brainstorm and Generate Article via Google Gemini REST API
         console.log("Generating gaming article using Gemini...");
         const prompt = `You are a professional, senior gaming journalist and technology expert writing for a premium, modern game distribution platform named "Avatar Play".
-Your task is to write a highly engaging, detailed, and SEO-optimized news article, game review, or technology insight.
+Your task is to write a highly engaging, deeply researched, and SEO-optimized news article, game review, or technology insight.
 
 Instructions:
 ${topicInstruction}
-3. Write a comprehensive, rich article containing around 300 to 450 words of actual reading content.
-4. Structure the article with a clear introduction, 1-2 detailed subheadings (heading), 2-3 rich paragraphs (paragraph), at least 1 detailed bulleted list (list) with 3 items, and 1 insightful blockquote (quote).
+3. Write a comprehensive, high-value, and extremely detailed article containing around 800 to 1200 words of actual reading content. Avoid generic sentences, high-level summaries, or filler text. Dive deep into technical specifications, gameplay mechanics, release timelines, pros and cons, player feedback, and industry impact.
+4. Structure the article in a logical flow with:
+   - A detailed introduction.
+   - At least 3 to 4 descriptive subheadings (heading).
+   - 5 to 8 rich, long paragraphs (paragraph) containing deep analysis.
+   - At least 2 detailed bulleted lists (list) with 3-5 items each, explaining key aspects (e.g. key features, hardware requirements, pros and cons).
+   - At least 1 insightful quote (quote) from an industry expert or gaming developer.
 5. AdSense Compliance: The article must be highly informative, objective, and authoritative. Write from an editorial, news, and review perspective. You MUST NEVER offer, mention, or suggest unauthorized or pirated download links of commercial/copyrighted games in the article.
 
 You MUST respond with a single, valid JSON object in the following format. Do not wrap the JSON in markdown code ticks (like \`\`\`json). The output must be pure, parsable JSON matching this schema:
@@ -76,7 +81,7 @@ You MUST respond with a single, valid JSON object in the following format. Do no
   "description": "A compelling 1-2 sentence summary of the article for SEO metadata.",
   "category": "Must be exactly one of: 'Technology', 'Culture', 'Design', 'Industry', 'Security'",
   "slug": "url-friendly-lowercase-slug-derived-from-title-using-hyphens",
-  "readTime": "e.g., '5 min read'",
+  "readTime": "e.g., '7 min read'",
   "keywords": "3-4 comma-separated English keywords representing the visual theme of the article, used for image search",
   "content": [
     {
@@ -85,7 +90,7 @@ You MUST respond with a single, valid JSON object in the following format. Do no
     },
     {
       "type": "paragraph",
-      "text": "Detailed paragraph text."
+      "text": "Detailed paragraph text with high-quality analysis."
     },
     {
       "type": "quote",
@@ -222,7 +227,7 @@ You MUST respond with a single, valid JSON object in the following format. Do no
             description: article.description,
             category: article.category || "Technology",
             date: formattedDate,
-            author: "Avatar Play AI",
+            author: "Avatar Play Editorial Team",
             readTime: article.readTime || "5 min read",
             coverImage: coverImage,
             content: article.content
