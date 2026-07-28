@@ -1,5 +1,11 @@
 import CommunityFeed from '@/components/CommunityFeed';
 import { Users } from 'lucide-react';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+    title: 'Community Feed',
+    description: 'Share your gaming moments, discuss strategies, and connect with fellow gamers on Avatar Play.',
+}
 
 export default function CommunityPage() {
     return (

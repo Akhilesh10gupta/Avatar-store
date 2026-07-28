@@ -7,12 +7,60 @@ import { Monitor, Cpu, HardDrive, MemoryStick, Image as ImageIcon, ArrowLeft, Sm
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Metadata } from "next";
 
 import { getVideoEmbedUrl } from '@/lib/video';
 import { getAICardImage } from "@/lib/cloudinary";
 
 // Force dynamic rendering since we are fetching data
 export const dynamic = 'force-dynamic';
+
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+    const { id } = await params;
+    const game = await getGameByIdAdmin(id);
+
+    if (!game) {
+        return {
+            title: "Game Not Found | Avatar Play",
+        };
+    }
+
+    const title = `${game.title} - Download Game | Avatar Play`;
+    const description = game.description
+        ? (game.description.length > 155 ? `${game.description.slice(0, 155)}...` : game.description)
+        : `Download ${game.title} on Avatar Play.`;
+
+    const coverUrl = game.cardImage
+        ? getAICardImage(game.cardImage, 1200, 1600)
+        : game.coverImage
+            ? getAICardImage(game.coverImage, 1200, 1600)
+            : 'https://images.unsplash.com/photo-1552820728-8b83bb6b773f?q=80&w=2070&auto=format&fit=crop';
+
+    return {
+        title,
+        description,
+        openGraph: {
+            title,
+            description,
+            type: "video.other",
+            url: `https://avatarplay.in/game/${id}`,
+            images: [
+                {
+                    url: coverUrl,
+                    width: 1200,
+                    height: 1600,
+                    alt: `${game.title} cover image`,
+                }
+            ],
+        },
+        twitter: {
+            card: "summary_large_image",
+            title,
+            description,
+            images: [coverUrl],
+        }
+    };
+}
 
 export default async function GameDetails({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;

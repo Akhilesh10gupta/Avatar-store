@@ -4,6 +4,12 @@ import { getGamesAdmin, getMostDownloadedGamesAdmin } from "@/lib/firestore-admi
 import FeaturedGames from "@/components/FeaturedGames";
 import TopRatedGames from "@/components/TopRatedGames";
 import AdBanner from "@/components/AdBanner";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Avatar Play - Premium Game Distribution Platform",
+  description: "Your ultimate destination for curated games, avatars, and gaming community. Discover, download, and play the future of gaming today.",
+};
 
 // Dummy data for initial render if DB is empty
 export const dynamic = 'force-dynamic';
