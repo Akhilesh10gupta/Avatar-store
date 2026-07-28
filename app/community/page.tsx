@@ -1,4 +1,5 @@
 import CommunityFeed from '@/components/CommunityFeed';
+import { getPostsAction } from '@/app/actions/communityActions';
 import { Users } from 'lucide-react';
 import { Metadata } from 'next';
 
@@ -7,7 +8,10 @@ export const metadata: Metadata = {
     description: 'Share your gaming moments, discuss strategies, and connect with fellow gamers on Avatar Play.',
 }
 
-export default function CommunityPage() {
+export const dynamic = 'force-dynamic';
+
+export default async function CommunityPage() {
+    const initialPosts = await getPostsAction(1, 10);
     return (
         <main className="min-h-screen bg-[#050505] pt-4 pb-8 px-4">
             <div className="container mx-auto max-w-2xl">
@@ -21,7 +25,7 @@ export default function CommunityPage() {
                     </p>
                 </div>
 
-                <CommunityFeed />
+                <CommunityFeed initialPosts={initialPosts} />
             </div>
         </main>
     );

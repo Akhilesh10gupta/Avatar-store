@@ -12,10 +12,14 @@ import { uploadFile } from '@/lib/storage';
 import GameLoader from './GameLoader';
 import { checkImageSafety } from '@/lib/contentSafety';
 
-export default function CommunityFeed() {
+interface CommunityFeedProps {
+    initialPosts?: Post[];
+}
+
+export default function CommunityFeed({ initialPosts = [] }: CommunityFeedProps) {
     const { user } = useAuth();
-    const [posts, setPosts] = useState<Post[]>([]);
-    const [loading, setLoading] = useState(true);
+    const [posts, setPosts] = useState<Post[]>(initialPosts);
+    const [loading, setLoading] = useState(initialPosts.length === 0);
     const [newPostContent, setNewPostContent] = useState('');
     const [imageUrls, setImageUrls] = useState<string[]>([]); // For manually added URLs
     const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
@@ -26,12 +30,18 @@ export default function CommunityFeed() {
 
     // Pagination State
     const [page, setPage] = useState(1);
-    const [hasMore, setHasMore] = useState(true);
+    const [hasMore, setHasMore] = useState(initialPosts.length === 10);
     const POSTS_PER_PAGE = 10;
 
     useEffect(() => {
-        loadPosts(true);
-    }, []);
+        if (initialPosts.length > 0) {
+            setPosts(initialPosts);
+            setHasMore(initialPosts.length === POSTS_PER_PAGE);
+            setLoading(false);
+        } else {
+            loadPosts(true);
+        }
+    }, [initialPosts]);
 
     const loadPosts = async (reset: boolean = false) => {
         if (reset) {

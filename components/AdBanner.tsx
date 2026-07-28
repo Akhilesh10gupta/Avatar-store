@@ -14,11 +14,6 @@ export default function AdBanner({
 }: AdBannerProps) {
   const adInited = useRef(false);
 
-  // TEMPORARILY DISABLED: Returning null hides the ad placements 
-  // without breaking the rest of the app's layout.
-  // Remove this return statement once Google AdSense is approved.
-  return null;
-
   useEffect(() => {
     // Prevent multiple initializations in React Strict Mode
     if (adInited.current) return;
