@@ -3,7 +3,7 @@ import StarRating from "@/components/StarRating";
 import ReviewSection from "@/components/ReviewSection";
 import DownloadButton from "@/components/DownloadButton";
 import { Button } from "@/components/ui/Button";
-import { Monitor, Cpu, HardDrive, MemoryStick, Image as ImageIcon, ArrowLeft, Smartphone, Download } from "lucide-react";
+import { Monitor, Cpu, HardDrive, MemoryStick, Image as ImageIcon, ArrowLeft, Smartphone, Download, Wrench, ShieldCheck, ShieldAlert } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -339,6 +339,62 @@ export default async function GameDetails({ params }: { params: Promise<{ id: st
                     </section>
                 )
             }
+
+            {/* Guide & Safety Sections */}
+            <div className="grid md:grid-cols-2 gap-8">
+                {/* Installation Guide */}
+                <section className="bg-card rounded-2xl p-8 border border-border/50 space-y-6">
+                    <h2 className="text-2xl font-bold flex items-center gap-2">
+                        <Wrench className="text-primary" />
+                        Installation Guidelines
+                    </h2>
+                    <div className="space-y-4 text-muted-foreground text-sm">
+                        {game.platform === 'PC' || game.platform === 'Both' ? (
+                            <div className="space-y-3">
+                                <h3 className="font-semibold text-foreground text-base">For PC / Windows:</h3>
+                                <ol className="list-decimal pl-5 space-y-2">
+                                    <li>Click the <strong className="text-primary">Download PC</strong> button above to download the installation package.</li>
+                                    <li>Extract the downloaded archive file (ZIP/RAR) using an application like 7-Zip or WinRAR.</li>
+                                    <li>Right-click the main setup application or game executable and choose <strong className="text-foreground">"Run as Administrator"</strong>.</li>
+                                    <li>Follow the on-screen prompts of the game installer to select your destination folder and complete setup.</li>
+                                </ol>
+                            </div>
+                        ) : null}
+
+                        {game.platform === 'Android' || game.platform === 'Both' ? (
+                            <div className="space-y-3 pt-2">
+                                <h3 className="font-semibold text-foreground text-base">For Android:</h3>
+                                <ol className="list-decimal pl-5 space-y-2">
+                                    <li>Click the <strong className="text-primary">Download Android</strong> button to retrieve the package.</li>
+                                    <li>On your Android device, go to <strong className="text-foreground">Settings &gt; Security &gt; Special App Access</strong>.</li>
+                                    <li>Allow installation of applications from <strong className="text-foreground">"Unknown Sources"</strong> or your specific Web Browser.</li>
+                                    <li>Open your file manager, tap the downloaded APK, and follow prompts to install and play.</li>
+                                </ol>
+                            </div>
+                        ) : null}
+                    </div>
+                </section>
+
+                {/* Safety & Advisory */}
+                <section className="bg-card rounded-2xl p-8 border border-border/50 space-y-6">
+                    <h2 className="text-2xl font-bold flex items-center gap-2">
+                        <ShieldCheck className="text-emerald-400" />
+                        Security & Integrity Vetted
+                    </h2>
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                        At Avatar Play, we maintain a secure publisher ecosystem. Each submission is thoroughly scanned using server-side security checks before being cataloged. We guarantee that all download targets link to official repositories or secure, verified builds free of unauthorized spyware, malware, or wrappers.
+                    </p>
+                    <div className="border-t border-border/50 pt-4 space-y-2">
+                        <h3 className="font-semibold text-foreground flex items-center gap-2 text-sm">
+                            <ShieldAlert className="w-4 h-4 text-amber-500" />
+                            Content & Parental Advisory
+                        </h3>
+                        <p className="text-xs text-muted-foreground leading-relaxed">
+                            This title represents interactive digital software. User discretion is advised for minor audiences. We encourage users and parents to consult our community-submitted reviews and ratings below for comprehensive gaming and age suitability feedback.
+                        </p>
+                    </div>
+                </section>
+            </div>
 
             {/* User Reviews */}
             <section id="reviews" className="bg-card rounded-2xl p-8 border border-border/50">

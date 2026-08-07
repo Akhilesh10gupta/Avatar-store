@@ -110,6 +110,7 @@ export default function Footer() {
                                 { label: 'Terms of Service', href: '/legal/terms' },
                                 { label: 'Privacy Policy', href: '/legal/privacy' },
                                 { label: 'Cookie Policy', href: '/legal/cookies' },
+                                { label: 'Disclaimer & DMCA', href: '/legal/disclaimer' },
                             ].map((link, idx) => (
                                 <li key={idx}>
                                     <Link href={link.href} className="hover:text-white transition-all duration-300 flex items-center gap-2 group hover:translate-x-1">
@@ -180,6 +181,7 @@ export default function Footer() {
                             <Link href="/legal/privacy" className="hover:text-white transition-colors">Privacy</Link>
                             <Link href="/legal/terms" className="hover:text-white transition-colors">Terms</Link>
                             <Link href="/legal/cookies" className="hover:text-white transition-colors">Cookies</Link>
+                            <Link href="/legal/disclaimer" className="hover:text-white transition-colors">Disclaimer</Link>
                         </div>
                     </div>
                 </div>

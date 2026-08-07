@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Shield, FileText, Cookie, Scale, ArrowLeft } from 'lucide-react';
+import { Shield, FileText, Cookie, Scale, ArrowLeft, AlertTriangle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
 
@@ -17,6 +17,7 @@ export default function LegalLayout({
         { href: '/legal/terms', label: 'Terms of Service', icon: Scale },
         { href: '/legal/privacy', label: 'Privacy Policy', icon: Shield },
         { href: '/legal/cookies', label: 'Cookie Policy', icon: Cookie },
+        { href: '/legal/disclaimer', label: 'Disclaimer & DMCA', icon: AlertTriangle },
     ];
 
     return (
