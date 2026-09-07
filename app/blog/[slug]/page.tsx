@@ -2,6 +2,7 @@ import { getBlogPostBySlugAdmin, getBlogPostsAdmin } from "@/lib/firestore-blog"
 import Link from "next/link";
 import Image from "next/image";
 import { Calendar, User, Clock, ArrowLeft, ChevronRight } from "lucide-react";
+import AdsterraBanner from "@/components/AdsterraBanner";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 
@@ -218,6 +219,9 @@ export default async function BlogDetails({ params }: RouteParams) {
                     }
                 })}
             </article>
+
+            {/* Sponsored Ad Unit at the end of article */}
+            <AdsterraBanner />
 
             {/* Related Articles Divider */}
             <div className="border-t border-white/5 pt-12 mt-16 space-y-8">

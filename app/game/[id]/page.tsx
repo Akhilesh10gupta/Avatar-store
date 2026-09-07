@@ -2,6 +2,7 @@ import { getGameByIdAdmin } from "@/lib/firestore-admin";
 import StarRating from "@/components/StarRating";
 import ReviewSection from "@/components/ReviewSection";
 import DownloadButton from "@/components/DownloadButton";
+import AdsterraBanner from "@/components/AdsterraBanner";
 import { Button } from "@/components/ui/Button";
 import { Monitor, Cpu, HardDrive, MemoryStick, Image as ImageIcon, ArrowLeft, Smartphone, Download, Wrench, ShieldCheck, ShieldAlert } from "lucide-react";
 import Image from "next/image";
@@ -207,6 +208,9 @@ export default async function GameDetails({ params }: { params: Promise<{ id: st
                     </div>
                 </section>
             )}
+
+            {/* Sponsored Ad Unit (safely isolated from download buttons) */}
+            <AdsterraBanner />
 
             {/* Gameplay Video */}
             {
