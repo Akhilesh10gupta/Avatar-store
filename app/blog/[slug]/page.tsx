@@ -1,4 +1,4 @@
-import { getBlogPostBySlugAdmin, getBlogPostsAdmin } from "@/lib/firestore-blog";
+import { getBlogPostBySlugAdmin, getBlogPostsAdmin, getRecentBlogPostsAdmin } from "@/lib/firestore-blog";
 import Link from "next/link";
 import Image from "next/image";
 import { Calendar, User, Clock, ArrowLeft, ChevronRight } from "lucide-react";
@@ -76,8 +76,8 @@ export default async function BlogDetails({ params }: RouteParams) {
         }
     };
 
-    // Get 2 related articles (excluding the current one) dynamically from Firestore
-    const posts = await getBlogPostsAdmin();
+    // Get 2 related articles (fetch only 4 recent posts instead of entire DB)
+    const posts = await getRecentBlogPostsAdmin(4);
     const relatedPosts = posts
         .filter((p) => p.slug !== slug)
         .slice(0, 2);

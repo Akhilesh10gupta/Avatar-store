@@ -2,6 +2,9 @@ import { MetadataRoute } from 'next'
 import { getGamesAdmin } from '@/lib/firestore-admin'
 import { getBlogPostsAdmin } from '@/lib/firestore-blog'
 
+// Cache sitemap for 24 hours to prevent search engine bots from burning Firestore reads
+export const revalidate = 86400;
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const baseUrl = 'https://avatarplay.in'
     const currentDate = new Date()

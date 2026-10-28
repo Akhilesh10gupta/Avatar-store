@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { adminDb } from "./firebase-admin";
 import { Game } from "./firestore";
 
@@ -68,7 +69,7 @@ export const getMostDownloadedGamesAdmin = async () => {
     }
 };
 
-export const getGameByIdAdmin = async (id: string) => {
+export const getGameByIdAdmin = cache(async (id: string) => {
     try {
         const doc = await adminDb.collection(GAMES_COLLECTION).doc(id).get();
         if (doc.exists) {
@@ -82,4 +83,4 @@ export const getGameByIdAdmin = async (id: string) => {
         console.error(`Error fetching game ${id} (admin):`, error);
         return null;
     }
-};
+});

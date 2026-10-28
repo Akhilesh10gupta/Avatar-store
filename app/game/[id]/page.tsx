@@ -13,8 +13,9 @@ import { Metadata } from "next";
 import { getVideoEmbedUrl } from '@/lib/video';
 import { getAICardImage } from "@/lib/cloudinary";
 
-// Force dynamic rendering since we are fetching data
-export const dynamic = 'force-dynamic';
+// ISR Cache: Cache game details page for 10 minutes (600s)
+export const revalidate = 600;
+export const dynamicParams = true;
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
     const { id } = await params;

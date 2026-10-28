@@ -7,7 +7,8 @@ export const metadata: Metadata = {
     description: 'Explore the full collection of indie and premium games on Avatar Play.',
 };
 
-export const dynamic = 'force-dynamic';
+// ISR Cache: Revalidate every 5 minutes
+export const revalidate = 300;
 
 export default async function BrowsePage() {
     const games = await getGamesAdmin();

@@ -11,8 +11,8 @@ export const metadata: Metadata = {
   description: "Your ultimate destination for curated games, avatars, and gaming community. Discover, download, and play the future of gaming today.",
 };
 
-// Dummy data for initial render if DB is empty
-export const dynamic = 'force-dynamic';
+// ISR Cache: Revalidate every 5 minutes to prevent Firestore quota exhaustion
+export const revalidate = 300;
 
 const dummyGames: Game[] = [
   // ... (keep dummy data if needed, or just let it handle empty arrays)

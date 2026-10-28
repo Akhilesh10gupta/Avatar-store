@@ -8,7 +8,8 @@ export const metadata: Metadata = {
     description: 'Share your gaming moments, discuss strategies, and connect with fellow gamers on Avatar Play.',
 }
 
-export const dynamic = 'force-dynamic';
+// ISR Cache: Cache community feed for 60 seconds
+export const revalidate = 60;
 
 export default async function CommunityPage() {
     const initialPosts = await getPostsAction(1, 10);

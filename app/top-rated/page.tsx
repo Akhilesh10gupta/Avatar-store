@@ -7,7 +7,8 @@ export const metadata: Metadata = {
     description: 'Check out the highest-rated games as voted by the Avatar Play community.',
 };
 
-export const dynamic = 'force-dynamic';
+// ISR Cache: Revalidate every 5 minutes
+export const revalidate = 300;
 
 export default async function TopRatedPage() {
     const ratedGames = await getTopRatedGamesAdmin();

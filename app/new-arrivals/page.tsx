@@ -7,7 +7,8 @@ export const metadata: Metadata = {
     description: 'Discover the newest games recently published on Avatar Play.',
 };
 
-export const dynamic = 'force-dynamic';
+// ISR Cache: Revalidate every 5 minutes
+export const revalidate = 300;
 
 export default async function NewArrivalsPage() {
     const games = await getGamesAdmin();

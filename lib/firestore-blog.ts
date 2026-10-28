@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { adminDb } from "./firebase-admin";
 import { BlogPost, blogPosts } from "./blogData";
 
@@ -14,6 +15,24 @@ const convertTimestamps = (data: any) => {
         result.updatedAt = result.updatedAt.toDate().toISOString();
     }
     return result;
+};
+
+// Fetch only N recent blog posts (for related posts or widgets, preventing full collection scans)
+export const getRecentBlogPostsAdmin = async (limitCount: number = 4): Promise<BlogPost[]> => {
+    try {
+        const snapshot = await adminDb.collection(BLOG_COLLECTION)
+            .orderBy("createdAt", "desc")
+            .limit(limitCount)
+            .get();
+
+        return snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...convertTimestamps(doc.data())
+        } as unknown as BlogPost));
+    } catch (error) {
+        console.error("Error fetching recent blog posts (admin):", error);
+        return [];
+    }
 };
 
 // Fetch all blog posts (server-side, bypass rules)
@@ -63,8 +82,8 @@ export const getBlogPostsCountAdmin = async (): Promise<number> => {
     }
 };
 
-// Fetch a single blog post by its slug (server-side)
-export const getBlogPostBySlugAdmin = async (slug: string): Promise<BlogPost | null> => {
+// Fetch a single blog post by its slug (server-side, cached per request)
+export const getBlogPostBySlugAdmin = cache(async (slug: string): Promise<BlogPost | null> => {
     try {
         const snapshot = await adminDb.collection(BLOG_COLLECTION)
             .where("slug", "==", slug)
@@ -84,7 +103,7 @@ export const getBlogPostBySlugAdmin = async (slug: string): Promise<BlogPost | n
         console.error(`Error fetching blog post by slug ${slug} (admin):`, error);
         return null;
     }
-};
+});
 
 // Create a new blog post (server-side)
 export const createBlogPostAdmin = async (postData: Omit<BlogPost, 'id'>) => {
