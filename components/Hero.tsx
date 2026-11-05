@@ -108,7 +108,7 @@ const Hero = ({ latestGames = [], popularGames = [] }: HeroProps) => {
                                     }
                                     alt={game.title}
                                     fill
-                                    className="object-cover"
+                                    className="object-cover object-top"
                                     priority={index === 0}
                                 />
                                 {/* Gradient Overlay */}
@@ -172,12 +172,12 @@ const Hero = ({ latestGames = [], popularGames = [] }: HeroProps) => {
                             transition={{ duration: 0.7 }}
                             className="absolute inset-0"
                         >
-                            {/* Background Image */}
+                            {/* Background Image - Anchored at the top so 16:9 banner titles are never cropped */}
                             <Image
                                 src={getAICardImage(activeGame.coverImage, 1200, 800)}
                                 alt={activeGame.title}
                                 fill
-                                className="object-cover"
+                                className="object-cover object-top"
                                 priority
                             />
                             {/* Gradients */}

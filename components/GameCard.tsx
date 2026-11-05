@@ -169,7 +169,7 @@ const GameCard = ({ game, className, variant = 'default', rank }: GameCardProps)
                         src={imageUrl}
                         alt={game.title}
                         fill
-                        className="object-cover transition-transform duration-500 group-hover:scale-110"
+                        className="object-cover object-top transition-transform duration-500 group-hover:scale-110"
                     />
                     {/* Hover Overlay - Soft brightness boost instead of shadow */}
                     <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />

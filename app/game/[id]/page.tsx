@@ -119,12 +119,12 @@ export default async function GameDetails({ params }: { params: Promise<{ id: st
             {/* Header Section */}
             <div className="grid md:grid-cols-[300px_1fr] gap-8">
                 {/* Cover Image */}
-                <div className="relative aspect-[3/4] rounded-xl overflow-hidden shadow-2xl border border-border/50">
+                <div className="relative aspect-[3/4] rounded-xl overflow-hidden shadow-2xl border border-border/50 bg-black/40">
                     <Image
                         src={coverUrl}
                         alt={game.title}
                         fill
-                        className="object-cover"
+                        className="object-cover object-top"
                         priority
                     />
                 </div>
