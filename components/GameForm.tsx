@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Game } from '@/lib/firestore';
 import { addGameAction, updateGameAction } from '@/app/actions/gameActions';
+import { fetchItchGameMetadata } from '@/app/actions/importItchAction';
 import { uploadFile, uploadMultipleFiles } from '@/lib/storage';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -53,6 +54,65 @@ export default function GameForm({ initialData }: GameFormProps) {
     const [iconFile, setIconFile] = useState<File | null>(null);
     const [screenshotFiles, setScreenshotFiles] = useState<File[]>([]);
     const [videoFile, setVideoFile] = useState<File | null>(null);
+
+    // Itch.io Import States
+    const [itchUrl, setItchUrl] = useState('');
+    const [importingItch, setImportingItch] = useState(false);
+    const [importStatus, setImportStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+
+    const handleItchImport = async () => {
+        if (!itchUrl.trim()) return;
+        setImportingItch(true);
+        setImportStatus(null);
+
+        try {
+            const res = await fetchItchGameMetadata(itchUrl);
+            if (res.success && res.data) {
+                const itch = res.data;
+                setFormData(prev => ({
+                    ...prev,
+                    title: itch.title || prev.title,
+                    description: itch.description || prev.description,
+                    developer: itch.developer || prev.developer,
+                    genre: itch.genre || prev.genre,
+                    releaseDate: itch.releaseDate || prev.releaseDate,
+                    platform: itch.platform,
+                    coverImage: itch.coverImage || prev.coverImage,
+                    icon: itch.coverImage || prev.icon,
+                    screenshots: itch.screenshots?.length ? itch.screenshots : prev.screenshots,
+                    webPlayUrl: itch.webPlayUrl || '',
+                    webPlayUrlAlternate: itch.webPlayUrlAlternate || '',
+                    downloadLinkPC: itch.downloadLinkPC || '',
+                    downloadLinkAndroid: itch.downloadLinkAndroid || '',
+                }));
+
+                const platformLabel = itch.platform === 'Web' 
+                    ? '🌐 Online Web Game' 
+                    : itch.platform === 'Android' 
+                    ? '📱 Android Download Game' 
+                    : itch.platform === 'Both' 
+                    ? '💻📱 PC & Android Game' 
+                    : '💻 PC / Windows Download Game';
+
+                setImportStatus({
+                    type: 'success',
+                    message: `✅ "${itch.title}" imported as ${platformLabel}! Ready to save.`
+                });
+            } else {
+                setImportStatus({
+                    type: 'error',
+                    message: res.error || 'Failed to import itch.io game.'
+                });
+            }
+        } catch (err: any) {
+            setImportStatus({
+                type: 'error',
+                message: err.message || 'An unexpected error occurred while fetching.'
+            });
+        } finally {
+            setImportingItch(false);
+        }
+    };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
@@ -164,6 +224,62 @@ export default function GameForm({ initialData }: GameFormProps) {
 
     return (
         <form onSubmit={handleSubmit} className="space-y-8 max-w-4xl mx-auto pb-20">
+            {/* Quick 1-Click Import from Itch.io */}
+            <div className="rounded-2xl border border-red-500/30 bg-gradient-to-r from-red-500/10 via-secondary/40 to-cyan-500/10 p-5 space-y-3 shadow-lg">
+                <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-xl bg-red-600 flex items-center justify-center text-white font-black text-xs shadow-md">
+                        itch
+                    </div>
+                    <div>
+                        <h3 className="font-bold text-base flex items-center gap-1.5 text-foreground">
+                            <span>1-Click Auto-Import from Itch.io</span>
+                            <Sparkles className="w-4 h-4 text-cyan-400 animate-pulse" />
+                        </h3>
+                        <p className="text-xs text-muted-foreground">
+                            Paste an itch.io game link to automatically fill Title, Cover Image, Screenshots, Description, and Play/Download links.
+                        </p>
+                    </div>
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-2 pt-1">
+                    <Input
+                        type="url"
+                        value={itchUrl}
+                        onChange={(e) => setItchUrl(e.target.value)}
+                        placeholder="https://creator.itch.io/game-name"
+                        className="bg-background/80 text-sm flex-1"
+                    />
+                    <Button
+                        type="button"
+                        onClick={handleItchImport}
+                        disabled={importingItch || !itchUrl.trim()}
+                        className="shrink-0 bg-red-600 hover:bg-red-700 text-white font-semibold flex items-center justify-center gap-2 shadow-md cursor-pointer"
+                    >
+                        {importingItch ? (
+                            <>
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                                <span>Importing...</span>
+                            </>
+                        ) : (
+                            <>
+                                <Sparkles className="w-4 h-4" />
+                                <span>Fetch & Auto-Fill</span>
+                            </>
+                        )}
+                    </Button>
+                </div>
+
+                {importStatus && (
+                    <div className={`text-xs px-3 py-2 rounded-lg flex items-center gap-2 ${
+                        importStatus.type === 'success' 
+                            ? 'bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-medium' 
+                            : 'bg-destructive/10 border border-destructive/30 text-destructive font-medium'
+                    }`}>
+                        {importStatus.message}
+                    </div>
+                )}
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="space-y-4">
                     <h3 className="text-lg font-semibold border-b border-border/50 pb-2">Basic Info</h3>

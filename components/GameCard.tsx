@@ -159,10 +159,10 @@ const GameCard = ({ game, className, variant = 'default', rank }: GameCardProps)
                 {rank && <CyberBadge rank={rank} />}
                 {/* Image Container */}
                 <div title={`Source: ${game.cardImage ? 'Uploaded Card' : 'AI Generated (Cover)'}\nURL: ${imageUrl}`} className="aspect-[3/4] relative overflow-hidden rounded-t-xl">
-                    {game.webPlayUrl && (
+                    {game.platform === 'Web' && game.webPlayUrl && (
                         <div className="absolute top-2 right-2 z-10 bg-cyan-500/90 backdrop-blur-md text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 shadow-md shadow-cyan-500/30">
                             <Play className="w-2.5 h-2.5 fill-current" />
-                            <span>Play</span>
+                            <span>Online</span>
                         </div>
                     )}
                     <Image
@@ -185,23 +185,23 @@ const GameCard = ({ game, className, variant = 'default', rank }: GameCardProps)
                         <div className="flex items-center gap-1">
                             {game.platform === 'Android' ? (
                                 <>
-                                    <Smartphone className="w-3 h-3" />
-                                    <span>Android</span>
+                                    <Smartphone className="w-3 h-3 text-green-400" />
+                                    <span className="text-green-400 font-semibold">Android</span>
                                 </>
                             ) : game.platform === 'Both' ? (
                                 <>
-                                    <Layers className="w-3 h-3" />
-                                    <span>PC + Android</span>
+                                    <Layers className="w-3 h-3 text-amber-400" />
+                                    <span className="text-amber-400 font-semibold">PC & Android</span>
                                 </>
                             ) : game.platform === 'Web' ? (
                                 <>
                                     <Globe className="w-3 h-3 text-cyan-400" />
-                                    <span className="text-cyan-400 font-medium">Web</span>
+                                    <span className="text-cyan-400 font-semibold">Online Web</span>
                                 </>
                             ) : (
                                 <>
-                                    <Monitor className="w-3 h-3" />
-                                    <span>PC</span>
+                                    <Monitor className="w-3 h-3 text-primary" />
+                                    <span className="text-primary font-semibold">PC</span>
                                 </>
                             )}
                         </div>

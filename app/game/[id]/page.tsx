@@ -5,7 +5,7 @@ import DownloadButton from "@/components/DownloadButton";
 import PlayOnlineButton from "@/components/PlayOnlineButton";
 import AdsterraBanner from "@/components/AdsterraBanner";
 import { Button } from "@/components/ui/Button";
-import { Monitor, Cpu, HardDrive, MemoryStick, Image as ImageIcon, ArrowLeft, Smartphone, Download, Wrench, ShieldCheck, ShieldAlert, Globe, Play, Gamepad2, ExternalLink } from "lucide-react";
+import { Monitor, Cpu, HardDrive, MemoryStick, Image as ImageIcon, ArrowLeft, Smartphone, Download, Wrench, ShieldCheck, ShieldAlert, Globe, Play, Gamepad2, ExternalLink, Layers } from "lucide-react";
 import WebGamePlayer from "@/components/WebGamePlayer";
 import Image from "next/image";
 import Link from "next/link";
@@ -133,19 +133,40 @@ export default async function GameDetails({ params }: { params: Promise<{ id: st
                 <div className="flex flex-col justify-between space-y-6">
                     <div>
                         <h1 className="text-4xl md:text-5xl font-bold mb-2">{game.title}</h1>
-                        <div className="flex items-center gap-4 text-muted-foreground mb-6 flex-wrap">
-                            <span className="bg-secondary px-3 py-1 rounded-full text-sm font-medium text-secondary-foreground flex items-center gap-2">
+                        <div className="flex items-center gap-3 text-muted-foreground mb-6 flex-wrap">
+                            {/* Clear Platform Badge */}
+                            <span className="bg-secondary px-3 py-1 rounded-full text-sm font-medium text-secondary-foreground flex items-center gap-2 border border-border/40">
                                 {game.platform === 'Android' ? (
-                                    <Smartphone className="w-3 h-3 text-green-500" />
+                                    <>
+                                        <Smartphone className="w-3.5 h-3.5 text-green-500" />
+                                        <span className="text-green-500 font-semibold">Android</span>
+                                    </>
+                                ) : game.platform === 'Both' ? (
+                                    <>
+                                        <Layers className="w-3.5 h-3.5 text-amber-400" />
+                                        <span className="text-amber-400 font-semibold">PC & Android</span>
+                                    </>
                                 ) : game.platform === 'Web' ? (
-                                    <Globe className="w-3 h-3 text-cyan-400" />
+                                    <>
+                                        <Globe className="w-3.5 h-3.5 text-cyan-400" />
+                                        <span className="text-cyan-400 font-semibold">Online Web Game</span>
+                                    </>
                                 ) : (
-                                    <Monitor className="w-3 h-3 text-primary" />
+                                    <>
+                                        <Monitor className="w-3.5 h-3.5 text-primary" />
+                                        <span className="text-primary font-semibold">Windows PC</span>
+                                    </>
                                 )}
-                                {game.platform === 'Web' ? 'Web Game' : game.genre}
                             </span>
+
+                            {/* Genre Badge */}
+                            <span className="bg-secondary/70 border border-border/40 px-3 py-1 rounded-full text-sm font-medium text-secondary-foreground">
+                                {game.genre}
+                            </span>
+
                             <span>{game.developer}</span>
                             <span>{game.releaseDate}</span>
+
                             <span className="flex items-center gap-1.5 text-emerald-400 font-semibold bg-emerald-400/10 px-3 py-1 rounded-full border border-emerald-400/20">
                                 {game.platform === 'Web' ? <Play className="w-3.5 h-3.5 fill-current" /> : <Download className="w-4 h-4" />}
                                 {(game.downloadCount || 0).toLocaleString()} {game.platform === 'Web' ? 'Plays' : 'Downloads'}
@@ -169,8 +190,8 @@ export default async function GameDetails({ params }: { params: Promise<{ id: st
                     </div>
 
                     <div className="flex flex-wrap gap-4">
-                        {/* Instant Online Play & Alternate Button (Tracks play count) */}
-                        {game.webPlayUrl && (
+                        {/* Instant Online Play Button - ONLY for Web Games or if explicitly enabled */}
+                        {(game.platform === 'Web' || (game.webPlayUrl && game.platform !== 'Android' && game.platform !== 'PC')) && game.webPlayUrl && (
                             <PlayOnlineButton
                                 gameId={game.id!}
                                 webPlayUrl={game.webPlayUrl}
@@ -199,8 +220,8 @@ export default async function GameDetails({ params }: { params: Promise<{ id: st
                 </div>
             </div>
 
-            {/* Embedded Web Game Player Section */}
-            {game.webPlayUrl && (
+            {/* Embedded Web Game Player Section - ONLY for Online Web Games */}
+            {(game.platform === 'Web' || (game.webPlayUrl && game.platform !== 'Android' && game.platform !== 'PC')) && game.webPlayUrl && (
                 <section id="online-player" className="scroll-mt-8 space-y-4">
                     <div className="flex items-center justify-between">
                         <h2 className="text-2xl font-bold flex items-center gap-2">
