@@ -157,16 +157,37 @@ export async function fetchItchGameMetadata(itchUrl: string): Promise<{ success:
             downloadLinkPC = trimmedUrl;
         }
 
-        // 7. Extract Screenshots
+        // 7. Extract Screenshots (High Resolution Only, no 32x32 favicon/icons)
         const screenshotUrls: string[] = [];
-        const screenshotRegex = /href=["'](https:\/\/img\.itch\.zone\/[^"']+\.(?:png|jpg|jpeg|webp))["']/gi;
-        let match;
-        while ((match = screenshotRegex.exec(html)) !== null) {
-            const url = match[1];
-            if (!screenshotUrls.includes(url) && url !== coverImage) {
-                screenshotUrls.push(url);
+
+        // Strategy A: Extract high-res screenshots from the gallery container (<div class="screenshot_list">)
+        const listMatch = html.match(/<div[^>]*class=["'][^"']*screenshot_list[^"']*["'][^>]*>([\s\S]*?)<\/div>/i);
+        if (listMatch) {
+            const listHtml = listMatch[1];
+            const aRegex = /href=["'](https:\/\/img\.itch\.zone\/[^"']+\.(?:png|jpg|jpeg|webp))["']/gi;
+            let m;
+            while ((m = aRegex.exec(listHtml)) !== null) {
+                let url = m[1];
+                // Always upgrade to original high-res quality
+                url = url.replace(/\/[0-9]+x[0-9]+(?:%23[a-z0-9]*)?\//, '/original/');
+                if (!screenshotUrls.includes(url) && url !== coverImage && !url.includes('32x32') && !url.includes('icon')) {
+                    screenshotUrls.push(url);
+                }
+                if (screenshotUrls.length >= 6) break;
             }
-            if (screenshotUrls.length >= 4) break;
+        }
+
+        // Strategy B: Fallback - grab only verified /original/ full-size images
+        if (screenshotUrls.length === 0) {
+            const originalRegex = /(https:\/\/img\.itch\.zone\/[a-zA-Z0-9=_-]+\/original\/[a-zA-Z0-9%_-]+\.(?:png|jpg|jpeg|webp))/gi;
+            let m;
+            while ((m = originalRegex.exec(html)) !== null) {
+                const url = m[1];
+                if (!screenshotUrls.includes(url) && url !== coverImage && !url.includes('32x32') && !url.includes('icon')) {
+                    screenshotUrls.push(url);
+                }
+                if (screenshotUrls.length >= 6) break;
+            }
         }
 
         // 8. Genre / Tag extraction
