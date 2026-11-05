@@ -20,7 +20,8 @@ import {
     Server
 } from 'lucide-react';
 import { useAuth } from '@/components/AuthProvider';
-import { addUserXPAction } from '@/app/actions/userActions';
+import { addUserXPAction, incrementUserDownloadAction } from '@/app/actions/userActions';
+import { incrementDownloadAction } from '@/app/actions/gameActions';
 
 interface WebGamePlayerProps {
     game: Game;
@@ -36,6 +37,7 @@ export default function WebGamePlayer({ game, autoPlay = false, className = '' }
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [reloadKey, setReloadKey] = useState(0);
     const [xpAwarded, setXpAwarded] = useState(false);
+    const [countIncremented, setCountIncremented] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
 
     // Active URL based on selected source (Primary vs Alternate Link)
@@ -64,10 +66,22 @@ export default function WebGamePlayer({ game, autoPlay = false, className = '' }
         setReloadKey(prev => prev + 1);
     };
 
-    // Award XP when the player starts playing
+    // Track game play in download/play count
+    const trackPlay = () => {
+        if (game.id && !countIncremented) {
+            setCountIncremented(true);
+            incrementDownloadAction(game.id);
+            if (user) {
+                incrementUserDownloadAction(user.uid);
+            }
+        }
+    };
+
+    // Award XP and increment play count when the player starts playing
     const handleStartPlaying = () => {
         setIsPlaying(true);
         setIsLoading(true);
+        trackPlay();
 
         if (user && !xpAwarded) {
             setXpAwarded(true);
@@ -212,6 +226,7 @@ export default function WebGamePlayer({ game, autoPlay = false, className = '' }
                         href={activeUrl}
                         target="_blank"
                         rel="noopener noreferrer"
+                        onClick={trackPlay}
                         className="p-2 px-3 rounded-lg bg-primary/20 hover:bg-primary/30 text-primary hover:text-primary-foreground text-xs transition-all border border-primary/30 flex items-center gap-1.5 font-semibold"
                         title="Open current game link in a new tab"
                     >
@@ -312,6 +327,7 @@ export default function WebGamePlayer({ game, autoPlay = false, className = '' }
                         href={activeUrl}
                         target="_blank"
                         rel="noopener noreferrer"
+                        onClick={trackPlay}
                         className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-xs shadow-md transition-colors"
                     >
                         <ExternalLink className="w-3.5 h-3.5" />
@@ -321,7 +337,10 @@ export default function WebGamePlayer({ game, autoPlay = false, className = '' }
                     {/* Alternate Option: Switch to Server 2 / Alternate Link */}
                     {game.webPlayUrlAlternate && (
                         <button
-                            onClick={() => handleSelectSource(selectedSource === 'primary' ? 'alternate' : 'primary')}
+                            onClick={() => {
+                                trackPlay();
+                                handleSelectSource(selectedSource === 'primary' ? 'alternate' : 'primary');
+                            }}
                             className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs shadow-md transition-colors"
                         >
                             <ArrowLeftRight className="w-3.5 h-3.5" />
@@ -338,6 +357,7 @@ export default function WebGamePlayer({ game, autoPlay = false, className = '' }
                             href={game.webPlayUrlAlternate}
                             target="_blank"
                             rel="noopener noreferrer"
+                            onClick={trackPlay}
                             className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-secondary hover:bg-secondary/80 text-foreground font-medium text-xs border border-border/60 transition-colors"
                         >
                             <ExternalLink className="w-3.5 h-3.5 text-emerald-400" />

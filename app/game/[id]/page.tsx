@@ -2,6 +2,7 @@ import { getGameByIdAdmin } from "@/lib/firestore-admin";
 import StarRating from "@/components/StarRating";
 import ReviewSection from "@/components/ReviewSection";
 import DownloadButton from "@/components/DownloadButton";
+import PlayOnlineButton from "@/components/PlayOnlineButton";
 import AdsterraBanner from "@/components/AdsterraBanner";
 import { Button } from "@/components/ui/Button";
 import { Monitor, Cpu, HardDrive, MemoryStick, Image as ImageIcon, ArrowLeft, Smartphone, Download, Wrench, ShieldCheck, ShieldAlert, Globe, Play, Gamepad2, ExternalLink } from "lucide-react";
@@ -146,8 +147,8 @@ export default async function GameDetails({ params }: { params: Promise<{ id: st
                             <span>{game.developer}</span>
                             <span>{game.releaseDate}</span>
                             <span className="flex items-center gap-1.5 text-emerald-400 font-semibold bg-emerald-400/10 px-3 py-1 rounded-full border border-emerald-400/20">
-                                <Download className="w-4 h-4" />
-                                {(game.downloadCount || 0).toLocaleString()} Downloads
+                                {game.platform === 'Web' ? <Play className="w-3.5 h-3.5 fill-current" /> : <Download className="w-4 h-4" />}
+                                {(game.downloadCount || 0).toLocaleString()} {game.platform === 'Web' ? 'Plays' : 'Downloads'}
                             </span>
                         </div>
                         <p className="text-lg text-muted-foreground leading-relaxed max-w-2xl">
@@ -168,36 +169,13 @@ export default async function GameDetails({ params }: { params: Promise<{ id: st
                     </div>
 
                     <div className="flex flex-wrap gap-4">
-                        {/* Instant Online Play Button */}
+                        {/* Instant Online Play & Alternate Button (Tracks play count) */}
                         {game.webPlayUrl && (
-                            <a href="#online-player">
-                                <Button
-                                    size="lg"
-                                    className="px-8 shadow-lg shadow-cyan-500/25 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-bold border-none flex items-center gap-2 group animate-pulse hover:animate-none"
-                                >
-                                    <Play className="w-5 h-5 fill-current" />
-                                    Play Online (Instant)
-                                </Button>
-                            </a>
-                        )}
-
-                        {/* Direct / Alternate Play Button */}
-                        {game.webPlayUrl && (
-                            <a
-                                href={game.webPlayUrlAlternate || game.webPlayUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                <Button
-                                    size="lg"
-                                    variant="outline"
-                                    className="px-6 border-cyan-500/40 hover:bg-cyan-500/10 text-cyan-400 font-semibold flex items-center gap-2"
-                                    title="Open directly in a new window"
-                                >
-                                    <ExternalLink className="w-4 h-4" />
-                                    {game.webPlayUrlAlternate ? 'Alternate Play Link' : 'Play in New Tab'}
-                                </Button>
-                            </a>
+                            <PlayOnlineButton
+                                gameId={game.id!}
+                                webPlayUrl={game.webPlayUrl}
+                                webPlayUrlAlternate={game.webPlayUrlAlternate}
+                            />
                         )}
 
                         {/* PC Download Button */}
