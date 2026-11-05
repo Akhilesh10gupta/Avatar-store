@@ -29,10 +29,41 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
         };
     }
 
-    const title = `${game.title} - Download Game | Avatar Play`;
-    const description = game.description
-        ? (game.description.length > 155 ? `${game.description.slice(0, 155)}...` : game.description)
-        : `Download ${game.title} on Avatar Play.`;
+    const shortDesc = game.description
+        ? (game.description.length > 120 ? `${game.description.slice(0, 120)}...` : game.description)
+        : '';
+
+    // Smart High-CTR Platform-Specific SEO Titles & Descriptions
+    let title: string;
+    let description: string;
+    let keywords: string[];
+
+    if (game.platform === 'Web') {
+        title = `Play ${game.title} Online Free in Browser | Avatar Play`;
+        description = shortDesc
+            ? `Play ${game.title} instantly in your web browser. ${shortDesc}`
+            : `Play ${game.title} online for free in your browser on Avatar Play. No installation needed.`;
+        keywords = [game.title, `play ${game.title} online`, `${game.title} browser game`, `${game.title} free`, `${game.genre} online`, 'Avatar Play', 'instant play'];
+    } else if (game.platform === 'Android') {
+        title = `${game.title} - Download Android APK Free | Avatar Play`;
+        description = shortDesc
+            ? `Download ${game.title} APK for Android. ${shortDesc}`
+            : `Download ${game.title} Android APK on Avatar Play. Free & secure mobile gaming.`;
+        keywords = [game.title, `${game.title} apk`, `${game.title} android download`, `${game.title} free apk`, `${game.genre} android`, 'Avatar Play'];
+    } else if (game.platform === 'Both') {
+        title = `${game.title} - Download for PC & Android APK | Avatar Play`;
+        description = shortDesc
+            ? `Download ${game.title} for PC & Android. ${shortDesc}`
+            : `Download ${game.title} for PC (Windows) and Android APK on Avatar Play.`;
+        keywords = [game.title, `${game.title} download`, `${game.title} pc`, `${game.title} apk`, `${game.genre} games`, 'Avatar Play'];
+    } else {
+        // PC / Windows
+        title = `${game.title} - Download PC Game (Windows) | Avatar Play`;
+        description = shortDesc
+            ? `Download ${game.title} for PC. ${shortDesc}`
+            : `Download ${game.title} PC game on Avatar Play. Verified Windows setup.`;
+        keywords = [game.title, `${game.title} pc download`, `${game.title} windows`, `${game.title} setup`, `${game.genre} pc`, 'Avatar Play'];
+    }
 
     const coverUrl = game.cardImage
         ? getAICardImage(game.cardImage, 1200, 1600)
@@ -43,6 +74,10 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     return {
         title,
         description,
+        keywords,
+        alternates: {
+            canonical: `https://avatarplay.in/game/${id}`,
+        },
         openGraph: {
             title,
             description,
