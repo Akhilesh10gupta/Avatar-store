@@ -204,7 +204,7 @@ const Hero = ({ latestGames = [], popularGames = [] }: HeroProps) => {
                                     {activeGame.genre}
                                 </span>
                                 <span className="px-3 py-1 rounded bg-primary/80 backdrop-blur-md text-primary-foreground text-sm font-medium">
-                                    {activeGame.platform === 'Both' ? 'PC & Android' : activeGame.platform}
+                                    {activeGame.platform === 'Both' ? 'PC & Android' : activeGame.platform === 'Web' ? 'Web Game' : activeGame.platform}
                                 </span>
                             </div>
 
@@ -215,7 +215,7 @@ const Hero = ({ latestGames = [], popularGames = [] }: HeroProps) => {
                             <div className="flex gap-4 w-full md:w-auto">
                                 <Link href={`/game/${activeGame.id}`} className="w-full md:w-auto">
                                     <Button size="lg" className="rounded-xl px-8 py-6 text-lg font-semibold shadow-xl shadow-primary/20 w-full md:w-auto whitespace-nowrap flex items-center justify-center">
-                                        Download Now <ArrowRight className="ml-2 w-5 h-5" />
+                                        {activeGame.platform === 'Web' || activeGame.webPlayUrl ? 'Play Now' : 'Download Now'} <ArrowRight className="ml-2 w-5 h-5" />
                                     </Button>
                                 </Link>
                                 {/* Wishlist button removed for now */}

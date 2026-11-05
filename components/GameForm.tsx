@@ -7,7 +7,7 @@ import { addGameAction, updateGameAction } from '@/app/actions/gameActions';
 import { uploadFile, uploadMultipleFiles } from '@/lib/storage';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { Loader2, Upload, X, Image as ImageIcon, Monitor, Smartphone, Layers, Sparkles } from 'lucide-react';
+import { Loader2, Upload, X, Image as ImageIcon, Monitor, Smartphone, Layers, Sparkles, Globe, Play } from 'lucide-react';
 import Image from 'next/image';
 
 interface GameFormProps {
@@ -26,6 +26,7 @@ export default function GameForm({ initialData }: GameFormProps) {
         platform: initialData?.platform || 'PC', // Default to PC if missing
         downloadLinkPC: initialData?.downloadLinkPC || initialData?.downloadLink || '', // Fallback to legacy link
         downloadLinkAndroid: initialData?.downloadLinkAndroid || '',
+        webPlayUrl: initialData?.webPlayUrl || '',
         coverImage: initialData?.coverImage || '',
         cardImage: initialData?.cardImage || '',
         icon: initialData?.icon || '',
@@ -194,6 +195,7 @@ export default function GameForm({ initialData }: GameFormProps) {
                                     <option value="PC">PC (Windows)</option>
                                     <option value="Android">Android</option>
                                     <option value="Both">Both (PC & Android)</option>
+                                    <option value="Web">Web / Browser Game (Online Play)</option>
                                 </select>
                             </div>
                         </div>
@@ -308,6 +310,29 @@ export default function GameForm({ initialData }: GameFormProps) {
 
                     {/* Dynamic Download Links */}
                     <div className="p-4 bg-secondary/20 rounded-lg border border-border/50 space-y-4">
+                        {/* Web / Online Play Link */}
+                        {(formData.platform === 'Web' || formData.webPlayUrl !== undefined) && (
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium flex items-center justify-between">
+                                    <span className="flex items-center gap-2">
+                                        <Globe className="w-4 h-4 text-cyan-400" />
+                                        Play Online URL (Web Game) {formData.platform === 'Web' ? <span className="text-red-400 font-bold">*</span> : <span className="text-xs text-muted-foreground">(Optional)</span>}
+                                    </span>
+                                    <span className="text-xs text-muted-foreground">e.g. https://fightkaro.com</span>
+                                </label>
+                                <Input
+                                    name="webPlayUrl"
+                                    value={formData.webPlayUrl || ''}
+                                    onChange={handleChange}
+                                    required={formData.platform === 'Web'}
+                                    placeholder="https://fightkaro.com or https://example.com/game"
+                                />
+                                <p className="text-xs text-muted-foreground">
+                                    Users can play this game directly in their browser without downloading!
+                                </p>
+                            </div>
+                        )}
+
                         {(formData.platform === 'PC' || formData.platform === 'Both') && (
                             <div className="space-y-2">
                                 <label className="text-sm font-medium flex items-center gap-2">

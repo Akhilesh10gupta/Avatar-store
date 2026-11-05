@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { Download, Monitor, Smartphone, Layers, Crown, Medal, Trophy } from 'lucide-react';
+import { Download, Monitor, Smartphone, Layers, Crown, Medal, Trophy, Globe, Play } from 'lucide-react';
 import { Game } from '@/lib/firestore'; // Assuming types are exported from here or a types file
 
 import { getOptimizedImage, getAICardImage } from '@/lib/cloudinary';
@@ -159,6 +159,12 @@ const GameCard = ({ game, className, variant = 'default', rank }: GameCardProps)
                 {rank && <CyberBadge rank={rank} />}
                 {/* Image Container */}
                 <div title={`Source: ${game.cardImage ? 'Uploaded Card' : 'AI Generated (Cover)'}\nURL: ${imageUrl}`} className="aspect-[3/4] relative overflow-hidden rounded-t-xl">
+                    {game.webPlayUrl && (
+                        <div className="absolute top-2 right-2 z-10 bg-cyan-500/90 backdrop-blur-md text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 shadow-md shadow-cyan-500/30">
+                            <Play className="w-2.5 h-2.5 fill-current" />
+                            <span>Play</span>
+                        </div>
+                    )}
                     <Image
                         src={imageUrl}
                         alt={game.title}
@@ -186,6 +192,11 @@ const GameCard = ({ game, className, variant = 'default', rank }: GameCardProps)
                                 <>
                                     <Layers className="w-3 h-3" />
                                     <span>PC + Android</span>
+                                </>
+                            ) : game.platform === 'Web' ? (
+                                <>
+                                    <Globe className="w-3 h-3 text-cyan-400" />
+                                    <span className="text-cyan-400 font-medium">Web</span>
                                 </>
                             ) : (
                                 <>

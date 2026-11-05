@@ -110,9 +110,10 @@ export interface Game {
     price?: string;
 
     // Platform Support
-    platform: 'PC' | 'Android' | 'Both';
+    platform: 'PC' | 'Android' | 'Both' | 'Web';
     downloadLinkPC?: string;      // For PC/Both
     downloadLinkAndroid?: string; // For Android/Both
+    webPlayUrl?: string;          // Direct play link for Web/Browser games (e.g. https://fightkaro.com)
 
     downloadLink?: string; // @deprecated - keeping for backward compatibility
 

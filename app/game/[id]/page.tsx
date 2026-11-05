@@ -4,7 +4,8 @@ import ReviewSection from "@/components/ReviewSection";
 import DownloadButton from "@/components/DownloadButton";
 import AdsterraBanner from "@/components/AdsterraBanner";
 import { Button } from "@/components/ui/Button";
-import { Monitor, Cpu, HardDrive, MemoryStick, Image as ImageIcon, ArrowLeft, Smartphone, Download, Wrench, ShieldCheck, ShieldAlert } from "lucide-react";
+import { Monitor, Cpu, HardDrive, MemoryStick, Image as ImageIcon, ArrowLeft, Smartphone, Download, Wrench, ShieldCheck, ShieldAlert, Globe, Play, Gamepad2 } from "lucide-react";
+import WebGamePlayer from "@/components/WebGamePlayer";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -84,7 +85,7 @@ export default async function GameDetails({ params }: { params: Promise<{ id: st
         "@type": "SoftwareApplication",
         "name": game.title,
         "applicationCategory": "GameApplication",
-        "operatingSystem": game.platform === 'Both' ? 'Windows, Android' : game.platform,
+        "operatingSystem": game.platform === 'Both' ? 'Windows, Android' : game.platform === 'Web' ? 'Web Browser' : game.platform,
         "genre": game.genre,
         "author": {
             "@type": "Organization",
@@ -133,8 +134,14 @@ export default async function GameDetails({ params }: { params: Promise<{ id: st
                         <h1 className="text-4xl md:text-5xl font-bold mb-2">{game.title}</h1>
                         <div className="flex items-center gap-4 text-muted-foreground mb-6 flex-wrap">
                             <span className="bg-secondary px-3 py-1 rounded-full text-sm font-medium text-secondary-foreground flex items-center gap-2">
-                                {game.platform === 'Android' ? <Smartphone className="w-3 h-3" /> : <Monitor className="w-3 h-3" />}
-                                {game.genre}
+                                {game.platform === 'Android' ? (
+                                    <Smartphone className="w-3 h-3 text-green-500" />
+                                ) : game.platform === 'Web' ? (
+                                    <Globe className="w-3 h-3 text-cyan-400" />
+                                ) : (
+                                    <Monitor className="w-3 h-3 text-primary" />
+                                )}
+                                {game.platform === 'Web' ? 'Web Game' : game.genre}
                             </span>
                             <span>{game.developer}</span>
                             <span>{game.releaseDate}</span>
@@ -161,6 +168,19 @@ export default async function GameDetails({ params }: { params: Promise<{ id: st
                     </div>
 
                     <div className="flex flex-wrap gap-4">
+                        {/* Instant Online Play Button */}
+                        {game.webPlayUrl && (
+                            <a href="#online-player">
+                                <Button
+                                    size="lg"
+                                    className="px-8 shadow-lg shadow-cyan-500/25 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-bold border-none flex items-center gap-2 group animate-pulse hover:animate-none"
+                                >
+                                    <Play className="w-5 h-5 fill-current" />
+                                    Play Online (Instant)
+                                </Button>
+                            </a>
+                        )}
+
                         {/* PC Download Button */}
                         {(game.platform === 'PC' || game.platform === 'Both') && (game.downloadLinkPC || game.downloadLink) && (
                             <DownloadButton
@@ -181,6 +201,19 @@ export default async function GameDetails({ params }: { params: Promise<{ id: st
                     </div>
                 </div>
             </div>
+
+            {/* Embedded Web Game Player Section */}
+            {game.webPlayUrl && (
+                <section id="online-player" className="scroll-mt-8 space-y-4">
+                    <div className="flex items-center justify-between">
+                        <h2 className="text-2xl font-bold flex items-center gap-2">
+                            <Gamepad2 className="text-cyan-400" />
+                            Play {game.title} Online
+                        </h2>
+                    </div>
+                    <WebGamePlayer game={game} />
+                </section>
+            )}
 
             {/* Screenshots */}
             {game.screenshots && game.screenshots.length > 0 && (
@@ -269,6 +302,44 @@ export default async function GameDetails({ params }: { params: Promise<{ id: st
             }
 
             {/* System Requirements */}
+            {/* Web System Requirements */}
+            {
+                (game.platform === 'Web' || (game.webPlayUrl && game.platform !== 'PC' && game.platform !== 'Android')) && (
+                    <section className="bg-card rounded-2xl p-8 border border-border/50">
+                        <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
+                            <Globe className="text-cyan-400" />
+                            Browser System Requirements
+                        </h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                            <div className="space-y-2">
+                                <span className="flex items-center gap-2 text-muted-foreground text-sm font-medium">
+                                    <Monitor className="w-4 h-4" /> Platform
+                                </span>
+                                <p className="font-semibold">Web Browser (PC & Mobile)</p>
+                            </div>
+                            <div className="space-y-2">
+                                <span className="flex items-center gap-2 text-muted-foreground text-sm font-medium">
+                                    <Cpu className="w-4 h-4" /> Supported Browsers
+                                </span>
+                                <p className="font-semibold">Chrome, Edge, Firefox, Safari</p>
+                            </div>
+                            <div className="space-y-2">
+                                <span className="flex items-center gap-2 text-muted-foreground text-sm font-medium">
+                                    <MemoryStick className="w-4 h-4" /> Memory (RAM)
+                                </span>
+                                <p className="font-semibold">4 GB RAM or higher</p>
+                            </div>
+                            <div className="space-y-2">
+                                <span className="flex items-center gap-2 text-muted-foreground text-sm font-medium">
+                                    <HardDrive className="w-4 h-4" /> Storage
+                                </span>
+                                <p className="font-semibold">Zero Disk Space (Instant)</p>
+                            </div>
+                        </div>
+                    </section>
+                )
+            }
+
             {/* PC System Requirements */}
             {
                 (game.platform === 'PC' || game.platform === 'Both') && (
@@ -354,6 +425,18 @@ export default async function GameDetails({ params }: { params: Promise<{ id: st
                         Installation Guidelines
                     </h2>
                     <div className="space-y-4 text-muted-foreground text-sm">
+                        {game.platform === 'Web' || game.webPlayUrl ? (
+                            <div className="space-y-3">
+                                <h3 className="font-semibold text-foreground text-base">For Web / Browser:</h3>
+                                <ol className="list-decimal pl-5 space-y-2">
+                                    <li>No installation or disk download required!</li>
+                                    <li>Click the <strong className="text-cyan-400">Play Online</strong> button above to load the game directly.</li>
+                                    <li>Use Fullscreen mode or Theatre mode for the most immersive experience.</li>
+                                    <li>If your browser blocks embeds, use the "Open in New Tab" link to launch directly.</li>
+                                </ol>
+                            </div>
+                        ) : null}
+
                         {game.platform === 'PC' || game.platform === 'Both' ? (
                             <div className="space-y-3">
                                 <h3 className="font-semibold text-foreground text-base">For PC / Windows:</h3>
