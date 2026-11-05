@@ -15,7 +15,9 @@ import {
     Loader2, 
     Sparkles, 
     Gamepad2,
-    ShieldAlert
+    ShieldAlert,
+    ArrowLeftRight,
+    Server
 } from 'lucide-react';
 import { useAuth } from '@/components/AuthProvider';
 import { addUserXPAction } from '@/app/actions/userActions';
@@ -28,6 +30,7 @@ interface WebGamePlayerProps {
 
 export default function WebGamePlayer({ game, autoPlay = false, className = '' }: WebGamePlayerProps) {
     const { user } = useAuth();
+    const [selectedSource, setSelectedSource] = useState<'primary' | 'alternate'>('primary');
     const [isPlaying, setIsPlaying] = useState(autoPlay);
     const [isLoading, setIsLoading] = useState(true);
     const [isFullscreen, setIsFullscreen] = useState(false);
@@ -35,17 +38,31 @@ export default function WebGamePlayer({ game, autoPlay = false, className = '' }
     const [xpAwarded, setXpAwarded] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
 
-    const playUrl = game.webPlayUrl;
+    // Active URL based on selected source (Primary vs Alternate Link)
+    const activeUrl = (selectedSource === 'alternate' && game.webPlayUrlAlternate) 
+        ? game.webPlayUrlAlternate 
+        : (game.webPlayUrl || '');
 
-    // Extract domain for source attribution
-    const domainName = (() => {
-        if (!playUrl) return 'External Site';
+    // Extract domains for attribution
+    const getDomain = (url?: string) => {
+        if (!url) return 'External Site';
         try {
-            return new URL(playUrl).hostname.replace(/^www\./, '');
+            return new URL(url).hostname.replace(/^www\./, '');
         } catch {
             return 'External Site';
         }
-    })();
+    };
+
+    const activeDomain = getDomain(activeUrl);
+    const primaryDomain = getDomain(game.webPlayUrl);
+    const alternateDomain = getDomain(game.webPlayUrlAlternate);
+
+    // Switch between Primary and Alternate server/link
+    const handleSelectSource = (source: 'primary' | 'alternate') => {
+        setSelectedSource(source);
+        setIsLoading(true);
+        setReloadKey(prev => prev + 1);
+    };
 
     // Award XP when the player starts playing
     const handleStartPlaying = () => {
@@ -86,7 +103,6 @@ export default function WebGamePlayer({ game, autoPlay = false, className = '' }
         }
     };
 
-    // Listen for fullscreen change events (e.g. if user presses Esc key)
     useEffect(() => {
         const handleFullscreenChange = () => {
             setIsFullscreen(!!document.fullscreenElement);
@@ -100,7 +116,7 @@ export default function WebGamePlayer({ game, autoPlay = false, className = '' }
         setReloadKey(prev => prev + 1);
     };
 
-    if (!playUrl) {
+    if (!activeUrl) {
         return null;
     }
 
@@ -108,38 +124,65 @@ export default function WebGamePlayer({ game, autoPlay = false, className = '' }
         <div className={`space-y-3 ${className}`}>
             {/* Top Toolbar */}
             <div className="flex flex-wrap items-center justify-between gap-2 px-1">
-                <div className="flex items-center gap-2 text-sm">
+                <div className="flex items-center gap-2 text-sm flex-wrap">
                     <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 font-semibold text-xs">
                         <Globe className="w-3.5 h-3.5" />
                         Online Web Game
                     </span>
-                    <span className="text-muted-foreground text-xs hidden sm:inline">
-                        Hosted on <strong className="text-foreground">{domainName}</strong>
-                    </span>
+
+                    {/* Server 1 / Server 2 Switcher if Alternate Link is present */}
+                    {game.webPlayUrlAlternate && (
+                        <div className="flex items-center gap-1 bg-secondary/80 p-0.5 rounded-lg border border-border/50 text-xs">
+                            <button
+                                onClick={() => handleSelectSource('primary')}
+                                className={`px-2.5 py-1 rounded-md font-medium transition-all flex items-center gap-1 ${
+                                    selectedSource === 'primary' 
+                                        ? 'bg-cyan-500 text-white shadow-sm font-bold' 
+                                        : 'text-muted-foreground hover:text-foreground'
+                                }`}
+                                title={`Play via Server 1 (${primaryDomain})`}
+                            >
+                                <Server className="w-3 h-3" />
+                                <span>Server 1</span>
+                            </button>
+                            <button
+                                onClick={() => handleSelectSource('alternate')}
+                                className={`px-2.5 py-1 rounded-md font-medium transition-all flex items-center gap-1 ${
+                                    selectedSource === 'alternate' 
+                                        ? 'bg-emerald-600 text-white shadow-sm font-bold' 
+                                        : 'text-muted-foreground hover:text-foreground'
+                                }`}
+                                title={`Play via Alternate Link (${alternateDomain})`}
+                            >
+                                <ArrowLeftRight className="w-3 h-3" />
+                                <span>Alternate Link</span>
+                            </button>
+                        </div>
+                    )}
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5 flex-wrap">
                     {/* Reload Button */}
                     {isPlaying && (
                         <button
                             onClick={handleReload}
                             title="Reload Game"
-                            className="p-2 rounded-lg bg-secondary/80 hover:bg-secondary text-secondary-foreground text-xs transition-colors border border-border/50 flex items-center gap-1.5"
+                            className="p-2 rounded-lg bg-secondary/80 hover:bg-secondary text-secondary-foreground text-xs transition-colors border border-border/50 flex items-center gap-1"
                         >
                             <RotateCcw className="w-3.5 h-3.5" />
-                            <span className="hidden md:inline">Restart</span>
+                            <span className="hidden sm:inline">Restart</span>
                         </button>
                     )}
 
-                    {/* Dedicated Full Page Link */}
+                    {/* Dedicated Theatre Mode Link */}
                     {game.id && (
                         <Link
                             href={`/play/${game.id}`}
-                            className="p-2 px-3 rounded-lg bg-secondary/80 hover:bg-secondary text-secondary-foreground text-xs transition-colors border border-border/50 flex items-center gap-1.5 font-medium"
-                            title="Dedicated Theatre Screen"
+                            className="p-2 px-2.5 sm:px-3 rounded-lg bg-secondary/80 hover:bg-secondary text-secondary-foreground text-xs transition-colors border border-border/50 flex items-center gap-1.5 font-medium"
+                            title="Theatre Mode"
                         >
                             <Gamepad2 className="w-3.5 h-3.5 text-primary" />
-                            <span className="hidden sm:inline">Theatre Mode</span>
+                            <span className="hidden sm:inline">Theatre</span>
                         </Link>
                     )}
 
@@ -148,29 +191,29 @@ export default function WebGamePlayer({ game, autoPlay = false, className = '' }
                         <button
                             onClick={toggleFullscreen}
                             title={isFullscreen ? "Exit Fullscreen" : "Fullscreen"}
-                            className="p-2 px-3 rounded-lg bg-secondary/80 hover:bg-secondary text-secondary-foreground text-xs transition-colors border border-border/50 flex items-center gap-1.5 font-medium"
+                            className="p-2 px-2.5 sm:px-3 rounded-lg bg-secondary/80 hover:bg-secondary text-secondary-foreground text-xs transition-colors border border-border/50 flex items-center gap-1.5 font-medium"
                         >
                             {isFullscreen ? (
                                 <>
                                     <Minimize className="w-3.5 h-3.5" />
-                                    <span>Exit Fullscreen</span>
+                                    <span className="hidden sm:inline">Exit</span>
                                 </>
                             ) : (
                                 <>
                                     <Maximize className="w-3.5 h-3.5 text-cyan-400" />
-                                    <span>Fullscreen</span>
+                                    <span className="hidden sm:inline">Fullscreen</span>
                                 </>
                             )}
                         </button>
                     )}
 
-                    {/* Hybrid Fallback: Open in New Tab Button */}
+                    {/* Open in New Tab Button (kept as requested!) */}
                     <a
-                        href={playUrl}
+                        href={activeUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="p-2 px-3 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary text-xs transition-colors border border-primary/20 flex items-center gap-1.5 font-medium"
-                        title="Open game on external website in a new tab"
+                        className="p-2 px-3 rounded-lg bg-primary/20 hover:bg-primary/30 text-primary hover:text-primary-foreground text-xs transition-all border border-primary/30 flex items-center gap-1.5 font-semibold"
+                        title="Open current game link in a new tab"
                     >
                         <span>Open in New Tab</span>
                         <ExternalLink className="w-3.5 h-3.5" />
@@ -188,7 +231,6 @@ export default function WebGamePlayer({ game, autoPlay = false, className = '' }
                 {!isPlaying ? (
                     /* Splash Screen before Play */
                     <div className="relative w-full h-full flex flex-col items-center justify-center p-6 text-center select-none overflow-hidden">
-                        {/* Background Poster */}
                         {(game.coverImage || game.cardImage) && (
                             <Image
                                 src={game.coverImage || game.cardImage || ''}
@@ -199,7 +241,6 @@ export default function WebGamePlayer({ game, autoPlay = false, className = '' }
                         )}
                         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
 
-                        {/* Foreground Action */}
                         <div className="relative z-10 flex flex-col items-center max-w-md space-y-4">
                             <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-cyan-500/20 border-2 border-cyan-400/50 flex items-center justify-center shadow-[0_0_30px_rgba(6,182,212,0.4)] animate-pulse">
                                 <Gamepad2 className="w-8 h-8 sm:w-10 sm:h-10 text-cyan-400" />
@@ -210,7 +251,7 @@ export default function WebGamePlayer({ game, autoPlay = false, className = '' }
                                     {game.title}
                                 </h3>
                                 <p className="text-xs sm:text-sm text-white/70">
-                                    Instant browser gameplay. No download or installation required.
+                                    Instant browser gameplay. No download required.
                                 </p>
                             </div>
 
@@ -235,14 +276,14 @@ export default function WebGamePlayer({ game, autoPlay = false, className = '' }
                         {isLoading && (
                             <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-black/90 text-white gap-3">
                                 <Loader2 className="w-10 h-10 animate-spin text-cyan-400" />
-                                <span className="text-sm font-medium text-white/80">Connecting to {domainName}...</span>
-                                <span className="text-xs text-white/50">Loading game files into browser cache</span>
+                                <span className="text-sm font-medium text-white/80">Connecting to {activeDomain}...</span>
+                                <span className="text-xs text-white/50">Loading game files into browser</span>
                             </div>
                         )}
 
                         <iframe
-                            key={reloadKey}
-                            src={playUrl}
+                            key={`${selectedSource}-${reloadKey}`}
+                            src={activeUrl}
                             title={`${game.title} - Online Play`}
                             onLoad={() => setIsLoading(false)}
                             className="w-full h-full border-0"
@@ -254,23 +295,57 @@ export default function WebGamePlayer({ game, autoPlay = false, className = '' }
                 )}
             </div>
 
-            {/* Hybrid Info & Troubleshooting Bar */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 px-2 py-2 rounded-xl bg-secondary/30 border border-border/40 text-xs text-muted-foreground">
-                <span className="flex items-center gap-1.5">
-                    <ShieldAlert className="w-3.5 h-3.5 text-yellow-400 shrink-0" />
-                    If the game screen stays white/blank due to ad-blockers or browser security:
-                </span>
-                <a
-                    href={playUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-primary hover:underline font-medium ml-5 sm:ml-0 shrink-0"
-                >
-                    Click to Open in New Window ({domainName})
-                    <ExternalLink className="w-3 h-3" />
-                </a>
+            {/* Smart Fallback & Alternate Options Box */}
+            <div className="rounded-xl bg-card border border-border/70 p-4 space-y-3 shadow-sm">
+                <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                    <ShieldAlert className="w-4 h-4 text-amber-400 shrink-0" />
+                    <span>Game refused to connect or showing blank screen?</span>
+                </div>
+                
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                    Some game websites (like <strong className="text-foreground">{primaryDomain}</strong>) block embedding inside other sites for security. You can continue playing instantly using these options:
+                </p>
+
+                <div className="flex flex-wrap gap-2 pt-1">
+                    {/* Primary Option: Open in New Tab */}
+                    <a
+                        href={activeUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-xs shadow-md transition-colors"
+                    >
+                        <ExternalLink className="w-3.5 h-3.5" />
+                        Open in New Tab ({activeDomain})
+                    </a>
+
+                    {/* Alternate Option: Switch to Server 2 / Alternate Link */}
+                    {game.webPlayUrlAlternate && (
+                        <button
+                            onClick={() => handleSelectSource(selectedSource === 'primary' ? 'alternate' : 'primary')}
+                            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs shadow-md transition-colors"
+                        >
+                            <ArrowLeftRight className="w-3.5 h-3.5" />
+                            {selectedSource === 'primary' 
+                                ? `Switch to Alternate Link (${alternateDomain})` 
+                                : `Switch back to Primary (${primaryDomain})`
+                            }
+                        </button>
+                    )}
+
+                    {/* Alternate Option: Open Alternate Link in New Tab */}
+                    {game.webPlayUrlAlternate && (
+                        <a
+                            href={game.webPlayUrlAlternate}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-secondary hover:bg-secondary/80 text-foreground font-medium text-xs border border-border/60 transition-colors"
+                        >
+                            <ExternalLink className="w-3.5 h-3.5 text-emerald-400" />
+                            Open Alternate Link in New Tab
+                        </a>
+                    )}
+                </div>
             </div>
         </div>
     );
 }
-

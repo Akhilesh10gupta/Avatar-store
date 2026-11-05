@@ -4,7 +4,7 @@ import ReviewSection from "@/components/ReviewSection";
 import DownloadButton from "@/components/DownloadButton";
 import AdsterraBanner from "@/components/AdsterraBanner";
 import { Button } from "@/components/ui/Button";
-import { Monitor, Cpu, HardDrive, MemoryStick, Image as ImageIcon, ArrowLeft, Smartphone, Download, Wrench, ShieldCheck, ShieldAlert, Globe, Play, Gamepad2 } from "lucide-react";
+import { Monitor, Cpu, HardDrive, MemoryStick, Image as ImageIcon, ArrowLeft, Smartphone, Download, Wrench, ShieldCheck, ShieldAlert, Globe, Play, Gamepad2, ExternalLink } from "lucide-react";
 import WebGamePlayer from "@/components/WebGamePlayer";
 import Image from "next/image";
 import Link from "next/link";
@@ -177,6 +177,25 @@ export default async function GameDetails({ params }: { params: Promise<{ id: st
                                 >
                                     <Play className="w-5 h-5 fill-current" />
                                     Play Online (Instant)
+                                </Button>
+                            </a>
+                        )}
+
+                        {/* Direct / Alternate Play Button */}
+                        {game.webPlayUrl && (
+                            <a
+                                href={game.webPlayUrlAlternate || game.webPlayUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                <Button
+                                    size="lg"
+                                    variant="outline"
+                                    className="px-6 border-cyan-500/40 hover:bg-cyan-500/10 text-cyan-400 font-semibold flex items-center gap-2"
+                                    title="Open directly in a new window"
+                                >
+                                    <ExternalLink className="w-4 h-4" />
+                                    {game.webPlayUrlAlternate ? 'Alternate Play Link' : 'Play in New Tab'}
                                 </Button>
                             </a>
                         )}

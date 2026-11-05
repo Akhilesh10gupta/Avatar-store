@@ -27,6 +27,7 @@ export default function GameForm({ initialData }: GameFormProps) {
         downloadLinkPC: initialData?.downloadLinkPC || initialData?.downloadLink || '', // Fallback to legacy link
         downloadLinkAndroid: initialData?.downloadLinkAndroid || '',
         webPlayUrl: initialData?.webPlayUrl || '',
+        webPlayUrlAlternate: initialData?.webPlayUrlAlternate || '',
         coverImage: initialData?.coverImage || '',
         cardImage: initialData?.cardImage || '',
         icon: initialData?.icon || '',
@@ -312,25 +313,46 @@ export default function GameForm({ initialData }: GameFormProps) {
                     <div className="p-4 bg-secondary/20 rounded-lg border border-border/50 space-y-4">
                         {/* Web / Online Play Link */}
                         {(formData.platform === 'Web' || formData.webPlayUrl !== undefined) && (
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium flex items-center justify-between">
-                                    <span className="flex items-center gap-2">
-                                        <Globe className="w-4 h-4 text-cyan-400" />
-                                        Play Online URL (Web Game) {formData.platform === 'Web' ? <span className="text-red-400 font-bold">*</span> : <span className="text-xs text-muted-foreground">(Optional)</span>}
-                                    </span>
-                                    <span className="text-xs text-muted-foreground">e.g. https://fightkaro.com</span>
-                                </label>
-                                <Input
-                                    name="webPlayUrl"
-                                    value={formData.webPlayUrl || ''}
-                                    onChange={handleChange}
-                                    required={formData.platform === 'Web'}
-                                    placeholder="https://fightkaro.com or https://example.com/game"
-                                />
-                                <p className="text-xs text-muted-foreground">
-                                    Users can play this game directly in their browser without downloading!
-                                </p>
-                            </div>
+                            <>
+                                <div className="space-y-2">
+                                    <label className="text-sm font-medium flex items-center justify-between">
+                                        <span className="flex items-center gap-2">
+                                            <Globe className="w-4 h-4 text-cyan-400" />
+                                            Play Online URL (Primary Link) {formData.platform === 'Web' ? <span className="text-red-400 font-bold">*</span> : <span className="text-xs text-muted-foreground">(Optional)</span>}
+                                        </span>
+                                        <span className="text-xs text-muted-foreground">e.g. https://fightkaro.com</span>
+                                    </label>
+                                    <Input
+                                        name="webPlayUrl"
+                                        value={formData.webPlayUrl || ''}
+                                        onChange={handleChange}
+                                        required={formData.platform === 'Web'}
+                                        placeholder="https://fightkaro.com or https://example.com/game"
+                                    />
+                                    <p className="text-xs text-muted-foreground">
+                                        Main link for users to play directly in browser.
+                                    </p>
+                                </div>
+
+                                <div className="space-y-2 pt-2 border-t border-border/30">
+                                    <label className="text-sm font-medium flex items-center justify-between">
+                                        <span className="flex items-center gap-2">
+                                            <Globe className="w-4 h-4 text-emerald-400" />
+                                            Alternate Play URL (Mirror / Backup Link) <span className="text-xs text-muted-foreground">(Optional)</span>
+                                        </span>
+                                        <span className="text-xs text-muted-foreground">e.g. Server 2 / Embed Link</span>
+                                    </label>
+                                    <Input
+                                        name="webPlayUrlAlternate"
+                                        value={formData.webPlayUrlAlternate || ''}
+                                        onChange={handleChange}
+                                        placeholder="https://backup.fightkaro.com or https://itch.io/embed/..."
+                                    />
+                                    <p className="text-xs text-muted-foreground">
+                                        If primary link refused to connect or is blocked in iframe, users can switch to this alternate link or play via Server 2.
+                                    </p>
+                                </div>
+                            </>
                         )}
 
                         {(formData.platform === 'PC' || formData.platform === 'Both') && (

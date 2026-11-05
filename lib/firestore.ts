@@ -114,6 +114,7 @@ export interface Game {
     downloadLinkPC?: string;      // For PC/Both
     downloadLinkAndroid?: string; // For Android/Both
     webPlayUrl?: string;          // Direct play link for Web/Browser games (e.g. https://fightkaro.com)
+    webPlayUrlAlternate?: string; // Alternate / Mirror link for Web games (e.g. backup server or embed link)
 
     downloadLink?: string; // @deprecated - keeping for backward compatibility
 
