@@ -134,6 +134,7 @@ export default function RootLayout({
         <Script
           src="https://pl31228341.profitableratecpmnetwork.com/bb/2b/b5/bb2bb5cea8d0ccd183638e0376aece7e.js"
           strategy="afterInteractive"
+          data-cfasync="false"
         />
       </body>
     </html>
