@@ -11,8 +11,8 @@ export const metadata: Metadata = {
   description: "Your ultimate destination for curated games, avatars, and gaming community. Discover, download, and play the future of gaming today.",
 };
 
-// ISR Cache: Revalidate every 5 minutes to prevent Firestore quota exhaustion
-export const revalidate = 300;
+// ISR Cache: Cache homepage for 1 hour (3600s) to keep Vercel within free limits
+export const revalidate = 3600;
 
 const dummyGames: Game[] = [
   // ... (keep dummy data if needed, or just let it handle empty arrays)

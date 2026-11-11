@@ -15,8 +15,8 @@ import { Metadata } from "next";
 import { getVideoEmbedUrl } from '@/lib/video';
 import { getAICardImage } from "@/lib/cloudinary";
 
-// ISR Cache: Cache game details page for 10 minutes (600s)
-export const revalidate = 600;
+// ISR Cache: Cache game details for 24 hours (86400s) to keep Vercel within free limits
+export const revalidate = 86400;
 export const dynamicParams = true;
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {

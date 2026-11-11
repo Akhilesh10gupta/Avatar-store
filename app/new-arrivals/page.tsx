@@ -7,8 +7,8 @@ export const metadata: Metadata = {
     description: 'Discover the newest games recently published on Avatar Play.',
 };
 
-// ISR Cache: Revalidate every 5 minutes
-export const revalidate = 300;
+// ISR Cache: Cache new arrivals page for 1 hour (3600s) to keep Vercel within free limits
+export const revalidate = 3600;
 
 export default async function NewArrivalsPage() {
     const games = await getGamesAdmin();

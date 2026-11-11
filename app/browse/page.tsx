@@ -7,8 +7,8 @@ export const metadata: Metadata = {
     description: 'Explore the full collection of indie and premium games on Avatar Play.',
 };
 
-// ISR Cache: Revalidate every 5 minutes
-export const revalidate = 300;
+// ISR Cache: Cache browse page for 1 hour (3600s) to keep Vercel within free limits
+export const revalidate = 3600;
 
 export default async function BrowsePage() {
     const games = await getGamesAdmin();

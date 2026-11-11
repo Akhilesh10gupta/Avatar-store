@@ -7,8 +7,8 @@ export const metadata: Metadata = {
     description: 'Check out the highest-rated games as voted by the Avatar Play community.',
 };
 
-// ISR Cache: Revalidate every 5 minutes
-export const revalidate = 300;
+// ISR Cache: Cache top-rated page for 1 hour (3600s) to keep Vercel within free limits
+export const revalidate = 3600;
 
 export default async function TopRatedPage() {
     const ratedGames = await getTopRatedGamesAdmin();

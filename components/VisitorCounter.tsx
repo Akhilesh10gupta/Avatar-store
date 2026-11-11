@@ -46,31 +46,22 @@ export default function VisitorCounter() {
     };
 
     useEffect(() => {
-        let intervalId: NodeJS.Timeout;
-
         const initCounter = async () => {
             try {
-                // Dynamically import server actions to avoid build issues if wrapped oddly, though direct import is fine in Client Components usually if they are actions
+                // Dynamically import server actions
                 const { getVisitorCountAction, incrementVisitorCountAction } = await import('@/app/actions/generalActions');
 
-                // 1. Check if new visitor and increment if needed
+                // 1. Check if new visitor and increment once per session
                 const hasVisited = sessionStorage.getItem('has_visited_site');
                 if (!hasVisited) {
                     await incrementVisitorCountAction();
                     sessionStorage.setItem('has_visited_site', 'true');
                 }
 
-                // 2. Fetch initial count
+                // 2. Fetch count once (no continuous 30-second polling to save Vercel Edge requests)
                 const count = await getVisitorCountAction();
                 setCount(count + 1500); // Add base offset
                 setIsLoading(false);
-
-                // 3. Simple polling for "live" updates (every 30s)
-                intervalId = setInterval(async () => {
-                    const latest = await getVisitorCountAction();
-                    setCount(latest + 1500);
-                }, 30000);
-
             } catch (error) {
                 console.error("Failed to init visitor counter:", error);
                 setIsLoading(false);
@@ -78,11 +69,6 @@ export default function VisitorCounter() {
         };
 
         initCounter();
-
-        // Cleanup
-        return () => {
-            if (intervalId) clearInterval(intervalId);
-        };
     }, []);
 
     return (
