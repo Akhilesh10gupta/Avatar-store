@@ -1,7 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { createUserWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
+import { 
+    createUserWithEmailAndPassword, 
+    signInWithPopup, 
+    signInWithRedirect, 
+    getRedirectResult, 
+    getAdditionalUserInfo 
+} from 'firebase/auth';
 import { auth, googleProvider } from '@/lib/firebase';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
@@ -73,33 +79,38 @@ export default function Signup() {
     };
 
     useEffect(() => {
-        // Handle redirect result
-        import('firebase/auth').then(({ getRedirectResult }) => {
-            getRedirectResult(auth).then(async (result) => {
-                if (result) {
-                    // Check if this is a new user? 
-                    // Firebase 'result' object has 'additionalUserInfo.isNewUser'
-                    // We should try to cast or check it safely.
-                    // For now, let's send it. Ideally we check if new.
-                    if (result.user.email) {
-                        await sendWelcomeEmail(result.user.email);
-                    }
-                    router.push(redirectPath);
+        // Handle redirect result from Google signup on mobile
+        getRedirectResult(auth).then(async (result) => {
+            if (result) {
+                const additionalInfo = getAdditionalUserInfo(result);
+                if (additionalInfo?.isNewUser && result.user.email) {
+                    await sendWelcomeEmail(result.user.email);
                 }
-            }).catch((err) => {
-                console.error(err);
-                setError('Failed to sign up with Google.');
-            });
+                router.push(redirectPath);
+            }
+        }).catch((err) => {
+            console.error("Redirect signup error:", err);
+            if (err?.code && err.code !== 'auth/null-user') {
+                setError(`Google sign-up error: ${err.message || 'Please try again'}`);
+            }
         });
-    }, [router]);
+    }, [router, redirectPath]);
 
     const handleGoogleSignup = async () => {
         setLoading(true);
         setError('');
-        try {
-            const { signInWithRedirect, signInWithPopup, getAdditionalUserInfo } = await import('firebase/auth');
 
-            // Try popup first
+        const isMobile = typeof window !== 'undefined' && /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        const isInApp = typeof window !== 'undefined' && /FBAN|FBAV|Instagram|WhatsApp|Line\/|MicroMessenger/i.test(navigator.userAgent);
+
+        if (isInApp) {
+            setError('Google Signup WhatsApp ya Instagram ke andar allow nahi karta. Kripya upar 3-dots (...) daba kar "Open in Chrome / Browser" chunein.');
+            setLoading(false);
+            return;
+        }
+
+        try {
+            // Direct synchronous call to signInWithPopup retains user activation gesture on modern mobile browsers
             try {
                 const result = await signInWithPopup(auth, googleProvider);
                 const additionalInfo = getAdditionalUserInfo(result);
@@ -110,25 +121,27 @@ export default function Signup() {
 
                 router.push(redirectPath);
             } catch (popupError: any) {
-                console.error("Popup failed, trying redirect:", popupError);
+                console.warn("Popup error:", popupError?.code, popupError?.message);
 
-                if (popupError.code === 'auth/popup-closed-by-user') {
+                if (popupError.code === 'auth/popup-closed-by-user' && !isMobile) {
                     setLoading(false);
                     return;
                 }
 
-                // Fallback to redirect
+                // Fallback to redirect on mobile or if popup was blocked/dismissed
                 try {
                     await signInWithRedirect(auth, googleProvider);
-                    return;
+                    return; // Redirecting browser
                 } catch (redirectError: any) {
                     console.error("Redirect failed:", redirectError);
                     setError(`Sign up failed: ${redirectError.message}`);
+                    setLoading(false);
                 }
             }
         } catch (err: any) {
             console.error(err);
             setError(`System error: ${err.message}`);
+            setLoading(false);
         } finally {
             setLoading(false);
         }
