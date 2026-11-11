@@ -101,32 +101,30 @@ export default function Login() {
         }
 
         try {
-            if (isMobile) {
+            // Try popup first (fast on Desktop and Chrome mobile without leaving page)
+            try {
+                await signInWithPopup(auth, googleProvider);
+                router.push(redirectPath);
+            } catch (popupError: any) {
+                console.warn("Popup closed or blocked, falling back to redirect:", popupError?.code);
+
+                // If explicitly canceled on desktop, stop
+                if (popupError.code === 'auth/popup-closed-by-user' && !isMobile) {
+                    setLoading(false);
+                    return;
+                }
+
+                // Fallback to redirect for mobile devices
                 await signInWithRedirect(auth, googleProvider);
                 return;
             }
-
-            await signInWithPopup(auth, googleProvider);
-            router.push(redirectPath);
         } catch (err: any) {
             console.error("Login error:", err);
-            if (err.code === 'auth/popup-closed-by-user') {
-                setLoading(false);
-                return;
-            }
-            if (err.code === 'auth/popup-blocked') {
-                try {
-                    await signInWithRedirect(auth, googleProvider);
-                    return;
-                } catch (redirectError: any) {
-                    setError(`Sign in failed: ${redirectError.message}`);
-                }
-            } else if (err.code === 'auth/account-exists-with-different-credential') {
+            if (err.code === 'auth/account-exists-with-different-credential') {
                 handleAccountExistsError(err);
                 return;
-            } else {
-                setError(`Sign in failed: ${err.message}`);
             }
+            setError(`Sign in failed: ${err.message}`);
             setLoading(false);
         } finally {
             if (!pendingCredential) {

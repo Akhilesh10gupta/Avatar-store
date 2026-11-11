@@ -120,35 +120,30 @@ export default function Signup() {
         }
 
         try {
-            if (isMobile) {
+            // Try popup first (fast on Desktop and Chrome mobile without leaving page)
+            try {
+                const result = await signInWithPopup(auth, googleProvider);
+                const additionalInfo = getAdditionalUserInfo(result);
+
+                if (additionalInfo?.isNewUser && result.user.email) {
+                    await sendWelcomeEmail(result.user.email);
+                }
+
+                router.push(redirectPath);
+            } catch (popupError: any) {
+                console.warn("Popup closed or blocked, falling back to redirect:", popupError?.code);
+
+                if (popupError.code === 'auth/popup-closed-by-user' && !isMobile) {
+                    setLoading(false);
+                    return;
+                }
+
                 await signInWithRedirect(auth, googleProvider);
                 return;
             }
-
-            const result = await signInWithPopup(auth, googleProvider);
-            const additionalInfo = getAdditionalUserInfo(result);
-
-            if (additionalInfo?.isNewUser && result.user.email) {
-                await sendWelcomeEmail(result.user.email);
-            }
-
-            router.push(redirectPath);
         } catch (err: any) {
             console.error(err);
-            if (err.code === 'auth/popup-closed-by-user') {
-                setLoading(false);
-                return;
-            }
-            if (err.code === 'auth/popup-blocked') {
-                try {
-                    await signInWithRedirect(auth, googleProvider);
-                    return;
-                } catch (redirectError: any) {
-                    setError(`Sign up failed: ${redirectError.message}`);
-                }
-            } else {
-                setError(`Sign up failed: ${err.message}`);
-            }
+            setError(`Sign up failed: ${err.message}`);
             setLoading(false);
         } finally {
             setLoading(false);
