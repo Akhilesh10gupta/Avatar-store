@@ -55,17 +55,19 @@ export default function Signup() {
             return;
         }
 
+        const cleanEmail = email.trim().toLowerCase();
+
         try {
-            await createUserWithEmailAndPassword(auth, email, password);
+            await createUserWithEmailAndPassword(auth, cleanEmail, password);
             // Send welcome email
-            await sendWelcomeEmail(email);
+            await sendWelcomeEmail(cleanEmail);
             router.push(redirectPath);
         } catch (err: any) {
             console.error(err);
             if (err.code === 'auth/email-already-in-use') {
                 setError('Email is already in use.');
             } else {
-                setError('Failed to create account. Please try again.');
+                setError(`[${err.code || 'Error'}]: ${err.message || 'Failed to create account. Please try again.'}`);
             }
         } finally {
             setLoading(false);
@@ -73,14 +75,16 @@ export default function Signup() {
     };
 
     useEffect(() => {
-        // Handle redirect result
-        import('firebase/auth').then(({ getRedirectResult }) => {
+        // Handle redirect result and check auth state for mobile
+        import('firebase/auth').then(({ getRedirectResult, onAuthStateChanged }) => {
+            const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+                if (currentUser) {
+                    router.push(redirectPath);
+                }
+            });
+
             getRedirectResult(auth).then(async (result) => {
                 if (result) {
-                    // Check if this is a new user? 
-                    // Firebase 'result' object has 'additionalUserInfo.isNewUser'
-                    // We should try to cast or check it safely.
-                    // For now, let's send it. Ideally we check if new.
                     if (result.user.email) {
                         await sendWelcomeEmail(result.user.email);
                     }
@@ -88,18 +92,25 @@ export default function Signup() {
                 }
             }).catch((err) => {
                 console.error(err);
-                setError('Failed to sign up with Google.');
+                if (err?.code && err.code !== 'auth/null-user') {
+                    setError('Failed to sign up with Google.');
+                }
             });
+
+            return () => unsubscribe();
         });
-    }, [router]);
+    }, [router, redirectPath]);
 
     const handleGoogleSignup = async () => {
         setLoading(true);
         setError('');
+
+        const isMobile = typeof window !== 'undefined' && /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
         try {
             const { signInWithRedirect, signInWithPopup, getAdditionalUserInfo } = await import('firebase/auth');
 
-            // Try popup first
+            // Try popup first (fast on Laptop / Desktop)
             try {
                 const result = await signInWithPopup(auth, googleProvider);
                 const additionalInfo = getAdditionalUserInfo(result);
@@ -110,14 +121,14 @@ export default function Signup() {
 
                 router.push(redirectPath);
             } catch (popupError: any) {
-                console.error("Popup failed, trying redirect:", popupError);
+                console.warn("Popup error:", popupError);
 
-                if (popupError.code === 'auth/popup-closed-by-user') {
+                if (popupError.code === 'auth/popup-closed-by-user' && !isMobile) {
                     setLoading(false);
                     return;
                 }
 
-                // Fallback to redirect
+                // Fallback to redirect for mobile devices
                 try {
                     await signInWithRedirect(auth, googleProvider);
                     return;
@@ -155,6 +166,9 @@ export default function Signup() {
                             placeholder="admin@nexusgames.com"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
+                            autoCapitalize="none"
+                            autoCorrect="off"
+                            spellCheck={false}
                             required
                         />
                     </div>

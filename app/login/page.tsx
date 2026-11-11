@@ -37,18 +37,22 @@ export default function Login() {
         setLoading(true);
         setError('');
 
+        const cleanEmail = email.trim().toLowerCase();
+
         try {
-            await signInWithEmailAndPassword(auth, email, password);
+            await signInWithEmailAndPassword(auth, cleanEmail, password);
             router.push(redirectPath);
         } catch (err: any) {
+            console.error("Login error:", err);
             // Handle specific Firebase errors
             if (err.code === 'auth/invalid-credential' || err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password') {
                 setError('Invalid email or password. Please try again.');
+            } else if (err.code === 'auth/invalid-email') {
+                setError('Please enter a valid email address.');
             } else if (err.code === 'auth/too-many-requests') {
                 setError('Too many failed attempts. Please try again later.');
             } else {
-                console.error(err); // Only log unknown errors
-                setError('Something went wrong. Please try again.');
+                setError(`[${err.code || 'Error'}]: ${err.message || 'Something went wrong. Please try again.'}`);
             }
         } finally {
             setLoading(false);
@@ -56,38 +60,54 @@ export default function Login() {
     };
 
     useEffect(() => {
-        // Handle redirect result
-        import('firebase/auth').then(({ getRedirectResult }) => {
+        // Handle redirect result and check auth state for mobile
+        import('firebase/auth').then(({ getRedirectResult, onAuthStateChanged }) => {
+            // 1. If user is authenticated via redirect, route to destination immediately
+            const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+                if (currentUser) {
+                    router.push(redirectPath);
+                }
+            });
+
+            // 2. Handle getRedirectResult
             getRedirectResult(auth).then((result) => {
                 if (result) {
                     router.push(redirectPath);
                 }
             }).catch((err) => {
-                console.error(err);
-                setError('Failed to sign in with Google.');
+                console.error("Redirect auth error:", err);
+                if (err?.code && err.code !== 'auth/null-user') {
+                    setError(`Google sign-in error: ${err.message || 'Please try again'}`);
+                }
             });
+
+            return () => unsubscribe();
         });
-    }, [router]);
+    }, [router, redirectPath]);
 
     const handleGoogleLogin = async () => {
         setLoading(true);
         setError('');
+
+        const isMobile = typeof window !== 'undefined' && /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
         try {
             const { signInWithRedirect, signInWithPopup } = await import('firebase/auth');
 
-            // Try popup first
+            // Try popup first (fast on Laptop / Desktop)
             try {
                 await signInWithPopup(auth, googleProvider);
                 router.push(redirectPath);
             } catch (popupError: any) {
-                console.error("Popup failed, trying redirect:", popupError);
+                console.warn("Popup error:", popupError?.code);
 
-                if (popupError.code === 'auth/popup-closed-by-user') {
+                // If user explicitly closed on desktop, stop loading
+                if (popupError.code === 'auth/popup-closed-by-user' && !isMobile) {
                     setLoading(false);
                     return;
                 }
 
-                // Fallback to redirect for mobile or blocked popups
+                // Fallback to redirect for mobile devices
                 try {
                     await signInWithRedirect(auth, googleProvider);
                     return; // Redirecting...
@@ -98,6 +118,7 @@ export default function Login() {
                         return;
                     }
                     setError(`Sign in failed: ${redirectError.message}`);
+                    setLoading(false);
                 }
             }
         } catch (err: any) {
@@ -107,8 +128,8 @@ export default function Login() {
                 return;
             }
             setError(`System error: ${err.message}`);
+            setLoading(false);
         } finally {
-            // Only stop loading if we didn't initiate a fallback redirect
             if (!pendingCredential) {
                 setLoading(false);
             }
@@ -323,6 +344,9 @@ export default function Login() {
                             placeholder="admin@avatarplay.com"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
+                            autoCapitalize="none"
+                            autoCorrect="off"
+                            spellCheck={false}
                             required
                         />
                     </div>
