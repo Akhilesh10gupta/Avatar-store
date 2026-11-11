@@ -120,37 +120,35 @@ export default function Signup() {
         }
 
         try {
-            // Direct synchronous call to signInWithPopup retains user activation gesture on modern mobile browsers
-            try {
-                const result = await signInWithPopup(auth, googleProvider);
-                const additionalInfo = getAdditionalUserInfo(result);
-
-                if (additionalInfo?.isNewUser && result.user.email) {
-                    await sendWelcomeEmail(result.user.email);
-                }
-
-                router.push(redirectPath);
-            } catch (popupError: any) {
-                console.warn("Popup error:", popupError?.code, popupError?.message);
-
-                if (popupError.code === 'auth/popup-closed-by-user' && !isMobile) {
-                    setLoading(false);
-                    return;
-                }
-
-                // Fallback to redirect on mobile or if popup was blocked/dismissed
-                try {
-                    await signInWithRedirect(auth, googleProvider);
-                    return; // Redirecting browser
-                } catch (redirectError: any) {
-                    console.error("Redirect failed:", redirectError);
-                    setError(`Sign up failed: ${redirectError.message}`);
-                    setLoading(false);
-                }
+            if (isMobile) {
+                await signInWithRedirect(auth, googleProvider);
+                return;
             }
+
+            const result = await signInWithPopup(auth, googleProvider);
+            const additionalInfo = getAdditionalUserInfo(result);
+
+            if (additionalInfo?.isNewUser && result.user.email) {
+                await sendWelcomeEmail(result.user.email);
+            }
+
+            router.push(redirectPath);
         } catch (err: any) {
             console.error(err);
-            setError(`System error: ${err.message}`);
+            if (err.code === 'auth/popup-closed-by-user') {
+                setLoading(false);
+                return;
+            }
+            if (err.code === 'auth/popup-blocked') {
+                try {
+                    await signInWithRedirect(auth, googleProvider);
+                    return;
+                } catch (redirectError: any) {
+                    setError(`Sign up failed: ${redirectError.message}`);
+                }
+            } else {
+                setError(`Sign up failed: ${err.message}`);
+            }
             setLoading(false);
         } finally {
             setLoading(false);

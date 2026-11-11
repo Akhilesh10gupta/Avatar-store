@@ -101,40 +101,32 @@ export default function Login() {
         }
 
         try {
-            // Direct synchronous call to signInWithPopup retains user activation gesture on modern mobile browsers
-            try {
-                await signInWithPopup(auth, googleProvider);
-                router.push(redirectPath);
-            } catch (popupError: any) {
-                console.warn("Popup error:", popupError?.code, popupError?.message);
-
-                // Only skip if user explicitly closed the popup on desktop PC
-                if (popupError.code === 'auth/popup-closed-by-user' && !isMobile) {
-                    setLoading(false);
-                    return;
-                }
-
-                // Fallback to redirect on mobile or if popup was blocked/dismissed
-                try {
-                    await signInWithRedirect(auth, googleProvider);
-                    return; // Redirecting browser
-                } catch (redirectError: any) {
-                    console.error("Redirect failed:", redirectError);
-                    if (redirectError.code === 'auth/account-exists-with-different-credential') {
-                        handleAccountExistsError(redirectError);
-                        return;
-                    }
-                    setError(`Sign in failed: ${redirectError.message}`);
-                    setLoading(false);
-                }
-            }
-        } catch (err: any) {
-            console.error(err);
-            if (err.code === 'auth/account-exists-with-different-credential') {
-                handleAccountExistsError(err);
+            if (isMobile) {
+                await signInWithRedirect(auth, googleProvider);
                 return;
             }
-            setError(`System error: ${err.message}`);
+
+            await signInWithPopup(auth, googleProvider);
+            router.push(redirectPath);
+        } catch (err: any) {
+            console.error("Login error:", err);
+            if (err.code === 'auth/popup-closed-by-user') {
+                setLoading(false);
+                return;
+            }
+            if (err.code === 'auth/popup-blocked') {
+                try {
+                    await signInWithRedirect(auth, googleProvider);
+                    return;
+                } catch (redirectError: any) {
+                    setError(`Sign in failed: ${redirectError.message}`);
+                }
+            } else if (err.code === 'auth/account-exists-with-different-credential') {
+                handleAccountExistsError(err);
+                return;
+            } else {
+                setError(`Sign in failed: ${err.message}`);
+            }
             setLoading(false);
         } finally {
             if (!pendingCredential) {

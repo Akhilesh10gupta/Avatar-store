@@ -17,6 +17,14 @@ const nextConfig = {
             },
         ],
     },
+    async rewrites() {
+        return [
+            {
+                source: '/__/auth/:path*',
+                destination: 'https://gameweb-4fe8b.firebaseapp.com/__/auth/:path*',
+            },
+        ];
+    },
 };
 
 export default withSerwist(nextConfig);
