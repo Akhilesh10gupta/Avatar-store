@@ -71,8 +71,10 @@ export default function Signup() {
             console.error(err);
             if (err.code === 'auth/email-already-in-use') {
                 setError('Email is already in use.');
+            } else if (err.code === 'auth/operation-not-allowed') {
+                setError('Email/Password signup is disabled in Firebase Console (Authentication > Sign-in method).');
             } else {
-                setError('Failed to create account. Please try again.');
+                setError(`[${err.code || 'Signup failed'}]: ${err.message || 'Failed to create account.'}`);
             }
         } finally {
             setLoading(false);

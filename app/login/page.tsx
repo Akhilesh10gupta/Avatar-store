@@ -50,14 +50,20 @@ export default function Login() {
             await signInWithEmailAndPassword(auth, email, password);
             router.push(redirectPath);
         } catch (err: any) {
+            console.error("Login error:", err);
             // Handle specific Firebase errors
             if (err.code === 'auth/invalid-credential' || err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password') {
                 setError('Invalid email or password. Please try again.');
+            } else if (err.code === 'auth/invalid-email') {
+                setError('Please enter a valid email address.');
+            } else if (err.code === 'auth/operation-not-allowed') {
+                setError('Email/Password provider is not enabled in Firebase Console (Authentication > Sign-in method).');
+            } else if (err.code === 'auth/network-request-failed') {
+                setError('Network error. Check your internet connection or disable Private DNS / AdBlocker on phone.');
             } else if (err.code === 'auth/too-many-requests') {
                 setError('Too many failed attempts. Please try again later.');
             } else {
-                console.error(err); // Only log unknown errors
-                setError('Something went wrong. Please try again.');
+                setError(`[${err.code || 'Error'}]: ${err.message || 'Something went wrong. Please try again.'}`);
             }
         } finally {
             setLoading(false);
@@ -124,7 +130,7 @@ export default function Login() {
                 handleAccountExistsError(err);
                 return;
             }
-            setError(`Sign in failed: ${err.message}`);
+            setError(`[${err.code || 'Sign in failed'}]: ${err.message}`);
             setLoading(false);
         } finally {
             if (!pendingCredential) {
