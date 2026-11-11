@@ -6,6 +6,7 @@ import {
     signInWithPopup, 
     signInWithRedirect, 
     getRedirectResult, 
+    onAuthStateChanged,
     getAdditionalUserInfo 
 } from 'firebase/auth';
 import { auth, googleProvider } from '@/lib/firebase';
@@ -79,7 +80,14 @@ export default function Signup() {
     };
 
     useEffect(() => {
-        // Handle redirect result from Google signup on mobile
+        // 1. If user is already authenticated or authenticates via redirect, redirect immediately
+        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+            if (currentUser) {
+                router.push(redirectPath);
+            }
+        });
+
+        // 2. Handle redirect result from Google signup on mobile
         getRedirectResult(auth).then(async (result) => {
             if (result) {
                 const additionalInfo = getAdditionalUserInfo(result);
@@ -94,6 +102,8 @@ export default function Signup() {
                 setError(`Google sign-up error: ${err.message || 'Please try again'}`);
             }
         });
+
+        return () => unsubscribe();
     }, [router, redirectPath]);
 
     const handleGoogleSignup = async () => {

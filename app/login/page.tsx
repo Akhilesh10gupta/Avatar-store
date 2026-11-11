@@ -6,6 +6,7 @@ import {
     signInWithPopup, 
     signInWithRedirect, 
     getRedirectResult, 
+    onAuthStateChanged,
     fetchSignInMethodsForEmail, 
     linkWithCredential, 
     OAuthProvider 
@@ -64,7 +65,14 @@ export default function Login() {
     };
 
     useEffect(() => {
-        // Handle redirect result from Google login on mobile
+        // 1. If user is already authenticated or authenticates via redirect, redirect immediately
+        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+            if (currentUser) {
+                router.push(redirectPath);
+            }
+        });
+
+        // 2. Handle redirect result from Google login on mobile
         getRedirectResult(auth).then((result) => {
             if (result) {
                 router.push(redirectPath);
@@ -75,6 +83,8 @@ export default function Login() {
                 setError(`Google sign-in error: ${err.message || 'Please try again'}`);
             }
         });
+
+        return () => unsubscribe();
     }, [router, redirectPath]);
 
     const handleGoogleLogin = async () => {
