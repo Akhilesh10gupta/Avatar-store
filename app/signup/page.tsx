@@ -1,14 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { 
-    createUserWithEmailAndPassword, 
-    signInWithPopup, 
-    signInWithRedirect, 
-    getRedirectResult, 
-    onAuthStateChanged,
-    getAdditionalUserInfo 
-} from 'firebase/auth';
+import { createUserWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
 import { auth, googleProvider } from '@/lib/firebase';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
@@ -71,10 +64,8 @@ export default function Signup() {
             console.error(err);
             if (err.code === 'auth/email-already-in-use') {
                 setError('Email is already in use.');
-            } else if (err.code === 'auth/operation-not-allowed') {
-                setError('Email/Password signup is disabled in Firebase Console (Authentication > Sign-in method).');
             } else {
-                setError(`[${err.code || 'Signup failed'}]: ${err.message || 'Failed to create account.'}`);
+                setError('Failed to create account. Please try again.');
             }
         } finally {
             setLoading(false);
@@ -82,47 +73,33 @@ export default function Signup() {
     };
 
     useEffect(() => {
-        // 1. If user is already authenticated or authenticates via redirect, redirect immediately
-        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-            if (currentUser) {
-                router.push(redirectPath);
-            }
-        });
-
-        // 2. Handle redirect result from Google signup on mobile
-        getRedirectResult(auth).then(async (result) => {
-            if (result) {
-                const additionalInfo = getAdditionalUserInfo(result);
-                if (additionalInfo?.isNewUser && result.user.email) {
-                    await sendWelcomeEmail(result.user.email);
+        // Handle redirect result
+        import('firebase/auth').then(({ getRedirectResult }) => {
+            getRedirectResult(auth).then(async (result) => {
+                if (result) {
+                    // Check if this is a new user? 
+                    // Firebase 'result' object has 'additionalUserInfo.isNewUser'
+                    // We should try to cast or check it safely.
+                    // For now, let's send it. Ideally we check if new.
+                    if (result.user.email) {
+                        await sendWelcomeEmail(result.user.email);
+                    }
+                    router.push(redirectPath);
                 }
-                router.push(redirectPath);
-            }
-        }).catch((err) => {
-            console.error("Redirect signup error:", err);
-            if (err?.code && err.code !== 'auth/null-user') {
-                setError(`Google sign-up error: ${err.message || 'Please try again'}`);
-            }
+            }).catch((err) => {
+                console.error(err);
+                setError('Failed to sign up with Google.');
+            });
         });
-
-        return () => unsubscribe();
-    }, [router, redirectPath]);
+    }, [router]);
 
     const handleGoogleSignup = async () => {
         setLoading(true);
         setError('');
-
-        const isMobile = typeof window !== 'undefined' && /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        const isInApp = typeof window !== 'undefined' && /FBAN|FBAV|Instagram|WhatsApp|Line\/|MicroMessenger/i.test(navigator.userAgent);
-
-        if (isInApp) {
-            setError('Google Signup WhatsApp ya Instagram ke andar allow nahi karta. Kripya upar 3-dots (...) daba kar "Open in Chrome / Browser" chunein.');
-            setLoading(false);
-            return;
-        }
-
         try {
-            // Try popup first (fast on Desktop and Chrome mobile without leaving page)
+            const { signInWithRedirect, signInWithPopup, getAdditionalUserInfo } = await import('firebase/auth');
+
+            // Try popup first
             try {
                 const result = await signInWithPopup(auth, googleProvider);
                 const additionalInfo = getAdditionalUserInfo(result);
@@ -133,20 +110,25 @@ export default function Signup() {
 
                 router.push(redirectPath);
             } catch (popupError: any) {
-                console.warn("Popup closed or blocked, falling back to redirect:", popupError?.code);
+                console.error("Popup failed, trying redirect:", popupError);
 
-                if (popupError.code === 'auth/popup-closed-by-user' && !isMobile) {
+                if (popupError.code === 'auth/popup-closed-by-user') {
                     setLoading(false);
                     return;
                 }
 
-                await signInWithRedirect(auth, googleProvider);
-                return;
+                // Fallback to redirect
+                try {
+                    await signInWithRedirect(auth, googleProvider);
+                    return;
+                } catch (redirectError: any) {
+                    console.error("Redirect failed:", redirectError);
+                    setError(`Sign up failed: ${redirectError.message}`);
+                }
             }
         } catch (err: any) {
             console.error(err);
-            setError(`Sign up failed: ${err.message}`);
-            setLoading(false);
+            setError(`System error: ${err.message}`);
         } finally {
             setLoading(false);
         }

@@ -1,16 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { 
-    signInWithEmailAndPassword, 
-    signInWithPopup, 
-    signInWithRedirect, 
-    getRedirectResult, 
-    onAuthStateChanged,
-    fetchSignInMethodsForEmail, 
-    linkWithCredential, 
-    OAuthProvider 
-} from 'firebase/auth';
+import { signInWithEmailAndPassword, signInWithPopup, fetchSignInMethodsForEmail, linkWithCredential, OAuthProvider } from 'firebase/auth';
 import { auth, googleProvider } from '@/lib/firebase';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
@@ -50,20 +41,14 @@ export default function Login() {
             await signInWithEmailAndPassword(auth, email, password);
             router.push(redirectPath);
         } catch (err: any) {
-            console.error("Login error:", err);
             // Handle specific Firebase errors
             if (err.code === 'auth/invalid-credential' || err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password') {
                 setError('Invalid email or password. Please try again.');
-            } else if (err.code === 'auth/invalid-email') {
-                setError('Please enter a valid email address.');
-            } else if (err.code === 'auth/operation-not-allowed') {
-                setError('Email/Password provider is not enabled in Firebase Console (Authentication > Sign-in method).');
-            } else if (err.code === 'auth/network-request-failed') {
-                setError('Network error. Check your internet connection or disable Private DNS / AdBlocker on phone.');
             } else if (err.code === 'auth/too-many-requests') {
                 setError('Too many failed attempts. Please try again later.');
             } else {
-                setError(`[${err.code || 'Error'}]: ${err.message || 'Something went wrong. Please try again.'}`);
+                console.error(err); // Only log unknown errors
+                setError('Something went wrong. Please try again.');
             }
         } finally {
             setLoading(false);
@@ -71,68 +56,59 @@ export default function Login() {
     };
 
     useEffect(() => {
-        // 1. If user is already authenticated or authenticates via redirect, redirect immediately
-        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-            if (currentUser) {
-                router.push(redirectPath);
-            }
+        // Handle redirect result
+        import('firebase/auth').then(({ getRedirectResult }) => {
+            getRedirectResult(auth).then((result) => {
+                if (result) {
+                    router.push(redirectPath);
+                }
+            }).catch((err) => {
+                console.error(err);
+                setError('Failed to sign in with Google.');
+            });
         });
-
-        // 2. Handle redirect result from Google login on mobile
-        getRedirectResult(auth).then((result) => {
-            if (result) {
-                router.push(redirectPath);
-            }
-        }).catch((err) => {
-            console.error("Redirect login error:", err);
-            if (err?.code && err.code !== 'auth/null-user') {
-                setError(`Google sign-in error: ${err.message || 'Please try again'}`);
-            }
-        });
-
-        return () => unsubscribe();
-    }, [router, redirectPath]);
+    }, [router]);
 
     const handleGoogleLogin = async () => {
         setLoading(true);
         setError('');
-
-        const isMobile = typeof window !== 'undefined' && /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        const isInApp = typeof window !== 'undefined' && /FBAN|FBAV|Instagram|WhatsApp|Line\/|MicroMessenger/i.test(navigator.userAgent);
-
-        if (isInApp) {
-            setError('Google Login WhatsApp ya Instagram browser me block hota hai. Kripya upar 3 dots (...) dabakar "Open in Chrome / Browser" karein.');
-            setLoading(false);
-            return;
-        }
-
         try {
-            // Try popup first (fast on Desktop and Chrome mobile without leaving page)
+            const { signInWithRedirect, signInWithPopup } = await import('firebase/auth');
+
+            // Try popup first
             try {
                 await signInWithPopup(auth, googleProvider);
                 router.push(redirectPath);
             } catch (popupError: any) {
-                console.warn("Popup closed or blocked, falling back to redirect:", popupError?.code);
+                console.error("Popup failed, trying redirect:", popupError);
 
-                // If explicitly canceled on desktop, stop
-                if (popupError.code === 'auth/popup-closed-by-user' && !isMobile) {
+                if (popupError.code === 'auth/popup-closed-by-user') {
                     setLoading(false);
                     return;
                 }
 
-                // Fallback to redirect for mobile devices
-                await signInWithRedirect(auth, googleProvider);
-                return;
+                // Fallback to redirect for mobile or blocked popups
+                try {
+                    await signInWithRedirect(auth, googleProvider);
+                    return; // Redirecting...
+                } catch (redirectError: any) {
+                    console.error("Redirect failed:", redirectError);
+                    if (redirectError.code === 'auth/account-exists-with-different-credential') {
+                        handleAccountExistsError(redirectError);
+                        return;
+                    }
+                    setError(`Sign in failed: ${redirectError.message}`);
+                }
             }
         } catch (err: any) {
-            console.error("Login error:", err);
+            console.error(err);
             if (err.code === 'auth/account-exists-with-different-credential') {
                 handleAccountExistsError(err);
                 return;
             }
-            setError(`[${err.code || 'Sign in failed'}]: ${err.message}`);
-            setLoading(false);
+            setError(`System error: ${err.message}`);
         } finally {
+            // Only stop loading if we didn't initiate a fallback redirect
             if (!pendingCredential) {
                 setLoading(false);
             }
