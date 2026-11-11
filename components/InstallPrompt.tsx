@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useInstall } from './InstallProvider';
 
 export default function InstallPrompt() {
-    const { isInstallable, handleInstallClick, showBanner, setShowBanner } = useInstall();
+    const { isInstallable, handleInstallClick, showBanner, dismissBanner } = useInstall();
 
     if (!isInstallable || !showBanner) return null;
 
@@ -28,8 +28,9 @@ export default function InstallPrompt() {
                     Install
                 </button>
                 <button
-                    onClick={() => setShowBanner(false)}
+                    onClick={dismissBanner}
                     className="text-white/40 hover:text-white transition-colors"
+                    aria-label="Close"
                 >
                     <X className="w-5 h-5" />
                 </button>

@@ -7,6 +7,7 @@ interface InstallContextType {
     handleInstallClick: () => void;
     showBanner: boolean;
     setShowBanner: (show: boolean) => void;
+    dismissBanner: () => void;
 }
 
 const InstallContext = createContext<InstallContextType | null>(null);
@@ -18,13 +19,27 @@ export function InstallProvider({ children }: { children: React.ReactNode }) {
     const [isIOS, setIsIOS] = useState(false);
     const [showInstructions, setShowInstructions] = useState(false);
 
+    const dismissBanner = () => {
+        setShowBanner(false);
+        try {
+            localStorage.setItem('avatarplay_pwa_dismissed', 'true');
+        } catch (e) {
+            console.error(e);
+        }
+    };
+
     useEffect(() => {
+        // Check if user already dismissed or installed the prompt
+        const isDismissed = typeof window !== 'undefined' && localStorage.getItem('avatarplay_pwa_dismissed') === 'true';
+
         // Build PWA Install Prompt
         const handler = (e: Event) => {
             e.preventDefault();
             setDeferredPrompt(e);
             setIsInstallable(true);
-            setShowBanner(true);
+            if (!isDismissed) {
+                setShowBanner(true);
+            }
         };
 
         window.addEventListener('beforeinstallprompt', handler);
@@ -37,13 +52,19 @@ export function InstallProvider({ children }: { children: React.ReactNode }) {
         if (isIosDevice && !isStandalone) {
             setIsIOS(true);
             setIsInstallable(true);
-            setShowBanner(true);
+            if (!isDismissed) {
+                setShowBanner(true);
+            }
         }
 
         return () => window.removeEventListener('beforeinstallprompt', handler);
     }, []);
 
     const handleInstallClick = async () => {
+        try {
+            localStorage.setItem('avatarplay_pwa_dismissed', 'true');
+        } catch (e) {}
+
         if (deferredPrompt) {
             deferredPrompt.prompt();
             const { outcome } = await deferredPrompt.userChoice;
@@ -52,11 +73,12 @@ export function InstallProvider({ children }: { children: React.ReactNode }) {
             setShowBanner(false);
         } else if (isIOS) {
             setShowInstructions(true);
+            setShowBanner(false);
         }
     };
 
     return (
-        <InstallContext.Provider value={{ isInstallable, handleInstallClick, showBanner, setShowBanner }}>
+        <InstallContext.Provider value={{ isInstallable, handleInstallClick, showBanner, setShowBanner, dismissBanner }}>
             {children}
             {/* iOS Instructions Modal */}
             {showInstructions && (
