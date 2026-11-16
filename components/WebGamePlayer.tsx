@@ -192,6 +192,7 @@ export default function WebGamePlayer({ game, autoPlay = false, className = '' }
                     {game.id && (
                         <Link
                             href={`/play/${game.id}`}
+                            prefetch={false}
                             className="p-2 px-2.5 sm:px-3 rounded-lg bg-secondary/80 hover:bg-secondary text-secondary-foreground text-xs transition-colors border border-border/50 flex items-center gap-1.5 font-medium"
                             title="Theatre Mode"
                         >

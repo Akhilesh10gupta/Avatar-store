@@ -121,7 +121,7 @@ export default function ProfilePage() {
 
                     {/* Quick Action Floating Right */}
                     <div className="absolute top-0 right-0 hidden md:block">
-                        <Link href="/admin">
+                        <Link href="/admin" prefetch={false}>
                             <Button className="rounded-none clip-path-polygon h-10 px-8 font-bold bg-violet-950/30 hover:bg-violet-900/50 border border-violet-500/30 text-violet-400 hover:text-violet-200 transition-all group backdrop-blur-sm">
                                 <LayoutDashboard className="w-4 h-4 mr-2" />
                                 DASHBOARD
@@ -177,7 +177,7 @@ export default function ProfilePage() {
                                 <LayoutDashboard className="w-4 h-4 ml-1" />
                                 OVERVIEW
                             </button>
-                            <Link href="/admin">
+                            <Link href="/admin" prefetch={false}>
                                 <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-zinc-400 hover:text-white hover:bg-white/5 font-bold text-sm transition-all">
                                     <LayoutDashboard className="w-4 h-4 ml-1" />
                                     DASHBOARD
@@ -290,7 +290,7 @@ export default function ProfilePage() {
                                             {visibleActivities.map((activity: any) => {
                                                 if (activity.type === 'comment_received') {
                                                     return (
-                                                        <Link href={`/community#${activity.postId}`} key={activity.id + activity.type} className="flex gap-4 p-4 rounded-xl bg-purple-500/10 border border-purple-500/20 hover:bg-purple-500/20 transition-colors block group">
+                                                        <Link href={`/community#${activity.postId}`} prefetch={false} key={activity.id + activity.type} className="flex gap-4 p-4 rounded-xl bg-purple-500/10 border border-purple-500/20 hover:bg-purple-500/20 transition-colors block group">
                                                             <div className="shrink-0 mt-1">
                                                                 <div className="w-8 h-8 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center group-hover:scale-110 transition-transform">
                                                                     <MessageSquare className="w-4 h-4" />
@@ -318,7 +318,7 @@ export default function ProfilePage() {
 
                                                 // Post or Review
                                                 return (
-                                                    <Link href={activity.type === 'post' ? `/community#${activity.id}` : `/game/${activity.gameId}#reviews`} key={activity.id + activity.type} className="flex gap-4 p-4 rounded-xl bg-black/40 border border-white/10 hover:bg-white/5 transition-colors block group backdrop-blur-sm">
+                                                    <Link href={activity.type === 'post' ? `/community#${activity.id}` : `/game/${activity.gameId}#reviews`} prefetch={false} key={activity.id + activity.type} className="flex gap-4 p-4 rounded-xl bg-black/40 border border-white/10 hover:bg-white/5 transition-colors block group backdrop-blur-sm">
                                                         <div className="shrink-0 mt-1">
                                                             {activity.type === 'post' ? (
                                                                 <div className="w-8 h-8 rounded-full bg-blue-500/20 text-blue-500 flex items-center justify-center group-hover:scale-110 transition-transform">

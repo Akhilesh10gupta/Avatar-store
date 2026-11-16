@@ -147,7 +147,7 @@ export default async function GameDetails({ params }: { params: Promise<{ id: st
     return (
         <div className="space-y-8 animate-in fade-in duration-500">
             {/* Back Button */}
-            <Link href="/" className="inline-flex items-center text-muted-foreground hover:text-primary transition-colors">
+            <Link href="/" prefetch={false} className="inline-flex items-center text-muted-foreground hover:text-primary transition-colors">
                 <ArrowLeft className="w-4 h-4 mr-2" /> Back to Store
             </Link>
 

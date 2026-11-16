@@ -23,7 +23,7 @@ export default function LegalLayout({
     return (
         <div className="container mx-auto px-4 py-12 max-w-6xl min-h-screen">
             <div className="mb-8">
-                <Link href="/">
+                <Link href="/" prefetch={false}>
                     <Button variant="outline" className="gap-2 bg-card hover:bg-secondary text-foreground border-border/50">
                         <ArrowLeft className="w-4 h-4" /> Back to Store
                     </Button>
@@ -38,7 +38,7 @@ export default function LegalLayout({
                             const Icon = link.icon;
                             const isActive = pathname === link.href;
                             return (
-                                <Link key={link.href} href={link.href}>
+                                <Link key={link.href} href={link.href} prefetch={false}>
                                     <div className={cn(
                                         "flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 border",
                                         isActive
@@ -66,7 +66,7 @@ export default function LegalLayout({
                                 const Icon = link.icon;
                                 const isActive = pathname === link.href;
                                 return (
-                                    <Link key={link.href} href={link.href}>
+                                    <Link key={link.href} href={link.href} prefetch={false}>
                                         <div className={cn(
                                             "flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200",
                                             isActive

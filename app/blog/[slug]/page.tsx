@@ -105,6 +105,7 @@ export default async function BlogDetails({ params }: RouteParams) {
             {/* Back Button */}
             <Link
                 href="/blog"
+                prefetch={false}
                 className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-white transition-colors group"
             >
                 <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
@@ -234,7 +235,7 @@ export default async function BlogDetails({ params }: RouteParams) {
                             key={rPost.slug}
                             className="group relative flex flex-col justify-between overflow-hidden rounded-xl border border-white/5 bg-[#0a0a0a]/40 p-4 transition-all duration-300 hover:border-violet-500/20 hover:bg-[#0a0a0a]/60"
                         >
-                            <Link href={`/blog/${rPost.slug}`} className="space-y-3 flex flex-col h-full justify-between">
+                            <Link href={`/blog/${rPost.slug}`} prefetch={false} className="space-y-3 flex flex-col h-full justify-between">
                                 <div className="space-y-2">
                                     <div className="flex items-center gap-2 text-[10px] text-muted-foreground font-medium">
                                         <span className={`px-2 py-0.5 rounded-full border ${getCategoryStyles(rPost.category)}`}>

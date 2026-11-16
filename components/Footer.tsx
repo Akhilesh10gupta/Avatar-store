@@ -58,7 +58,7 @@ export default function Footer() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
                     {/* Brand Section */}
                     <div className="space-y-6">
-                        <Link href="/" className="flex items-center gap-2 font-bold text-xl tracking-tight">
+                        <Link href="/" prefetch={false} className="flex items-center gap-2 font-bold text-xl tracking-tight">
                             <img src="/logo.png" alt="Avatar Play Logo" className="w-8 h-8 rounded-lg object-contain" />
                             <span className="text-white">Avatar<span className="text-primary"> Play</span></span>
                         </Link>
@@ -92,7 +92,7 @@ export default function Footer() {
                                 { label: 'Meet the Developer', href: '/developer' },
                             ].map((link, idx) => (
                                 <li key={idx}>
-                                    <Link href={link.href} className="hover:text-white transition-all duration-300 flex items-center gap-2 group hover:translate-x-1">
+                                    <Link href={link.href} prefetch={false} className="hover:text-white transition-all duration-300 flex items-center gap-2 group hover:translate-x-1">
                                         <span className="w-1.5 h-1.5 rounded-full bg-white/10 group-hover:bg-primary group-hover:shadow-[0_0_10px_currentColor] transition-all"></span>
                                         {link.label}
                                     </Link>
@@ -113,7 +113,7 @@ export default function Footer() {
                                 { label: 'Disclaimer & DMCA', href: '/legal/disclaimer' },
                             ].map((link, idx) => (
                                 <li key={idx}>
-                                    <Link href={link.href} className="hover:text-white transition-all duration-300 flex items-center gap-2 group hover:translate-x-1">
+                                    <Link href={link.href} prefetch={false} className="hover:text-white transition-all duration-300 flex items-center gap-2 group hover:translate-x-1">
                                         <span className="w-1.5 h-1.5 rounded-full bg-white/10 group-hover:bg-primary group-hover:shadow-[0_0_10px_currentColor] transition-all"></span>
                                         {link.label}
                                     </Link>
@@ -178,10 +178,10 @@ export default function Footer() {
                         <VisitorCounter />
 
                         <div className="flex items-center gap-6 text-sm text-muted-foreground shrink-0">
-                            <Link href="/legal/privacy" className="hover:text-white transition-colors">Privacy</Link>
-                            <Link href="/legal/terms" className="hover:text-white transition-colors">Terms</Link>
-                            <Link href="/legal/cookies" className="hover:text-white transition-colors">Cookies</Link>
-                            <Link href="/legal/disclaimer" className="hover:text-white transition-colors">Disclaimer</Link>
+                            <Link href="/legal/privacy" prefetch={false} className="hover:text-white transition-colors">Privacy</Link>
+                            <Link href="/legal/terms" prefetch={false} className="hover:text-white transition-colors">Terms</Link>
+                            <Link href="/legal/cookies" prefetch={false} className="hover:text-white transition-colors">Cookies</Link>
+                            <Link href="/legal/disclaimer" prefetch={false} className="hover:text-white transition-colors">Disclaimer</Link>
                         </div>
                     </div>
                 </div>

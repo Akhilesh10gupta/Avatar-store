@@ -49,6 +49,7 @@ export default async function PlayGamePage({ params }: { params: Promise<{ id: s
                 <div className="flex items-center gap-3">
                     <Link
                         href={`/game/${id}`}
+                        prefetch={false}
                         className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-secondary/80 hover:bg-secondary text-secondary-foreground text-sm font-medium transition-colors"
                     >
                         <ArrowLeft className="w-4 h-4" />
@@ -71,6 +72,7 @@ export default async function PlayGamePage({ params }: { params: Promise<{ id: s
                 <div className="flex items-center gap-2">
                     <Link
                         href={`/game/${id}`}
+                        prefetch={false}
                         className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1"
                     >
                         <Info className="w-3.5 h-3.5" />

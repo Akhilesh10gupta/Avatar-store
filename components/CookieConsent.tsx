@@ -56,7 +56,7 @@ export default function CookieConsent() {
 
                 <p className="text-[11px] text-muted-foreground">
                     By clicking "Accept All", you consent to our use of all cookies. You can manage preferences or read more in our{' '}
-                    <Link href="/legal/cookies" className="text-primary hover:underline font-semibold">
+                    <Link href="/legal/cookies" prefetch={false} className="text-primary hover:underline font-semibold">
                         Cookie Policy
                     </Link>.
                 </p>

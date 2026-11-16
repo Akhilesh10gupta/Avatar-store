@@ -73,18 +73,18 @@ const Navbar = () => {
             <div className="container mx-auto px-4 h-16 flex items-center justify-between relative z-50 bg-[#0a0a0a]/90">
 
                 {/* Logo */}
-                <Link href="/" className="flex items-center gap-2 font-bold text-xl tracking-tight hover:opacity-80 transition-opacity">
+                <Link href="/" prefetch={false} className="flex items-center gap-2 font-bold text-xl tracking-tight hover:opacity-80 transition-opacity">
                     <img src="/logo.png" alt="Avatar Play Logo" className="w-8 h-8 rounded-lg object-contain" />
                     <span className="text-white">Avatar<span className="text-violet-400"> Play</span></span>
                 </Link>
 
                 {/* Desktop Navigation */}
                 <div className="hidden md:flex items-center gap-8 text-sm font-medium text-white/70">
-                    <Link href="/" className="hover:text-white transition-colors">Store</Link>
-                    <Link href="/browse" className="hover:text-white transition-colors">Browse</Link>
-                    <Link href="/community" className="hover:text-white transition-colors">Community</Link>
-                    <Link href="/blog" className="hover:text-white transition-colors">Blog</Link>
-                    <Link href="/about" className="hover:text-white transition-colors">About</Link>
+                    <Link href="/" prefetch={false} className="hover:text-white transition-colors">Store</Link>
+                    <Link href="/browse" prefetch={false} className="hover:text-white transition-colors">Browse</Link>
+                    <Link href="/community" prefetch={false} className="hover:text-white transition-colors">Community</Link>
+                    <Link href="/blog" prefetch={false} className="hover:text-white transition-colors">Blog</Link>
+                    <Link href="/about" prefetch={false} className="hover:text-white transition-colors">About</Link>
                 </div>
 
                 {/* Right Actions (Desktop) */}
@@ -100,7 +100,7 @@ const Navbar = () => {
                             className="h-10 w-64 rounded-full border border-white/10 bg-white/5 px-10 text-sm text-white placeholder:text-white/40 outline-none focus:border-violet-500/50 focus:bg-white/10 focus:ring-1 focus:ring-violet-500/50 transition-all"
                         />
                     </div>
-                    <Link href={profileLink}>
+                    <Link href={profileLink} prefetch={false}>
                         <button className="rounded-full bg-white/5 hover:bg-white/10 transition-all relative overflow-hidden w-10 h-10 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-primary/50" title={user ? "Go to Profile" : "Login"}>
                             <UserAvatar user={user} className="w-full h-full" />
                             {user && !user.photoURL && (
@@ -181,6 +181,7 @@ const Navbar = () => {
                                     <motion.div key={idx} variants={itemVariants}>
                                         <Link
                                             href={link.href}
+                                            prefetch={false}
                                             onClick={() => setIsMobileMenuOpen(false)}
                                             className="flex items-center justify-between p-4 rounded-2xl hover:bg-white/5 border border-transparent hover:border-white/10 transition-all group"
                                         >
@@ -195,6 +196,7 @@ const Navbar = () => {
                             <motion.div variants={itemVariants} className="pt-6 border-t border-white/10 mt-6">
                                 <Link
                                     href={profileLink}
+                                    prefetch={false}
                                     onClick={() => setIsMobileMenuOpen(false)}
                                     className="flex items-center gap-4 p-4 rounded-2xl bg-white/5 border border-white/10 hover:border-primary/30 transition-all group"
                                 >

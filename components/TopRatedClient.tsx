@@ -43,7 +43,7 @@ export default function TopRatedClient({ initialGames }: TopRatedClientProps) {
             <div className="flex flex-col gap-8">
                 {/* Header */}
                 <div className="flex flex-col gap-4">
-                    <Link href="/" className="text-muted-foreground hover:text-white transition-colors w-fit">
+                    <Link href="/" prefetch={false} className="text-muted-foreground hover:text-white transition-colors w-fit">
                         ← Back to Home
                     </Link>
                     <div>

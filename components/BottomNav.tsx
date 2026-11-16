@@ -53,6 +53,7 @@ export default function BottomNav() {
                         <Link
                             key={item.label}
                             href={item.href}
+                            prefetch={false}
                             className={cn(
                                 "flex flex-col items-center justify-center w-full h-full gap-1 active:scale-95 transition-all text-[10px] font-medium",
                                 isActive ? "text-white" : "text-muted-foreground hover:text-white/80"

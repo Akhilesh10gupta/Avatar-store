@@ -276,7 +276,7 @@ export default function CommunityFeed({ initialPosts = [] }: CommunityFeedProps)
                     <div className="text-center py-6">
                         <h3 className="text-xl font-bold mb-2 text-white">Join the Community</h3>
                         <p className="text-muted-foreground mb-4">Log in to share your gaming moments and connect with others.</p>
-                        <Link href="/login">
+                        <Link href="/login" prefetch={false}>
                             <Button>Log In / Sign Up</Button>
                         </Link>
                     </div>

@@ -432,6 +432,7 @@ export default function Login() {
                     <div className="text-center text-sm text-muted-foreground pt-4">
                         Need an admin account?{' '}
                         <Link
+                            prefetch={false}
                             href={redirectPath !== '/admin' ? `/signup?redirect=${encodeURIComponent(redirectPath)}` : "/signup"}
                             className="text-violet-400 hover:text-violet-300 hover:underline"
                         >

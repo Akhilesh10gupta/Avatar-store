@@ -18,7 +18,7 @@ export default function AboutPage() {
             <div className="container mx-auto px-4 relative z-10">
                 {/* Back Button */}
                 <div className="mb-8">
-                    <Link href="/">
+                    <Link href="/" prefetch={false}>
                         <Button variant="outline" className="gap-2 bg-card hover:bg-secondary text-foreground border-border/50">
                             <ArrowLeft className="w-4 h-4" /> Back to Store
                         </Button>
@@ -140,7 +140,7 @@ export default function AboutPage() {
                                     Meet the developer turning complex code into seamless experiences.
                                 </p>
                             </div>
-                            <Link href="/developer">
+                            <Link href="/developer" prefetch={false}>
                                 <Button size="lg" variant="outline" className="border-primary/50 text-primary hover:bg-primary/10 font-bold px-8 rounded-full">
                                     Meet the Developer
                                 </Button>
@@ -165,7 +165,7 @@ export default function AboutPage() {
                             Join thousands of gamers who have already found their new home.
                             The next great adventure is just a click away.
                         </p>
-                        <Link href="/browse">
+                        <Link href="/browse" prefetch={false}>
                             <Button size="lg" className="bg-white text-primary hover:bg-white/90 font-bold px-10 py-6 text-lg rounded-full shadow-xl">
                                 Browse Games
                             </Button>

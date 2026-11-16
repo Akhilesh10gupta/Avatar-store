@@ -78,7 +78,7 @@ export default async function BlogHome({ searchParams }: PageProps) {
             {featuredPost && (
                 <div className="group relative overflow-hidden rounded-2xl border border-white/5 bg-[#0a0a0a]/80 p-1 backdrop-blur-xl transition-all duration-500 hover:border-violet-500/30 hover:shadow-[0_0_30px_rgba(139,92,246,0.1)]">
                     <div className="absolute inset-0 bg-gradient-to-r from-violet-500/10 to-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
-                    <Link href={`/blog/${featuredPost.slug}`} className="grid md:grid-cols-[1.2fr_1fr] gap-8 p-6 md:p-8 relative z-10">
+                    <Link href={`/blog/${featuredPost.slug}`} prefetch={false} className="grid md:grid-cols-[1.2fr_1fr] gap-8 p-6 md:p-8 relative z-10">
                         {/* Image */}
                         <div className="relative aspect-[16/10] md:aspect-auto md:h-[350px] overflow-hidden rounded-xl border border-white/5">
                             <Image
@@ -138,7 +138,7 @@ export default async function BlogHome({ searchParams }: PageProps) {
                         key={post.slug}
                         className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-white/5 bg-[#0a0a0a]/50 backdrop-blur-xl transition-all duration-300 hover:border-violet-500/20 hover:bg-[#0a0a0a]/80"
                     >
-                        <Link href={`/blog/${post.slug}`} className="flex flex-col h-full">
+                        <Link href={`/blog/${post.slug}`} prefetch={false} className="flex flex-col h-full">
                             {/* Image */}
                             <div className="relative aspect-[16/10] overflow-hidden rounded-t-2xl border-b border-white/5">
                                 <Image
@@ -195,7 +195,7 @@ export default async function BlogHome({ searchParams }: PageProps) {
                 <div className="text-center py-12 border border-white/5 bg-[#0a0a0a]/30 rounded-2xl">
                     <p className="text-muted-foreground">No more articles found on this page.</p>
                     {currentPage > 1 && (
-                        <Link href="/blog" className="mt-4 inline-flex text-sm text-primary hover:underline">
+                        <Link href="/blog" prefetch={false} className="mt-4 inline-flex text-sm text-primary hover:underline">
                             Back to Page 1
                         </Link>
                     )}
@@ -209,6 +209,7 @@ export default async function BlogHome({ searchParams }: PageProps) {
                     {currentPage > 1 ? (
                         <Link
                             href={`/blog?page=${currentPage - 1}`}
+                            prefetch={false}
                             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/10 bg-white/5 text-sm font-semibold text-white hover:border-violet-500/50 hover:bg-violet-500/10 hover:shadow-[0_0_15px_rgba(139,92,246,0.2)] transition-all duration-300 group"
                         >
                             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
@@ -230,6 +231,7 @@ export default async function BlogHome({ searchParams }: PageProps) {
                     {currentPage < totalPages ? (
                         <Link
                             href={`/blog?page=${currentPage + 1}`}
+                            prefetch={false}
                             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/10 bg-white/5 text-sm font-semibold text-white hover:border-violet-500/50 hover:bg-violet-500/10 hover:shadow-[0_0_15px_rgba(139,92,246,0.2)] transition-all duration-300 group"
                         >
                             Next

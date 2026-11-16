@@ -266,6 +266,7 @@ export default function Signup() {
                     <div className="text-center text-sm text-muted-foreground pt-4">
                         Already have an account?{' '}
                         <Link
+                            prefetch={false}
                             href={redirectPath !== '/admin' ? `/login?redirect=${encodeURIComponent(redirectPath)}` : "/login"}
                             className="text-violet-400 hover:text-violet-300 hover:underline"
                         >

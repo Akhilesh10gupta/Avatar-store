@@ -118,7 +118,7 @@ export default function NotFound() {
                     transition={{ delay: 1.5 }}
                     className="flex flex-col sm:flex-row gap-6 justify-center pt-8"
                 >
-                    <Link href="/">
+                    <Link href="/" prefetch={false}>
                         <Button
                             size="lg"
                             className="bg-primary hover:bg-primary/90 text-white min-w-[200px] h-14 text-lg font-bold border-b-4 border-primary-foreground/20 active:border-b-0 active:translate-y-1 transition-all group"
@@ -128,7 +128,7 @@ export default function NotFound() {
                         </Button>
                     </Link>
 
-                    <Link href="/browse">
+                    <Link href="/browse" prefetch={false}>
                         <Button
                             size="lg"
                             variant="outline"
