@@ -55,7 +55,7 @@ export default function TopRatedGames({ games }: TopRatedGamesProps) {
         <section className="space-y-4">
             {/* Header */}
             <div className="flex items-center justify-between px-1">
-                <Link href="/top-rated" className="group flex items-center gap-1 cursor-pointer">
+                <Link href="/top-rated" prefetch={false} className="group flex items-center gap-1 cursor-pointer">
                     <h2 className="text-xl font-bold text-white group-hover:text-white/90 transition-colors flex items-center gap-2">
                         <Trophy className="w-5 h-5 text-yellow-500" />
                         Top Rated Games

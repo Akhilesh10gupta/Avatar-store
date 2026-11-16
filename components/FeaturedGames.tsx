@@ -46,7 +46,7 @@ export default function FeaturedGames({ games }: FeaturedGamesProps) {
         <section className="space-y-4">
             {/* Header */}
             <div className="flex items-center justify-between px-1">
-                <Link href="/browse" className="group flex items-center gap-1 cursor-pointer">
+                <Link href="/browse" prefetch={false} className="group flex items-center gap-1 cursor-pointer">
                     <h2 className="text-xl font-bold text-white group-hover:text-white/90 transition-colors">
                         Featured Games
                     </h2>

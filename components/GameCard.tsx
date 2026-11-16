@@ -121,7 +121,7 @@ const GameCard = ({ game, className, variant = 'default', rank }: GameCardProps)
 
     if (variant === 'clean') {
         return (
-            <Link href={`/game/${game.id}`} className={cn("group block h-full", className)}>
+            <Link href={`/game/${game.id}`} prefetch={false} className={cn("group block h-full", className)}>
                 <div className="space-y-3">
                     {/* Image Wrapper with Badge */}
                     <div className="relative">
@@ -154,7 +154,7 @@ const GameCard = ({ game, className, variant = 'default', rank }: GameCardProps)
     }
 
     return (
-        <Link href={`/game/${game.id}`} className={cn("group block h-full", className)}>
+        <Link href={`/game/${game.id}`} prefetch={false} className={cn("group block h-full", className)}>
             <div className="relative rounded-xl bg-card border border-border/50 hover:border-primary/50 hover:shadow-[0_0_25px_-5px_rgba(139,92,246,0.3)] transition-all duration-300 h-full flex flex-col cursor-pointer">
                 {rank && <CyberBadge rank={rank} />}
                 {/* Image Container */}

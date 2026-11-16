@@ -99,7 +99,7 @@ const Hero = ({ latestGames = [], popularGames = [] }: HeroProps) => {
                             key={game.id}
                             className="relative min-w-[75vw] h-[55vh] snap-center rounded-[32px] overflow-hidden shrink-0 shadow-xl border border-white/5"
                         >
-                            <Link href={`/game/${game.id}`} className="block w-full h-full">
+                            <Link href={`/game/${game.id}`} prefetch={false} className="block w-full h-full">
                                 <Image
                                     src={
                                         game.cardImage
@@ -213,7 +213,7 @@ const Hero = ({ latestGames = [], popularGames = [] }: HeroProps) => {
                             </p>
 
                             <div className="flex gap-4 w-full md:w-auto">
-                                <Link href={`/game/${activeGame.id}`} className="w-full md:w-auto">
+                                <Link href={`/game/${activeGame.id}`} prefetch={false} className="w-full md:w-auto">
                                     <Button size="lg" className="rounded-xl px-8 py-6 text-lg font-semibold shadow-xl shadow-primary/20 w-full md:w-auto whitespace-nowrap flex items-center justify-center">
                                         {activeGame.platform === 'Web' || activeGame.webPlayUrl ? 'Play Now' : 'Download Now'} <ArrowRight className="ml-2 w-5 h-5" />
                                     </Button>

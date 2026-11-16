@@ -26,12 +26,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
             setUser(user);
             if (user) {
-                await syncUserAction({
-                    uid: user.uid,
-                    email: user.email,
-                    displayName: user.displayName,
-                    photoURL: user.photoURL
-                });
+                const sessionKey = `user_synced_${user.uid}`;
+                if (!sessionStorage.getItem(sessionKey)) {
+                    await syncUserAction({
+                        uid: user.uid,
+                        email: user.email,
+                        displayName: user.displayName,
+                        photoURL: user.photoURL
+                    });
+                    sessionStorage.setItem(sessionKey, 'true');
+                }
             }
             setLoading(false);
         });

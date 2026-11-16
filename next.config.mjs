@@ -9,7 +9,7 @@ const withSerwist = withSerwistInit({
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     images: {
-        minimumCacheTTL: 2592000, // Cache optimized images for 30 days to protect Vercel limits
+        unoptimized: true, // Serve images directly from source CDN (Cloudinary), eliminating Vercel image CDN requests
         remotePatterns: [
             {
                 protocol: 'https',

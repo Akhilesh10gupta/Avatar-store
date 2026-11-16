@@ -48,6 +48,14 @@ export default function VisitorCounter() {
     useEffect(() => {
         const initCounter = async () => {
             try {
+                // Check if count was already cached in this session to prevent repeated Server Action requests on every page navigation
+                const cachedCount = sessionStorage.getItem('cached_visitor_count');
+                if (cachedCount) {
+                    setCount(parseInt(cachedCount, 10));
+                    setIsLoading(false);
+                    return;
+                }
+
                 // Dynamically import server actions
                 const { getVisitorCountAction, incrementVisitorCountAction } = await import('@/app/actions/generalActions');
 
@@ -58,9 +66,11 @@ export default function VisitorCounter() {
                     sessionStorage.setItem('has_visited_site', 'true');
                 }
 
-                // 2. Fetch count once (no continuous 30-second polling to save Vercel Edge requests)
+                // 2. Fetch count once per session
                 const count = await getVisitorCountAction();
-                setCount(count + 1500); // Add base offset
+                const total = count + 1500; // Add base offset
+                sessionStorage.setItem('cached_visitor_count', total.toString());
+                setCount(total);
                 setIsLoading(false);
             } catch (error) {
                 console.error("Failed to init visitor counter:", error);
