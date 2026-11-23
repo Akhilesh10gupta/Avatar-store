@@ -1,6 +1,6 @@
 "use server";
 
-// ... imports ...
+import { revalidatePath } from "next/cache";
 import { getGamesAdmin, getTopRatedGamesAdmin, getMostDownloadedGamesAdmin } from "@/lib/firestore-admin";
 import { Review } from "@/lib/firestore";
 
@@ -138,6 +138,8 @@ export async function addGameAction(gameData: any) {
             ratingCount: 0,
             downloadCount: 0
         });
+        revalidatePath('/');
+        revalidatePath('/games');
         return docRef.id;
     } catch (error) {
         console.error("Error adding game:", error);
@@ -152,6 +154,10 @@ export async function updateGameAction(gameId: string, gameData: any) {
             ...gameData,
             updatedAt: new Date()
         });
+        revalidatePath('/');
+        revalidatePath('/games');
+        revalidatePath(`/game/${gameId}`);
+        revalidatePath(`/play/${gameId}`);
     } catch (error) {
         console.error("Error updating game:", error);
         throw new Error("Failed to update game");
@@ -162,6 +168,10 @@ export async function deleteGameAction(gameId: string) {
     try {
         const { adminDb } = await import('@/lib/firebase-admin');
         await adminDb.collection('games').doc(gameId).delete();
+        revalidatePath('/');
+        revalidatePath('/games');
+        revalidatePath(`/game/${gameId}`);
+        revalidatePath(`/play/${gameId}`);
     } catch (error) {
         console.error("Error deleting game:", error);
         throw new Error("Failed to delete game");
