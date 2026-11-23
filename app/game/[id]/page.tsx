@@ -19,6 +19,18 @@ import { getAICardImage } from "@/lib/cloudinary";
 export const revalidate = 86400;
 export const dynamicParams = true;
 
+export async function generateStaticParams() {
+    try {
+        const { getGamesAdmin } = await import("@/lib/firestore-admin");
+        const games = await getGamesAdmin();
+        return games.map((game) => ({
+            id: game.id,
+        }));
+    } catch {
+        return [];
+    }
+}
+
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
     const { id } = await params;
     const game = await getGameByIdAdmin(id);
