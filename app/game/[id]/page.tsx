@@ -3,7 +3,7 @@ import StarRating from "@/components/StarRating";
 import ReviewSection from "@/components/ReviewSection";
 import DownloadButton from "@/components/DownloadButton";
 import PlayOnlineButton from "@/components/PlayOnlineButton";
-import AdsterraBanner from "@/components/AdsterraBanner";
+import AdsterraNative from "@/components/AdsterraNative";
 import { Button } from "@/components/ui/Button";
 import { Monitor, Cpu, HardDrive, MemoryStick, Image as ImageIcon, ArrowLeft, Smartphone, Download, Wrench, ShieldCheck, ShieldAlert, Globe, Play, Gamepad2, ExternalLink, Layers } from "lucide-react";
 import WebGamePlayer from "@/components/WebGamePlayer";
@@ -267,9 +267,6 @@ export default async function GameDetails({ params }: { params: Promise<{ id: st
                 </div>
             </div>
 
-            {/* In-Content Clean Adsterra Banner */}
-            <AdsterraBanner />
-
             {/* Embedded Web Game Player Section - ONLY for Online Web Games */}
             {(game.platform === 'Web' || (game.webPlayUrl && game.platform !== 'Android' && game.platform !== 'PC')) && game.webPlayUrl && (
                 <section id="online-player" className="scroll-mt-8 space-y-4">
@@ -311,8 +308,8 @@ export default async function GameDetails({ params }: { params: Promise<{ id: st
                 </section>
             )}
 
-            {/* Sponsored Ad Unit (safely isolated from download buttons) */}
-            <AdsterraBanner />
+            {/* Sponsored Native Ad Unit (3-4 Cards Under Screenshots) */}
+            <AdsterraNative />
 
             {/* Gameplay Video */}
             {
