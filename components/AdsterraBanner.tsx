@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface AdsterraBannerProps {
   className?: string;
@@ -11,42 +11,79 @@ export default function AdsterraBanner({
   className = '',
   showLabel = true,
 }: AdsterraBannerProps) {
-  // Mobile: 300x250, Desktop: 728x90 (Exactly ONE poster displayed per device)
-  const mobileKey = 'e3ffb4ef06eee74dd870f87cbfb0aff6';
-  const desktopKey = 'f5082d15bf0c3de318d0515ebf8530c9';
+  const [mounted, setMounted] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  const createAdHtml = (key: string, width: number, height: number) => `
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <meta charset="utf-8">
-        <style>
-          * { margin: 0; padding: 0; box-sizing: border-box; }
-          body { 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            background: transparent; 
-            overflow: hidden; 
-            width: ${width}px;
-            height: ${height}px;
-          }
-        </style>
-      </head>
-      <body>
-        <script type="text/javascript">
-          atOptions = {
-            'key' : '${key}',
-            'format' : 'iframe',
-            'height' : ${height},
-            'width' : ${width},
-            'params' : {}
-          };
-        </script>
-        <script type="text/javascript" data-cfasync="false" src="https://bicea.org/22/${key}"></script>
-      </body>
-    </html>
-  `;
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted || !containerRef.current) return;
+    const container = containerRef.current;
+
+    // Prevent duplicate injection
+    if (container.querySelector('iframe')) return;
+
+    try {
+      const isDesktop = window.innerWidth >= 768;
+      const width = isDesktop ? 728 : 300;
+      const height = isDesktop ? 90 : 250;
+      const key = isDesktop
+        ? 'f5082d15bf0c3de318d0515ebf8530c9'
+        : 'e3ffb4ef06eee74dd870f87cbfb0aff6';
+
+      const iframe = document.createElement('iframe');
+      iframe.width = String(width);
+      iframe.height = String(height);
+      iframe.scrolling = 'no';
+      iframe.style.border = '0';
+      iframe.style.overflow = 'hidden';
+      iframe.title = 'Advertisement';
+
+      container.appendChild(iframe);
+
+      const doc = iframe.contentWindow?.document || iframe.contentDocument;
+      if (doc) {
+        doc.open();
+        doc.write(`
+          <!DOCTYPE html>
+          <html>
+            <head>
+              <meta charset="utf-8">
+              <style>
+                * { margin: 0; padding: 0; box-sizing: border-box; }
+                body { 
+                  display: flex; 
+                  justify-content: center; 
+                  align-items: center; 
+                  background: transparent; 
+                  overflow: hidden; 
+                  width: ${width}px;
+                  height: ${height}px;
+                }
+              </style>
+            </head>
+            <body>
+              <script type="text/javascript">
+                atOptions = {
+                  'key' : '${key}',
+                  'format' : 'iframe',
+                  'height' : ${height},
+                  'width' : ${width},
+                  'params' : {}
+                };
+              </script>
+              <script type="text/javascript" data-cfasync="false" src="https://bicea.org/22/${key}"></script>
+            </body>
+          </html>
+        `);
+        doc.close();
+      }
+    } catch (err) {
+      console.warn('Adsterra banner initialization caught:', err);
+    }
+  }, [mounted]);
 
   return (
     <div className={`w-full flex flex-col items-center justify-center my-6 ${className}`}>
@@ -55,30 +92,10 @@ export default function AdsterraBanner({
           Advertisement
         </span>
       )}
-
-      {/* Desktop Banner (728x90) - Only visible on desktop screens (md: and above) */}
-      <div className="hidden md:flex justify-center items-center overflow-hidden rounded-xl border border-border/30 bg-card/20 p-2 shadow-sm min-w-[728px] min-h-[90px]">
-        <iframe
-          title="Advertisement"
-          srcDoc={createAdHtml(desktopKey, 728, 90)}
-          width={728}
-          height={90}
-          scrolling="no"
-          style={{ border: 0, overflow: 'hidden' }}
-        />
-      </div>
-
-      {/* Mobile Banner (300x250) - Only visible on mobile/tablet screens (< md:) */}
-      <div className="flex md:hidden justify-center items-center overflow-hidden rounded-xl border border-border/30 bg-card/20 p-2 shadow-sm min-w-[300px] min-h-[250px]">
-        <iframe
-          title="Advertisement"
-          srcDoc={createAdHtml(mobileKey, 300, 250)}
-          width={300}
-          height={250}
-          scrolling="no"
-          style={{ border: 0, overflow: 'hidden' }}
-        />
-      </div>
+      <div
+        ref={containerRef}
+        className="flex justify-center items-center overflow-hidden rounded-xl border border-border/30 bg-card/20 p-2 shadow-sm min-h-[90px] w-full"
+      />
     </div>
   );
 }
