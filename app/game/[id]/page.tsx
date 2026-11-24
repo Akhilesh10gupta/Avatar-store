@@ -267,6 +267,9 @@ export default async function GameDetails({ params }: { params: Promise<{ id: st
                 </div>
             </div>
 
+            {/* In-Content Clean Adsterra Banner */}
+            <AdsterraBanner />
+
             {/* Embedded Web Game Player Section - ONLY for Online Web Games */}
             {(game.platform === 'Web' || (game.webPlayUrl && game.platform !== 'Android' && game.platform !== 'PC')) && game.webPlayUrl && (
                 <section id="online-player" className="scroll-mt-8 space-y-4">

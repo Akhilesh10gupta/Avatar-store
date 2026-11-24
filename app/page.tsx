@@ -3,7 +3,7 @@ import { getGames, getTopRatedGames, getMostDownloadedGames, Game } from "@/lib/
 import { getGamesAdmin, getMostDownloadedGamesAdmin } from "@/lib/firestore-admin";
 import FeaturedGames from "@/components/FeaturedGames";
 import TopRatedGames from "@/components/TopRatedGames";
-import AdBanner from "@/components/AdBanner";
+import AdsterraBanner from "@/components/AdsterraBanner";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -39,7 +39,7 @@ export default async function Home() {
 
       {/* Top Banner Ad */}
       <div className="container mx-auto px-4 max-w-5xl">
-        <AdBanner />
+        <AdsterraBanner />
       </div>
 
       {/* Featured Games Section */}
