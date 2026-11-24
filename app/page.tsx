@@ -14,28 +14,6 @@ export const metadata: Metadata = {
 // ISR Cache: Cache homepage for 1 hour (3600s) to keep Vercel within free limits
 export const revalidate = 3600;
 
-const dummyGames: Game[] = [
-  // ... (keep dummy data if needed, or just let it handle empty arrays)
-  {
-    id: '1',
-    title: 'Cyber Odyssey 2077',
-    description: 'A futuristic RPG set in a neon-lit metropolis.',
-    coverImage: 'https://images.unsplash.com/photo-1552820728-8b83bb6b773f?q=80&w=2070&auto=format&fit=crop',
-    screenshots: [],
-    genre: 'RPG',
-    releaseDate: '2025',
-    developer: 'CD Project Red',
-    downloadLink: '#',
-    platform: 'PC',
-    icon: '',
-    systemRequirements: { os: '', processor: '', memory: '', graphics: '', storage: '' },
-    createdAt: new Date().toISOString(),
-    downloadCount: 1250,
-    rating: 4.8
-  },
-  // ...
-];
-
 export default async function Home() {
   // Try to fetch games from DB
   let games: Game[] = [];
@@ -49,14 +27,11 @@ export default async function Home() {
     games = latest;
     popularGames = popular;
   } catch (e) {
-    console.log("Using dummy data as DB might be empty or not configured yet for server side");
-    // Fallback dummies
-    games = dummyGames; // Treat dummies as "latest"
-    popularGames = dummyGames; // And as "popular"
+    console.error("Error loading games from DB on homepage:", e);
   }
 
-  const displayGames = games.length > 0 ? games : dummyGames;
-  const displayPopular = popularGames.length > 0 ? popularGames : dummyGames;
+  const displayGames = games;
+  const displayPopular = popularGames.length > 0 ? popularGames : games;
 
   return (
     <div className="flex flex-col gap-12 pb-16">
