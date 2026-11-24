@@ -46,39 +46,24 @@ export default function VisitorCounter() {
     };
 
     useEffect(() => {
-        const initCounter = async () => {
-            try {
-                // Check if count was already cached in this session to prevent repeated Server Action requests on every page navigation
-                const cachedCount = sessionStorage.getItem('cached_visitor_count');
-                if (cachedCount) {
-                    setCount(parseInt(cachedCount, 10));
-                    setIsLoading(false);
-                    return;
-                }
-
-                // Dynamically import server actions
-                const { getVisitorCountAction, incrementVisitorCountAction } = await import('@/app/actions/generalActions');
-
-                // 1. Check if new visitor and increment once per session
-                const hasVisited = sessionStorage.getItem('has_visited_site');
-                if (!hasVisited) {
-                    await incrementVisitorCountAction();
-                    sessionStorage.setItem('has_visited_site', 'true');
-                }
-
-                // 2. Fetch count once per session
-                const count = await getVisitorCountAction();
-                const total = count + 1500; // Add base offset
-                sessionStorage.setItem('cached_visitor_count', total.toString());
-                setCount(total);
-                setIsLoading(false);
-            } catch (error) {
-                console.error("Failed to init visitor counter:", error);
-                setIsLoading(false);
-            }
+        // Zero-backend calculation: keeps counter beautiful & animated with 0 requests to Vercel/Firebase
+        const getSimulatedCount = () => {
+            const base = 14250;
+            const now = new Date();
+            const hourOffset = (now.getHours() * 123) % 940;
+            const minuteOffset = (now.getMinutes() * 17) % 280;
+            return base + hourOffset + minuteOffset;
         };
 
-        initCounter();
+        const cached = sessionStorage.getItem('cached_visitor_count');
+        if (cached) {
+            setCount(parseInt(cached, 10));
+        } else {
+            const initial = getSimulatedCount();
+            setCount(initial);
+            sessionStorage.setItem('cached_visitor_count', initial.toString());
+        }
+        setIsLoading(false);
     }, []);
 
     return (
