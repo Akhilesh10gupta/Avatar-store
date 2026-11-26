@@ -1,14 +1,21 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { getGamesAdmin, getTopRatedGamesAdmin, getMostDownloadedGamesAdmin } from "@/lib/firestore-admin";
+import { getGamesAdmin, getTopRatedGamesAdmin, getMostDownloadedGamesAdmin, updateCachedGameDownload, clearGamesCache } from "@/lib/firestore-admin";
 import { Review } from "@/lib/firestore";
 
-// ... existing actions ...
+// In-memory reviews cache to avoid thousands of repetitive Firestore reads
+interface CachedReviews {
+    reviews: Review[];
+    timestamp: number;
+}
+const reviewsCache = new Map<string, CachedReviews>();
+const REVIEWS_CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
 
 export async function incrementDownloadAction(gameId: string) {
     if (!gameId) return;
     try {
+        updateCachedGameDownload(gameId);
         const { adminDb } = await import('@/lib/firebase-admin');
         const { FieldValue } = await import('firebase-admin/firestore');
         await adminDb.collection('games').doc(gameId).update({
@@ -20,6 +27,13 @@ export async function incrementDownloadAction(gameId: string) {
 }
 
 export async function getGameReviewsAction(gameId: string) {
+    if (!gameId) return [];
+    const now = Date.now();
+    const cached = reviewsCache.get(gameId);
+    if (cached && (now - cached.timestamp < REVIEWS_CACHE_TTL_MS)) {
+        return cached.reviews;
+    }
+
     try {
         const { adminDb } = await import('@/lib/firebase-admin');
         const snapshot = await adminDb.collection('reviews')
@@ -34,17 +48,23 @@ export async function getGameReviewsAction(gameId: string) {
             updatedAt: (doc.data().updatedAt?.toDate ? doc.data().updatedAt.toDate().toISOString() : doc.data().updatedAt)
         } as Review));
 
-        return reviews.sort((a, b) =>
+        const sorted = reviews.sort((a, b) =>
             new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
         );
+
+        reviewsCache.set(gameId, { reviews: sorted, timestamp: now });
+        return sorted;
     } catch (error) {
         console.error("Error fetching reviews:", error);
-        return [];
+        return cached ? cached.reviews : [];
     }
 }
 
 export async function addReviewAction(review: any) {
     try {
+        if (review?.gameId) {
+            reviewsCache.delete(review.gameId);
+        }
         const { adminDb } = await import('@/lib/firebase-admin');
         const docRef = await adminDb.collection('reviews').add({
             ...review,
@@ -130,6 +150,7 @@ export async function submitRatingAction(gameId: string, userId: string, rating:
 
 export async function addGameAction(gameData: any) {
     try {
+        clearGamesCache();
         const { adminDb } = await import('@/lib/firebase-admin');
         const docRef = await adminDb.collection('games').add({
             ...gameData,
@@ -149,6 +170,7 @@ export async function addGameAction(gameData: any) {
 
 export async function updateGameAction(gameId: string, gameData: any) {
     try {
+        clearGamesCache();
         const { adminDb } = await import('@/lib/firebase-admin');
         await adminDb.collection('games').doc(gameId).update({
             ...gameData,
@@ -166,6 +188,7 @@ export async function updateGameAction(gameId: string, gameData: any) {
 
 export async function deleteGameAction(gameId: string) {
     try {
+        clearGamesCache();
         const { adminDb } = await import('@/lib/firebase-admin');
         await adminDb.collection('games').doc(gameId).delete();
         revalidatePath('/');
