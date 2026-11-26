@@ -8,19 +8,19 @@ const outfit = Outfit({ subsets: ['latin'] })
 export const metadata: Metadata = {
   metadataBase: new URL('https://avatarplay.in'),
   title: {
-    default: "Avatar Play - Premium Game Distribution Platform",
+    default: "Avatar Play - Play & Download Viral Indian Meme Games & Desi APKs",
     template: "%s | Avatar Play"
   },
-  description: "Your ultimate destination for curated games, avatars, and gaming community. Discover, download, and play the future of gaming today.",
-  keywords: ["gaming", "avatar play", "game store", "indie games", "AAA games", "game reviews", "community"],
+  description: "Play and download the funniest viral Indian meme games for Android & PC! Featuring Sheru Bhai, Flying Thala, Big B's Bouncing Journey, Chappal Run 3D, and more free desi games on Avatar Play.",
+  keywords: ["Indian meme games", "viral games", "desi games", "Sheru Bhai", "Flying Thala", "free android games", "free browser games", "Avatar Play"],
   authors: [{ name: "Avatar Play Team" }],
   creator: "Avatar Play",
   openGraph: {
     type: "website",
-    locale: "en_US",
+    locale: "en_IN",
     url: "https://avatarplay.in",
-    title: "Avatar Play - Premium Game Distribution Platform",
-    description: "Your ultimate destination for curated games, avatars, and gaming community.",
+    title: "Avatar Play - Play & Download Viral Indian Meme Games & Desi APKs",
+    description: "Play and download the funniest viral Indian meme games for Android & PC! Featuring Sheru Bhai, Flying Thala, and more free desi games.",
     siteName: "Avatar Play",
     images: [
       {
@@ -33,8 +33,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Avatar Play",
-    description: "Your ultimate destination for curated games and avatars.",
+    title: "Avatar Play - Viral Indian Meme Games & Desi APKs",
+    description: "Play and download the funniest viral Indian meme games for Android & PC on Avatar Play.",
     images: ["/logo.png"],
     creator: "@avatarplay",
   },
