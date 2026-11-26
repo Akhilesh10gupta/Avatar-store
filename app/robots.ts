@@ -5,7 +5,7 @@ export default function robots(): MetadataRoute.Robots {
         rules: {
             userAgent: '*',
             allow: '/',
-            disallow: ['/admin/', '/api/'],
+            disallow: ['/admin/', '/api/', '/signup', '/login'],
         },
         sitemap: 'https://avatarplay.in/sitemap.xml',
     }

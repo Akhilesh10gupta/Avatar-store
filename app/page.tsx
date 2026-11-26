@@ -7,8 +7,26 @@ import AdsterraBanner from "@/components/AdsterraBanner";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Avatar Play - Premium Game Distribution Platform",
-  description: "Your ultimate destination for curated games, avatars, and gaming community. Discover, download, and play the future of gaming today.",
+  title: "Avatar Play - Play & Download Viral Indian Meme Games & Desi APKs",
+  description: "Play and download the funniest viral Indian meme games for Android & PC! Featuring Sheru Bhai, Flying Thala, Big B's Bouncing Journey, Chappal Run 3D, and more free desi games on Avatar Play.",
+  keywords: [
+    "Indian meme games",
+    "viral games",
+    "desi games",
+    "Sheru Bhai game",
+    "Flying Thala",
+    "free android games",
+    "free browser games",
+    "Avatar Play"
+  ],
+  openGraph: {
+    title: "Avatar Play - Play & Download Viral Indian Meme Games & Desi APKs",
+    description: "Play and download the funniest viral Indian meme games for Android & PC! Featuring Sheru Bhai, Flying Thala, and more free desi games.",
+    url: "https://avatarplay.in",
+    siteName: "Avatar Play",
+    locale: "en_IN",
+    type: "website",
+  },
 };
 
 // ISR Cache: Cache homepage for 1 hour (3600s) to keep Vercel within free limits
@@ -35,6 +53,8 @@ export default async function Home() {
 
   return (
     <div className="flex flex-col gap-12 pb-16">
+      {/* Semantic SEO Heading for search engines */}
+      <h1 className="sr-only">Avatar Play - India's #1 Hub for Viral Meme Games & Desi APKs</h1>
       <Hero latestGames={displayGames} popularGames={displayPopular} />
 
       {/* Top Banner Ad */}
