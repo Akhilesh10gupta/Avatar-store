@@ -32,6 +32,9 @@ export async function generateMetadata({ params }: RouteParams): Promise<Metadat
     return {
         title: `${post.title} | Avatar Play Blog`,
         description: post.description,
+        alternates: {
+            canonical: `https://avatarplay.in/blog/${slug}`,
+        },
         openGraph: {
             title: post.title,
             description: post.description,

@@ -37,11 +37,18 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     return {
         title,
         description,
+        alternates: {
+            canonical: `https://avatarplay.in/game/${id}`,
+        },
+        robots: {
+            index: false,
+            follow: true,
+        },
         openGraph: {
             title,
             description,
             type: "video.other",
-            url: `https://avatarplay.in/play/${id}`,
+            url: `https://avatarplay.in/game/${id}`,
         }
     };
 }

@@ -7,6 +7,9 @@ const outfit = Outfit({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://avatarplay.in'),
+  alternates: {
+    canonical: './',
+  },
   title: {
     default: "Avatar Play - Play & Download Viral Indian Meme Games & Desi APKs",
     template: "%s | Avatar Play"
