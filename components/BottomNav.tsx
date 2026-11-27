@@ -33,7 +33,8 @@ export default function BottomNav() {
         {
             label: '3D Action',
             href: '/game/crt-city-80s-open-world',
-            icon: Joystick
+            icon: Joystick,
+            emoji: '🕹️'
         },
         {
             label: 'Profile',
@@ -54,6 +55,7 @@ export default function BottomNav() {
                             key={item.label}
                             href={item.href}
                             prefetch={false}
+                            aria-label={item.label}
                             className={cn(
                                 "flex flex-col items-center justify-center w-full h-full gap-1 active:scale-95 transition-all text-[10px] font-medium",
                                 isActive ? "text-white" : "text-muted-foreground hover:text-white/80"
@@ -66,18 +68,19 @@ export default function BottomNav() {
                                 )}>
                                     <UserAvatar user={user} className="w-6 h-6" />
                                 </div>
+                            ) : item.emoji ? (
+                                <div className={cn(
+                                    "w-6 h-6 flex items-center justify-center transition-all",
+                                    isActive ? "scale-110 drop-shadow-[0_0_8px_rgba(168,85,247,0.7)] opacity-100" : "opacity-75 hover:opacity-100"
+                                )}>
+                                    <span className="text-xl leading-none select-none">{item.emoji}</span>
+                                </div>
                             ) : (
                                 <item.icon className={cn(
                                     "w-6 h-6 transition-all",
                                     isActive && "fill-current"
                                 )} />
                             )}
-                            {/* Optional: We can hide labels if we want a pure icon look like Instagram */}
-                            {/* Instagram usually hides labels or shows them only for inactive? No, usually just icons. */}
-                            {/* User said "use icon instead of name in mobile view". So let's hide the name? 
-                                Or keep it very small? Instagram actually HAS no labels.
-                                Let's hide labels to match the request "use icon instead of name".
-                             */}
                         </Link>
                     );
                 })}
