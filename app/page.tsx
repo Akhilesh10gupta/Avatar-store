@@ -48,8 +48,10 @@ export default async function Home() {
     console.error("Error loading games from DB on homepage:", e);
   }
 
-  const displayGames = games;
-  const displayPopular = popularGames.length > 0 ? popularGames : games;
+  // Exclude standalone / dedicated 3D games (like CRT City) from the public homepage
+  const isHomeVisible = (g: Game) => !g.hiddenFromHome && g.id !== 'crt-city-80s-open-world';
+  const displayGames = games.filter(isHomeVisible);
+  const displayPopular = (popularGames.length > 0 ? popularGames : games).filter(isHomeVisible);
 
   return (
     <div className="flex flex-col gap-12 pb-16">

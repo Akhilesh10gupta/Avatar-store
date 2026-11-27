@@ -134,6 +134,7 @@ export interface Game {
     };
     gameplayVideo?: string; // URL for gameplay video
     featured?: boolean;
+    hiddenFromHome?: boolean; // When true, excluded from Homepage hero/featured/popular grids
     createdAt?: string;
     userId?: string; // Owner of the game
     updatedAt?: string;
