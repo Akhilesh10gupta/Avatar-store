@@ -12,8 +12,12 @@ export const revalidate = 3600;
 
 export default async function TopRatedPage() {
     const ratedGames = await getTopRatedGamesAdmin();
+    // Exclude standalone 3D action games (accessible via /3d-action)
+    const filteredGames = ratedGames.filter(
+        g => !g.hiddenFromHome && g.id !== 'crt-city-80s-open-world' && g.id !== 'midnight-neon-underground-3d'
+    );
     // Sort logic from original: (Downloads -> Rating)
-    const sortedGames = [...ratedGames].sort((a, b) => {
+    const sortedGames = [...filteredGames].sort((a, b) => {
         const downloadsA = a.downloadCount || 0;
         const downloadsB = b.downloadCount || 0;
         if (downloadsA !== downloadsB) {

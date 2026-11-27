@@ -12,5 +12,9 @@ export const revalidate = 3600;
 
 export default async function NewArrivalsPage() {
     const games = await getGamesAdmin();
-    return <NewArrivalsClient initialGames={games} />;
+    // Exclude standalone 3D action games (accessible via /3d-action)
+    const catalogGames = games.filter(
+        g => !g.hiddenFromHome && g.id !== 'crt-city-80s-open-world' && g.id !== 'midnight-neon-underground-3d'
+    );
+    return <NewArrivalsClient initialGames={catalogGames} />;
 }

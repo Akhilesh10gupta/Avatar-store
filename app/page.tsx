@@ -48,8 +48,8 @@ export default async function Home() {
     console.error("Error loading games from DB on homepage:", e);
   }
 
-  // Exclude standalone / dedicated 3D games (like CRT City) from the public homepage
-  const isHomeVisible = (g: Game) => !g.hiddenFromHome && g.id !== 'crt-city-80s-open-world';
+  // Exclude standalone / dedicated 3D games (like CRT City and Midnight Underground) from the public homepage
+  const isHomeVisible = (g: Game) => !g.hiddenFromHome && g.id !== 'crt-city-80s-open-world' && g.id !== 'midnight-neon-underground-3d';
   const displayGames = games.filter(isHomeVisible);
   const displayPopular = (popularGames.length > 0 ? popularGames : games).filter(isHomeVisible);
 
