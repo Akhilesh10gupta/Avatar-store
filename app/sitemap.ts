@@ -12,6 +12,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // 1. Core High-Value Static Routes
     const coreRoutes = [
         { route: '', priority: 1.0, freq: 'daily' as const },
+        { route: '/3d-action', priority: 0.9, freq: 'daily' as const },
         { route: '/browse', priority: 0.9, freq: 'daily' as const },
         { route: '/top-rated', priority: 0.8, freq: 'weekly' as const },
         { route: '/new-arrivals', priority: 0.8, freq: 'weekly' as const },

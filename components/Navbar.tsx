@@ -82,7 +82,7 @@ const Navbar = () => {
                 <div className="hidden md:flex items-center gap-8 text-sm font-medium text-white/70">
                     <Link href="/" prefetch={false} className="hover:text-white transition-colors">Store</Link>
                     <Link href="/browse" prefetch={false} className="hover:text-white transition-colors">Browse</Link>
-                    <Link href="/game/crt-city-80s-open-world" prefetch={false} className="hover:text-white transition-colors flex items-center gap-1.5 text-white">
+                    <Link href="/3d-action" prefetch={false} className="hover:text-white transition-colors flex items-center gap-1.5 text-white">
                         <span>🕹️</span> 3D Action
                     </Link>
                     <Link href="/blog" prefetch={false} className="hover:text-white transition-colors">Blog</Link>

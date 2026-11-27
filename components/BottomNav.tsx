@@ -32,7 +32,7 @@ export default function BottomNav() {
         },
         {
             label: '3D Action',
-            href: '/game/crt-city-80s-open-world',
+            href: '/3d-action',
             icon: Joystick,
             emoji: '🕹️'
         },

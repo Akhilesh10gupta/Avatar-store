@@ -1,5 +1,36 @@
 [
   {
+    "id": "midnight-neon-underground-3d",
+    "title": "Midnight Neon Underground 3D: Street Racing",
+    "description": "Experience high-octane 3D midnight street racing, drifting, and open-world city cruising directly in your browser. Tune your ride with custom neon underglow, burn rubber across rain-slicked city streets, and dominate the underground racing scene with full physics and controller support.",
+    "genre": "3D Racing",
+    "developer": "Night Drift Studios",
+    "platform": "Web",
+    "webPlayUrl": "https://nfsu2.xyz/",
+    "webPlayUrlAlternate": "https://nfsu2mod.xyz/",
+    "cardImage": "/games/midnight-underground-card.jpg",
+    "coverImage": "/games/midnight-underground-cover.jpg",
+    "icon": "/games/midnight-underground-card.jpg",
+    "screenshots": [
+      "/games/midnight-underground-cover.jpg",
+      "/games/midnight-underground-card.jpg"
+    ],
+    "hiddenFromHome": true,
+    "downloadCount": 580,
+    "rating": 4.8,
+    "ratingCount": 42,
+    "releaseDate": "2026-11",
+    "systemRequirements": {
+      "os": "Web Browser (Chrome, Edge, Firefox, Safari)",
+      "processor": "Hardware Acceleration / WebGL 2.0",
+      "memory": "4 GB RAM",
+      "graphics": "WebGL / WebGPU Compatible GPU",
+      "storage": "Zero Disk Space (Instant Play)"
+    },
+    "createdAt": "2026-11-27T17:59:47.762Z",
+    "updatedAt": "2026-11-27T17:59:47.763Z"
+  },
+  {
     "id": "1Ki48bfEqATM0hoFBeWI",
     "genre": "RPG",
     "developer": "Indian Game Dev",
