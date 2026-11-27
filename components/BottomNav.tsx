@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Gamepad2, Users, UserCircle, Newspaper } from 'lucide-react';
+import { Home, Gamepad2, Joystick, UserCircle, Newspaper } from 'lucide-react';
 import { useAuth } from '@/components/AuthProvider';
 import { cn } from '@/lib/utils';
 import { UserAvatar } from '@/components/UserAvatar';
@@ -31,9 +31,9 @@ export default function BottomNav() {
             icon: Newspaper
         },
         {
-            label: 'Community',
-            href: '/community',
-            icon: Users
+            label: '3D Action',
+            href: '/game/crt-city-80s-open-world',
+            icon: Joystick
         },
         {
             label: 'Profile',

@@ -82,7 +82,9 @@ const Navbar = () => {
                 <div className="hidden md:flex items-center gap-8 text-sm font-medium text-white/70">
                     <Link href="/" prefetch={false} className="hover:text-white transition-colors">Store</Link>
                     <Link href="/browse" prefetch={false} className="hover:text-white transition-colors">Browse</Link>
-                    <Link href="/community" prefetch={false} className="hover:text-white transition-colors">Community</Link>
+                    <Link href="/game/crt-city-80s-open-world" prefetch={false} className="hover:text-white text-primary flex items-center gap-1.5 transition-colors font-semibold">
+                        <span>🕹️</span> 3D Action
+                    </Link>
                     <Link href="/blog" prefetch={false} className="hover:text-white transition-colors">Blog</Link>
                     <Link href="/about" prefetch={false} className="hover:text-white transition-colors">About</Link>
                 </div>
@@ -174,8 +176,9 @@ const Navbar = () => {
                                 {[
                                     { label: 'Store', href: '/' },
                                     { label: 'Browse Games', href: '/browse' },
-                                    { label: 'Community', href: '/community' },
+                                    { label: '🕹️ 3D Action', href: '/game/crt-city-80s-open-world' },
                                     { label: 'Blog', href: '/blog' },
+                                    { label: 'Community', href: '/community' },
                                     { label: 'About Us', href: '/about' },
                                 ].map((link, idx) => (
                                     <motion.div key={idx} variants={itemVariants}>
