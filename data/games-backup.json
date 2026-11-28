@@ -1,51 +1,20 @@
 [
   {
-    "id": "midnight-neon-underground-3d",
-    "title": "Midnight Neon Underground 3D: Street Racing",
-    "description": "Experience high-octane 3D midnight street racing, drifting, and open-world city cruising directly in your browser. Tune your ride with custom neon underglow, burn rubber across rain-slicked city streets, and dominate the underground racing scene with full physics and controller support.",
-    "genre": "3D Racing",
-    "developer": "Night Drift Studios",
-    "platform": "Web",
-    "webPlayUrl": "https://nfsu2.xyz/",
-    "webPlayUrlAlternate": "https://nfsu2mod.xyz/",
-    "cardImage": "/games/midnight-underground-card.jpg",
-    "coverImage": "/games/midnight-underground-cover.jpg",
-    "icon": "/games/midnight-underground-card.jpg",
-    "screenshots": [
-      "/games/midnight-underground-cover.jpg",
-      "/games/midnight-underground-card.jpg"
-    ],
-    "hiddenFromHome": true,
-    "downloadCount": 580,
-    "rating": 4.8,
-    "ratingCount": 42,
-    "releaseDate": "2026-11",
-    "systemRequirements": {
-      "os": "Web Browser (Chrome, Edge, Firefox, Safari)",
-      "processor": "Hardware Acceleration / WebGL 2.0",
-      "memory": "4 GB RAM",
-      "graphics": "WebGL / WebGPU Compatible GPU",
-      "storage": "Zero Disk Space (Instant Play)"
-    },
-    "createdAt": "2026-11-27T17:59:47.762Z",
-    "updatedAt": "2026-11-27T17:59:47.763Z"
-  },
-  {
     "id": "1Ki48bfEqATM0hoFBeWI",
     "genre": "RPG",
     "developer": "Indian Game Dev",
     "releaseDate": "10 Jan 2026",
     "platform": "Both",
     "downloadLinkAndroid": "https://drive.google.com/file/d/1F2UNf1BuEBI1pwbepMtakuOHGdRXSXrL/view?usp=drivesdk",
-    "icon": "https://res.cloudinary.com/dzzawmvmc/image/upload/v1769098955/icons/gvwdkmex2yfmpss0ncyt.png",
+    "icon": "/media/gvwdkmex2yfmpss0ncyt.png",
     "screenshots": [],
     "userId": "snMmKMDFGSP9EnEkzdk43R2DQTj2",
     "createdAt": "2026-01-22T16:22:35.827Z",
     "downloadLink": "https://drive.google.com/file/d/1g9QKEI_gbbEYekyWPFrCEHVd1oc_WWmv/view?usp=drivesdk",
     "downloadLinkPC": "https://drive.google.com/file/d/1g9QKEI_gbbEYekyWPFrCEHVd1oc_WWmv/view?usp=drivesdk",
     "rating": 5,
-    "cardImage": "https://res.cloudinary.com/dzzawmvmc/image/upload/v1769099368/cards/qjvdewwznfwgl4fn42yo.png",
-    "coverImage": "https://res.cloudinary.com/dzzawmvmc/image/upload/v1769102385/covers/v2zzn2nla9ffsvcvrv94.png",
+    "cardImage": "/media/qjvdewwznfwgl4fn42yo.png",
+    "coverImage": "/media/v2zzn2nla9ffsvcvrv94.png",
     "gameplayVideo": "https://youtube.com/shorts/yZVp1JjYhuI?si=VtOBat6eimb2GWih",
     "ratingCount": 2,
     "systemRequirements": {
@@ -77,13 +46,13 @@
     "downloadLinkAndroid": "https://play.google.com/store/apps/details?id=com.Skorax.SheruBhaiGame",
     "webPlayUrl": "",
     "webPlayUrlAlternate": "",
-    "coverImage": "https://res.cloudinary.com/dzzawmvmc/image/upload/v1795452828/covers/f6jvr5liv1vt0xcsnniy.png",
-    "icon": "https://res.cloudinary.com/dzzawmvmc/image/upload/v1795452830/icons/es3bbtkc48fbda6duapj.png",
+    "coverImage": "/media/f6jvr5liv1vt0xcsnniy.png",
+    "icon": "/media/es3bbtkc48fbda6duapj.png",
     "gameplayVideo": "",
     "screenshots": [
-      "https://res.cloudinary.com/dzzawmvmc/image/upload/v1795452834/screenshots/xmb0ql9p1xunwivqjrk7.png",
-      "https://res.cloudinary.com/dzzawmvmc/image/upload/v1795452832/screenshots/zzc2zdyiq28ryqocr9yl.png",
-      "https://res.cloudinary.com/dzzawmvmc/image/upload/v1795452834/screenshots/cuq8ktwlzc36kqw7qhun.png"
+      "/media/xmb0ql9p1xunwivqjrk7.png",
+      "/media/zzc2zdyiq28ryqocr9yl.png",
+      "/media/cuq8ktwlzc36kqw7qhun.png"
     ],
     "systemRequirements": {
       "os": "Windows 10",
@@ -101,12 +70,12 @@
     "downloadLink": "https://play.google.com/store/apps/details?id=com.Skorax.SheruBhaiGame",
     "userId": "snMmKMDFGSP9EnEkzdk43R2DQTj2",
     "createdAt": "2026-11-23T16:53:55.663Z",
-    "cardImage": "https://res.cloudinary.com/dzzawmvmc/image/upload/v1795453305/cards/oiz6njnnaso78mffhijl.png",
+    "cardImage": "/media/oiz6njnnaso78mffhijl.png",
     "downloadLinkPC": "https://play.google.com/store/apps/details?id=com.Skorax.SheruBhaiGame",
     "updatedAt": "2026-11-23T17:01:46.014Z",
     "rating": 5,
     "ratingCount": 2,
-    "downloadCount": 1316
+    "downloadCount": 1334
   },
   {
     "id": "2jlIrmFNDoraiuVuLiSO",
@@ -115,14 +84,14 @@
     "releaseDate": "10 Jan 2026",
     "platform": "Android",
     "downloadLinkAndroid": "https://drive.google.com/file/d/1JKgAQxt0LDodFH4qBW8KljauIiHPBZqT/view?usp=drivesdk",
-    "coverImage": "https://res.cloudinary.com/dzzawmvmc/image/upload/v1769316583/covers/zra7ijufic8wwr4tygk8.png",
-    "cardImage": "https://res.cloudinary.com/dzzawmvmc/image/upload/v1769316592/cards/iwz7hsfd0zv7s7vssunv.png",
+    "coverImage": "/media/zra7ijufic8wwr4tygk8.png",
+    "cardImage": "/media/iwz7hsfd0zv7s7vssunv.png",
     "gameplayVideo": "https://www.instagram.com/reel/DQ37S4BE-Xz/?igsh=MTlvMndudzBkaWRyMg==",
     "screenshots": [],
     "downloadLink": "https://drive.google.com/file/d/1JKgAQxt0LDodFH4qBW8KljauIiHPBZqT/view?usp=drivesdk",
     "userId": "snMmKMDFGSP9EnEkzdk43R2DQTj2",
     "createdAt": "2026-01-25T04:49:53.301Z",
-    "icon": "https://res.cloudinary.com/dzzawmvmc/image/upload/v1769316678/icons/mnd94osicpzhy4gxnzot.png",
+    "icon": "/media/mnd94osicpzhy4gxnzot.png",
     "downloadLinkPC": "https://drive.google.com/file/d/1JKgAQxt0LDodFH4qBW8KljauIiHPBZqT/view?usp=drivesdk",
     "systemRequirements": {
       "os": "Windows 10 64-bit",
@@ -152,9 +121,9 @@
     "platform": "Android",
     "downloadLinkPC": "",
     "downloadLinkAndroid": "https://drive.google.com/file/d/11UAbiqZ4K7bVXtkb16brNqUjH62bAA7M/view?usp=drivesdk",
-    "coverImage": "https://res.cloudinary.com/dzzawmvmc/image/upload/v1769491394/covers/h8fhktovoej5lclowx3y.png",
-    "cardImage": "https://res.cloudinary.com/dzzawmvmc/image/upload/v1769491396/cards/brvzrihgoref6tfv6mnj.png",
-    "icon": "https://res.cloudinary.com/dzzawmvmc/image/upload/v1769491397/icons/zyjhoz4dlwquf3uwz8ip.png",
+    "coverImage": "/media/h8fhktovoej5lclowx3y.png",
+    "cardImage": "/media/brvzrihgoref6tfv6mnj.png",
+    "icon": "/media/zyjhoz4dlwquf3uwz8ip.png",
     "gameplayVideo": "https://youtube.com/shorts/HyGFWgNb4XQ?si=lQ1UCZ93XZAoZwbx",
     "screenshots": [],
     "downloadLink": "https://drive.google.com/file/d/11UAbiqZ4K7bVXtkb16brNqUjH62bAA7M/view?usp=drivesdk",
@@ -178,7 +147,7 @@
     "updatedAt": "2026-07-16T05:24:03.846Z",
     "rating": 4.2,
     "ratingCount": 5,
-    "downloadCount": 2693
+    "downloadCount": 2694
   },
   {
     "id": "4afYRLkLvG6DmmktCg3Q",
@@ -188,12 +157,12 @@
     "platform": "Android",
     "downloadLinkPC": "",
     "downloadLinkAndroid": "https://drive.google.com/file/d/1bopqgBTYB3GaJgys7qCKfNbNMNNS5YGh/view?usp=drivesdk",
-    "coverImage": "https://res.cloudinary.com/dzzawmvmc/image/upload/v1768835939/covers/p0appyicr1y2tsnmwwee.jpg",
-    "icon": "https://res.cloudinary.com/dzzawmvmc/image/upload/v1768835940/icons/cwfzyn57br8ubzdokdxx.png",
+    "coverImage": "/media/p0appyicr1y2tsnmwwee.jpg",
+    "icon": "/media/cwfzyn57br8ubzdokdxx.png",
     "gameplayVideo": "https://youtube.com/shorts/2W7_XgIlcIk?si=oN4L4rr0SQxPoENU",
     "screenshots": [
-      "https://res.cloudinary.com/dzzawmvmc/image/upload/v1768835942/screenshots/wvxjwtncdiywc1fxtje0.jpg",
-      "https://res.cloudinary.com/dzzawmvmc/image/upload/v1768835943/screenshots/g4guywww2nqcamq9pvcx.jpg"
+      "/media/wvxjwtncdiywc1fxtje0.jpg",
+      "/media/g4guywww2nqcamq9pvcx.jpg"
     ],
     "downloadLink": "https://drive.google.com/file/d/1bopqgBTYB3GaJgys7qCKfNbNMNNS5YGh/view?usp=drivesdk",
     "userId": "snMmKMDFGSP9EnEkzdk43R2DQTj2",
@@ -216,7 +185,7 @@
     "updatedAt": "2026-07-16T05:24:15.219Z",
     "rating": 4,
     "ratingCount": 4,
-    "downloadCount": 1047
+    "downloadCount": 1056
   },
   {
     "id": "54koWRc4JYUkjD3QJ84A",
@@ -226,12 +195,12 @@
     "platform": "Both",
     "downloadLinkPC": "https://drive.google.com/file/d/1n-I1jHpyOc2FEPGFyWZj1Fa_s61Lip3m/view?usp=sharing",
     "downloadLinkAndroid": "https://drive.google.com/file/d/1pCSgQJK4D1nW7xsipoGsYzUBV9K8A0-o/view?usp=sharing",
-    "coverImage": "https://res.cloudinary.com/dzzawmvmc/image/upload/v1768400535/covers/qq5qife0gz3oc08heyxc.png",
-    "icon": "https://res.cloudinary.com/dzzawmvmc/image/upload/v1768400537/icons/rargfmfe9ctp61ettc27.jpg",
+    "coverImage": "/media/qq5qife0gz3oc08heyxc.png",
+    "icon": "/media/rargfmfe9ctp61ettc27.jpg",
     "gameplayVideo": "https://youtu.be/0GE0pXmBqJg",
     "screenshots": [
-      "https://res.cloudinary.com/dzzawmvmc/image/upload/v1768400541/screenshots/jpyi4wdjaapiegaavbf2.jpg",
-      "https://res.cloudinary.com/dzzawmvmc/image/upload/v1768400543/screenshots/p41eo7kmxzttaxofczkb.jpg"
+      "/media/jpyi4wdjaapiegaavbf2.jpg",
+      "/media/p41eo7kmxzttaxofczkb.jpg"
     ],
     "downloadLink": "https://drive.google.com/file/d/1n-I1jHpyOc2FEPGFyWZj1Fa_s61Lip3m/view?usp=sharing",
     "userId": "EHxwhqIKfCZ8BPN8QulX3cJOJA83",
@@ -264,8 +233,8 @@
     "platform": "Both",
     "downloadLinkPC": "https://drive.google.com/file/d/1RYGsKdDu6NqeBB1TRTDpGbYtEJUzMdV3/view?usp=drive_link",
     "downloadLinkAndroid": "https://drive.google.com/file/d/13bEPxNR09mStj7nIbo4CQ_zMgAv1AYYz/view?usp=drive_link",
-    "coverImage": "https://res.cloudinary.com/dzzawmvmc/image/upload/v1768374118/covers/zt1upzjdlie4huz9a7gf.png",
-    "icon": "https://res.cloudinary.com/dzzawmvmc/image/upload/v1768374119/icons/fju1fohfpgwr3bb6tlgn.jpg",
+    "coverImage": "/media/zt1upzjdlie4huz9a7gf.png",
+    "icon": "/media/fju1fohfpgwr3bb6tlgn.jpg",
     "gameplayVideo": "https://youtu.be/PCoCg5wccyA",
     "screenshots": [],
     "downloadLink": "https://drive.google.com/file/d/1RYGsKdDu6NqeBB1TRTDpGbYtEJUzMdV3/view?usp=drive_link",
@@ -289,7 +258,7 @@
     },
     "description": "### Game OverviewDive into the hilariously terrifying world of \"Daddi Ka Adda,\" a unique indie horror experience that masterfully blends jump scares with the quirky, relatable humor of popular Indian memes. Based on the original short description, this game aims to provide a fresh take on the horror genre, appealing especially to players familiar with Indian internet culture. Prepare for an unforgettable journey where every shadow might hide a familiar face from your meme feed, transforming dread into delightful, if unsettling, laughter. \"Daddi Ka Adda\" promises a narrative steeped in cultural references, making it both a homage and a parody of viral phenomena.### Gameplay and ControlsIn \"Daddi Ka Adda,\" players navigate a series of dimly lit, atmospheric environments, solving puzzles and evading bizarre entities inspired by iconic Indian memes. The core gameplay loop involves exploration, item collection, and stealth mechanics as you try to uncover the secrets of Daddi's mysterious den. Interaction with the environment is key; players will click, drag, and combine objects in classic point-and-click adventure fashion, all while managing a sense of growing unease. Controls are intuitive, designed to allow players to fully immerse themselves in the game's unsettling yet comedic atmosphere, whether on PC with keyboard/mouse or on Android with touch controls. Quick reflexes will be essential when meme-monsters suddenly appear!### Features\"Daddi Ka Adda\" boasts a compelling blend of features designed to keep players on the edge of their seats and in stitches. Experience a truly unique horror narrative driven by Indian meme culture, offering a fresh perspective on what can be scary and funny simultaneously. Enjoy meticulously crafted environments filled with Easter eggs and references. Encounter a rogue's gallery of meme-inspired antagonists, each with their own peculiar behaviors and jump-scare triggers. The game also features an adaptive difficulty system, ensuring both seasoned horror enthusiasts and casual players can enjoy the experience. Prepare for a game that's as genuinely unsettling as it is genuinely hilarious.",
     "updatedAt": "2026-07-16T05:24:41.277Z",
-    "downloadCount": 2343
+    "downloadCount": 2344
   },
   {
     "id": "Bfxpkwzo4bteIXM5JVpv",
@@ -302,13 +271,13 @@
     "downloadLink": "https://drive.google.com/file/d/10LiHfRtcigJSSLasD0SfN5I0GzmZyP6o/view?usp=drivesdk",
     "userId": "snMmKMDFGSP9EnEkzdk43R2DQTj2",
     "createdAt": "2026-03-08T11:42:46.259Z",
-    "coverImage": "https://res.cloudinary.com/dzzawmvmc/image/upload/v1772970311/covers/ueqpdilnxabi2hhpoxze.png",
-    "cardImage": "https://res.cloudinary.com/dzzawmvmc/image/upload/v1772974998/cards/zbcbfvmu2cg4p0tcmemc.png",
-    "icon": "https://res.cloudinary.com/dzzawmvmc/image/upload/v1772974999/icons/yjo139xxe0zk19gyd2ts.jpg",
+    "coverImage": "/media/ueqpdilnxabi2hhpoxze.png",
+    "cardImage": "/media/zbcbfvmu2cg4p0tcmemc.png",
+    "icon": "/media/yjo139xxe0zk19gyd2ts.jpg",
     "gameplayVideo": "https://www.instagram.com/p/DVn3EGwE9t1/",
     "screenshots": [
-      "https://res.cloudinary.com/dzzawmvmc/image/upload/v1772976118/screenshots/hiqxrjssvrvwyukdowhb.jpg",
-      "https://res.cloudinary.com/dzzawmvmc/image/upload/v1772976118/screenshots/re3wbxnnimksldbj99p3.jpg"
+      "/media/hiqxrjssvrvwyukdowhb.jpg",
+      "/media/re3wbxnnimksldbj99p3.jpg"
     ],
     "systemRequirements": {
       "os": "Windows 10 64-bit",
@@ -362,7 +331,7 @@
       "https://img.itch.zone/aW1hZ2UvNTI5MTk0My8zMTc2MTkzNC5qcGc=/original/2G%2FIbZ.jpg",
       "https://img.itch.zone/aW1hZ2UvNTI5MTk0My8zMTc2MTkzMS5qcGc=/original/21WMc5.jpg"
     ],
-    "cardImage": "https://res.cloudinary.com/dzzawmvmc/image/upload/v1793897801/cards/vbczddccowjakorbywno.jpg",
+    "cardImage": "/media/vbczddccowjakorbywno.jpg",
     "systemRequirementsAndroid": {
       "os": "",
       "processor": "",
@@ -370,7 +339,7 @@
       "storage": "1 GB"
     },
     "updatedAt": "2026-11-05T17:00:17.615Z",
-    "downloadCount": 132
+    "downloadCount": 133
   },
   {
     "id": "CyMWSp2jGoOqqDiCTXL6",
@@ -384,8 +353,8 @@
     "downloadLinkAndroid": "",
     "webPlayUrl": "https://thaxnay.com/ramayana/",
     "webPlayUrlAlternate": "https://thaxnay.com/ramayana/",
-    "coverImage": "https://res.cloudinary.com/dzzawmvmc/image/upload/v1795767283/covers/unhaeuoigefwnedd7kjw.png",
-    "cardImage": "https://res.cloudinary.com/dzzawmvmc/image/upload/v1795767289/cards/qkuk61oyzl1wcklrbjh4.png",
+    "coverImage": "/media/unhaeuoigefwnedd7kjw.png",
+    "cardImage": "/media/qkuk61oyzl1wcklrbjh4.png",
     "icon": "",
     "gameplayVideo": "https://www.instagram.com/reel/DgMeqCzS1V4/?utm_source=ig_web_copy_link",
     "screenshots": [],
@@ -405,9 +374,9 @@
     "downloadLink": "",
     "userId": "snMmKMDFGSP9EnEkzdk43R2DQTj2",
     "createdAt": "2026-11-27T08:14:50.337Z",
-    "rating": 0,
-    "ratingCount": 0,
-    "downloadCount": 3
+    "rating": 5,
+    "ratingCount": 1,
+    "downloadCount": 5
   },
   {
     "id": "Eyx7SyCwpZCmQFIxITmn",
@@ -419,9 +388,9 @@
     "platform": "Web",
     "downloadLinkPC": "",
     "downloadLinkAndroid": "",
-    "coverImage": "https://res.cloudinary.com/dzzawmvmc/image/upload/v1795665248/covers/zlftgemokcxpceoe5zhp.png",
-    "cardImage": "https://res.cloudinary.com/dzzawmvmc/image/upload/v1795665250/cards/fum8s7hfgaswayv5ezxr.png",
-    "icon": "https://res.cloudinary.com/dzzawmvmc/image/upload/v1795665251/icons/gjus6oicy42zmz0yrslh.jpg",
+    "coverImage": "/media/zlftgemokcxpceoe5zhp.png",
+    "cardImage": "/media/fum8s7hfgaswayv5ezxr.png",
+    "icon": "/media/gjus6oicy42zmz0yrslh.jpg",
     "gameplayVideo": "https://youtu.be/kTJikKvjhKQ?si=hGFEYknQv6pliWUS",
     "screenshots": [],
     "systemRequirements": {
@@ -454,14 +423,14 @@
     "releaseDate": "15 jan 2026",
     "platform": "Android",
     "downloadLinkAndroid": "https://drive.google.com/file/d/18_P3HKw9RehPWB3GtzhlKwnRxYQbuhX3/view?usp=drivesdk",
-    "coverImage": "https://res.cloudinary.com/dzzawmvmc/image/upload/v1769490105/covers/ueyqzwmbndfhwmiwyi2u.png",
-    "cardImage": "https://res.cloudinary.com/dzzawmvmc/image/upload/v1769490108/cards/swzxpmxebtc969kv2dcn.png",
+    "coverImage": "/media/ueyqzwmbndfhwmiwyi2u.png",
+    "cardImage": "/media/swzxpmxebtc969kv2dcn.png",
     "gameplayVideo": "https://youtube.com/shorts/6x7yQRTV6H4?si=6whM4ZD0pSbByPQo",
     "screenshots": [],
     "downloadLink": "https://drive.google.com/file/d/18_P3HKw9RehPWB3GtzhlKwnRxYQbuhX3/view?usp=drivesdk",
     "userId": "snMmKMDFGSP9EnEkzdk43R2DQTj2",
     "createdAt": "2026-01-27T05:01:49.130Z",
-    "icon": "https://res.cloudinary.com/dzzawmvmc/image/upload/v1769490198/icons/rxvguegsymwe7toxnank.png",
+    "icon": "/media/rxvguegsymwe7toxnank.png",
     "downloadLinkPC": "https://drive.google.com/file/d/18_P3HKw9RehPWB3GtzhlKwnRxYQbuhX3/view?usp=drivesdk",
     "systemRequirements": {
       "os": "Windows 10 64-bit",
@@ -481,7 +450,7 @@
     "updatedAt": "2026-07-16T05:25:05.916Z",
     "rating": 3.8,
     "ratingCount": 5,
-    "downloadCount": 10577
+    "downloadCount": 10615
   },
   {
     "id": "GyebY17hD7xyv9EpWZOo",
@@ -489,12 +458,12 @@
     "platform": "Both",
     "gameplayVideo": "https://youtube.com/shorts/V6m3Qx3R1G4?si=qPqMaZkfFkaXgCXk",
     "downloadLink": "https://drive.google.com/file/d/1he7gSByQVUn5bHq7O_Xb5q_kf_sIRQxW/view?usp=sharing",
-    "coverImage": "https://res.cloudinary.com/dzzawmvmc/image/upload/v1768377830/covers/yd7es5fjwyz3ynvtz2l1.png",
-    "icon": "https://res.cloudinary.com/dzzawmvmc/image/upload/v1768377832/icons/tcidcacidmkddtjob5ib.jpg",
+    "coverImage": "/media/yd7es5fjwyz3ynvtz2l1.png",
+    "icon": "/media/tcidcacidmkddtjob5ib.jpg",
     "genre": "Driving",
     "downloadLinkPC": "https://drive.google.com/file/d/1he7gSByQVUn5bHq7O_Xb5q_kf_sIRQxW/view?usp=sharing",
     "screenshots": [
-      "https://res.cloudinary.com/dzzawmvmc/image/upload/v1768377833/screenshots/rxf66jem143xqull2tyy.jpg"
+      "/media/rxf66jem143xqull2tyy.jpg"
     ],
     "downloadLinkAndroid": "https://drive.google.com/file/d/1EBjqclv2E7AhjwpS-mbELofBjFqSF_FT/view?usp=sharing",
     "userId": "EHxwhqIKfCZ8BPN8QulX3cJOJA83",
@@ -518,7 +487,7 @@
     "updatedAt": "2026-07-16T05:25:17.233Z",
     "rating": 4,
     "ratingCount": 4,
-    "downloadCount": 1396
+    "downloadCount": 1397
   },
   {
     "id": "V4mLWxzaQFGqtUwLanXi",
@@ -527,7 +496,7 @@
     "releaseDate": "28 Nov 2025",
     "platform": "Android",
     "downloadLinkAndroid": "https://drive.google.com/file/d/13CPB388WgVUyENFrMebX2tBmzO_1g2XA/view?usp=drivesdk",
-    "icon": "https://res.cloudinary.com/dzzawmvmc/image/upload/v1768964869/icons/ni6lexka3ne0mdma0fv4.png",
+    "icon": "/media/ni6lexka3ne0mdma0fv4.png",
     "gameplayVideo": "https://www.instagram.com/reel/DQ-xbAvE1Oe/?igsh=MTRseWh6ZW4wb3Fvcg==",
     "screenshots": [],
     "downloadLink": "https://drive.google.com/file/d/13CPB388WgVUyENFrMebX2tBmzO_1g2XA/view?usp=drivesdk",
@@ -535,8 +504,8 @@
     "createdAt": "2026-01-21T03:07:50.129Z",
     "downloadLinkPC": "https://drive.google.com/file/d/13CPB388WgVUyENFrMebX2tBmzO_1g2XA/view?usp=drivesdk",
     "rating": 5,
-    "coverImage": "https://res.cloudinary.com/dzzawmvmc/image/upload/v1768965054/covers/ykwg236spu42u5dwcyyk.jpg",
-    "cardImage": "https://res.cloudinary.com/dzzawmvmc/image/upload/v1768968017/cards/grpisduxymc8uh6v0du3.jpg",
+    "coverImage": "/media/ykwg236spu42u5dwcyyk.jpg",
+    "cardImage": "/media/grpisduxymc8uh6v0du3.jpg",
     "ratingCount": 2,
     "systemRequirements": {
       "os": "Windows 7/8/10/11 64-bit",
@@ -563,18 +532,18 @@
     "releaseDate": "30 Nov 2025",
     "platform": "Android",
     "downloadLinkAndroid": "https://drive.google.com/file/d/1s_R6sRBdgT5UO0b376L8HNYszzdwjlNd/view?usp=drivesdk",
-    "coverImage": "https://res.cloudinary.com/dzzawmvmc/image/upload/v1768729505/covers/bpg91msv9ehnykh5hrso.jpg",
-    "icon": "https://res.cloudinary.com/dzzawmvmc/image/upload/v1768729507/icons/ohlqia8xhpoazjuwfp90.png",
+    "coverImage": "/media/bpg91msv9ehnykh5hrso.jpg",
+    "icon": "/media/ohlqia8xhpoazjuwfp90.png",
     "gameplayVideo": "https://www.instagram.com/reel/DRJ7859E0NZ/?igsh=MWRzdDBuczlrN3htdg==",
     "screenshots": [
-      "https://res.cloudinary.com/dzzawmvmc/image/upload/v1768729510/screenshots/kurrv52hmhlfswiyyizf.jpg",
-      "https://res.cloudinary.com/dzzawmvmc/image/upload/v1768729511/screenshots/toszxg5ldkyqvsw0cjmp.jpg",
-      "https://res.cloudinary.com/dzzawmvmc/image/upload/v1768729511/screenshots/odduittm0fvvfbwua8uv.jpg"
+      "/media/kurrv52hmhlfswiyyizf.jpg",
+      "/media/toszxg5ldkyqvsw0cjmp.jpg",
+      "/media/odduittm0fvvfbwua8uv.jpg"
     ],
     "downloadLink": "https://drive.google.com/file/d/1s_R6sRBdgT5UO0b376L8HNYszzdwjlNd/view?usp=drivesdk",
     "userId": "snMmKMDFGSP9EnEkzdk43R2DQTj2",
     "createdAt": "2026-01-18T09:45:11.571Z",
-    "cardImage": "https://res.cloudinary.com/dzzawmvmc/image/upload/v1768890925/cards/v9w1mfxnzhrtyygowgkj.png",
+    "cardImage": "/media/v9w1mfxnzhrtyygowgkj.png",
     "downloadLinkPC": "https://drive.google.com/file/d/1s_R6sRBdgT5UO0b376L8HNYszzdwjlNd/view?usp=drivesdk",
     "systemRequirements": {
       "os": "Windows 10/11 64-bit",
@@ -594,7 +563,7 @@
     "updatedAt": "2026-07-16T05:27:09.441Z",
     "rating": 4.181818181818182,
     "ratingCount": 11,
-    "downloadCount": 5241
+    "downloadCount": 5243
   },
   {
     "id": "YotyCfjOlFnJf3qqbylV",
@@ -606,9 +575,9 @@
     "downloadLinkPC": "",
     "downloadLinkAndroid": "",
     "webPlayUrl": "https://fightkaro.com",
-    "coverImage": "https://res.cloudinary.com/dzzawmvmc/image/upload/v1793892281/covers/ueqosrgfkkyltjpqaqmo.png",
-    "cardImage": "https://res.cloudinary.com/dzzawmvmc/image/upload/v1793892283/cards/xesrh5tlhuhta4ypcljy.png",
-    "icon": "https://res.cloudinary.com/dzzawmvmc/image/upload/v1793892285/icons/vzeid4nf7nnymgtsm8d5.png",
+    "coverImage": "/media/ueqosrgfkkyltjpqaqmo.png",
+    "cardImage": "/media/xesrh5tlhuhta4ypcljy.png",
+    "icon": "/media/vzeid4nf7nnymgtsm8d5.png",
     "gameplayVideo": "https://youtu.be/tXcecrkErnw?si=50E3XcEQOX73PaFm",
     "systemRequirements": {
       "os": "Windows 10",
@@ -630,24 +599,21 @@
     "rating": 5,
     "webPlayUrlAlternate": "https://fightkaro.com",
     "screenshots": [
-      "https://res.cloudinary.com/dzzawmvmc/image/upload/v1793937701/screenshots/rkpmmh7oqdvd1k3r32bf.jpg",
-      "https://res.cloudinary.com/dzzawmvmc/image/upload/v1793937703/screenshots/h56oumlwqfz1eirkflnq.jpg",
-      "https://res.cloudinary.com/dzzawmvmc/image/upload/v1793937704/screenshots/ao0wuqux4kbj1mdul3qp.jpg"
+      "/media/rkpmmh7oqdvd1k3r32bf.jpg",
+      "/media/h56oumlwqfz1eirkflnq.jpg",
+      "/media/ao0wuqux4kbj1mdul3qp.jpg"
     ],
     "updatedAt": "2026-11-06T04:01:47.224Z",
     "ratingCount": 2,
-    "downloadCount": 4814
+    "downloadCount": 4842
   },
   {
     "id": "crt-city-80s-open-world",
     "cardImage": "/games/crt-city-card.jpg",
     "featured": true,
-    "webPlayUrl": "https://vco.wtf/",
     "releaseDate": "2026-11-27",
     "icon": "/games/crt-city-card.jpg",
-    "rating": 4.9,
     "description": "Play CRT City online free in browser! Experience an immersive 80s neon-lit open-world action game with 3D city driving, free roam exploration, retro cars, missions, and action-packed gameplay. No installation or download needed.",
-    "ratingCount": 168,
     "title": "CRT City – 80s Neon Open World 3D",
     "platform": "Web",
     "screenshots": [
@@ -665,9 +631,12 @@
     "coverImage": "/games/crt-city-cover.jpg",
     "genre": "Action 3D",
     "developer": "CRT Studios",
-    "downloadCount": 650,
-    "updatedAt": "2026-11-27T17:35:02.445Z",
-    "hiddenFromHome": true
+    "webPlayUrl": "https://vco.wtf/",
+    "rating": 4.894674556213018,
+    "ratingCount": 169,
+    "hiddenFromHome": true,
+    "updatedAt": "2026-11-27T17:35:00.319Z",
+    "downloadCount": 659
   },
   {
     "id": "dNVow4cY9rOo8T1Mdzij",
@@ -678,12 +647,12 @@
     "platform": "PC",
     "downloadLinkPC": "https://drive.google.com/file/d/1WwMQmD2B7TyrtiUCuhVNNhTwSO7x45il/view?usp=drivesdk",
     "downloadLinkAndroid": "",
-    "coverImage": "https://res.cloudinary.com/dzzawmvmc/image/upload/v1768968979/covers/bvjvbnedg1vcebqmwo4b.jpg",
+    "coverImage": "/media/bvjvbnedg1vcebqmwo4b.jpg",
     "cardImage": "",
-    "icon": "https://res.cloudinary.com/dzzawmvmc/image/upload/v1768968981/icons/ctg3ncqzfpfgntesyuzq.png",
+    "icon": "/media/ctg3ncqzfpfgntesyuzq.png",
     "gameplayVideo": "https://youtube.com/shorts/bj-PyCDEfFQ?si=KMuJlUZWd7tLTIaJ",
     "screenshots": [
-      "https://res.cloudinary.com/dzzawmvmc/image/upload/v1768968983/screenshots/rp4cybim1k095bdabxx8.jpg"
+      "/media/rp4cybim1k095bdabxx8.jpg"
     ],
     "downloadLink": "https://drive.google.com/file/d/1WwMQmD2B7TyrtiUCuhVNNhTwSO7x45il/view?usp=drivesdk",
     "userId": "snMmKMDFGSP9EnEkzdk43R2DQTj2",
@@ -716,13 +685,13 @@
     "platform": "Both",
     "downloadLinkPC": "https://drive.google.com/drive/u/0/mobile/folders/1Cg_dhVsp6PBZ0qtZNE2SjE1G-OLYlrnP?usp=sharing",
     "downloadLinkAndroid": "https://drive.google.com/drive/u/0/mobile/folders/1m4oBcGAsiaPQM8U_mc8F1MLLC0GvhxYl?usp=sharing",
-    "coverImage": "https://res.cloudinary.com/dzzawmvmc/image/upload/v1792755233/covers/kuqpgjmqno3mlynnkg01.png",
+    "coverImage": "/media/kuqpgjmqno3mlynnkg01.png",
     "cardImage": "",
-    "icon": "https://res.cloudinary.com/dzzawmvmc/image/upload/v1792755236/icons/zy3tgl9tquky6qcbqzfd.png",
+    "icon": "/media/zy3tgl9tquky6qcbqzfd.png",
     "gameplayVideo": "https://youtu.be/456ceMGhi5I?si=9VE8p8z2Oh_fu-4k",
     "screenshots": [
-      "https://res.cloudinary.com/dzzawmvmc/image/upload/v1792755240/screenshots/kmeoa7ddnd6i2slttedl.jpg",
-      "https://res.cloudinary.com/dzzawmvmc/image/upload/v1792755238/screenshots/gql2mmhlu4lgdsnkkpr4.jpg"
+      "/media/kmeoa7ddnd6i2slttedl.jpg",
+      "/media/gql2mmhlu4lgdsnkkpr4.jpg"
     ],
     "systemRequirements": {
       "os": "Windows 10",
@@ -744,7 +713,7 @@
     "updatedAt": "2026-10-23T11:41:38.567Z",
     "rating": 5,
     "ratingCount": 1,
-    "downloadCount": 90
+    "downloadCount": 91
   },
   {
     "id": "lNPq2pBqwYZf2oD1fbIv",
@@ -777,12 +746,43 @@
     "downloadLink": "",
     "userId": "snMmKMDFGSP9EnEkzdk43R2DQTj2",
     "createdAt": "2026-11-26T19:05:32.517Z",
-    "cardImage": "https://res.cloudinary.com/dzzawmvmc/image/upload/v1795720007/cards/gvy5akqdbuabz0egi6h6.jpg",
-    "coverImage": "https://res.cloudinary.com/dzzawmvmc/image/upload/v1795720005/covers/tkl8tsnzqj4reccvppjm.jpg",
+    "cardImage": "/media/gvy5akqdbuabz0egi6h6.jpg",
+    "coverImage": "/media/tkl8tsnzqj4reccvppjm.jpg",
     "updatedAt": "2026-11-26T19:06:48.699Z",
     "rating": 5,
     "ratingCount": 1,
-    "downloadCount": 25
+    "downloadCount": 27
+  },
+  {
+    "id": "midnight-neon-underground-3d",
+    "cardImage": "/games/midnight-underground-card.jpg",
+    "webPlayUrl": "https://nfsu2.xyz/",
+    "releaseDate": "2026-11",
+    "icon": "/games/midnight-underground-card.jpg",
+    "description": "Experience high-octane 3D midnight street racing, drifting, and open-world city cruising directly in your browser. Tune your ride with custom neon underglow, burn rubber across rain-slicked city streets, and dominate the underground racing scene with full physics and controller support.",
+    "webPlayUrlAlternate": "https://nfsu2mod.xyz/",
+    "hiddenFromHome": true,
+    "title": "Midnight Neon Underground 3D: Street Racing",
+    "platform": "Web",
+    "screenshots": [
+      "/games/midnight-underground-cover.jpg",
+      "/games/midnight-underground-card.jpg"
+    ],
+    "createdAt": "2026-11-27T17:59:47.762Z",
+    "systemRequirements": {
+      "memory": "4 GB RAM",
+      "os": "Web Browser (Chrome, Edge, Firefox, Safari)",
+      "graphics": "WebGL / WebGPU Compatible GPU",
+      "storage": "Zero Disk Space (Instant Play)",
+      "processor": "Hardware Acceleration / WebGL 2.0"
+    },
+    "coverImage": "/games/midnight-underground-cover.jpg",
+    "genre": "3D Racing",
+    "developer": "Night Drift Studios",
+    "updatedAt": "2026-11-27T17:59:47.763Z",
+    "rating": 4.804651162790697,
+    "ratingCount": 43,
+    "downloadCount": 582
   },
   {
     "id": "nTbxEaazWzjtdOrXTtL5",
@@ -793,16 +793,16 @@
     "platform": "Both",
     "downloadLinkPC": "https://drive.google.com/file/d/11MNCbqsbBI6f-aToOHo2u6rdF3qPqM7o/view?usp=sharing",
     "downloadLinkAndroid": "https://drive.google.com/file/d/1zz2BxEtwM5kkwKpRJ58_el6yAyQGt6Iv/view?usp=drive_link",
-    "icon": "https://res.cloudinary.com/dzzawmvmc/image/upload/v1768493792/icons/mngvqu9ryfthbxytrh4q.jpg",
+    "icon": "/media/mngvqu9ryfthbxytrh4q.jpg",
     "gameplayVideo": "https://youtube.com/shorts/PDbYWh6cQgQ?si=UFr06_QoxFNuwaSq",
     "screenshots": [
-      "https://res.cloudinary.com/dzzawmvmc/image/upload/v1768493793/screenshots/zlstpsxhjtwou9mkocai.jpg"
+      "/media/zlstpsxhjtwou9mkocai.jpg"
     ],
     "downloadLink": "https://drive.google.com/file/d/11MNCbqsbBI6f-aToOHo2u6rdF3qPqM7o/view?usp=sharing",
     "userId": "EHxwhqIKfCZ8BPN8QulX3cJOJA83",
     "createdAt": "2026-01-15T16:16:34.237Z",
     "rating": 5,
-    "coverImage": "https://res.cloudinary.com/dzzawmvmc/image/upload/v1768494121/covers/z0ahr0cixov6qkq7awzk.png",
+    "coverImage": "/media/z0ahr0cixov6qkq7awzk.png",
     "ratingCount": 2,
     "systemRequirements": {
       "os": "Windows 10/11 64-bit",
@@ -829,15 +829,15 @@
     "platform": "Android",
     "downloadLinkPC": "",
     "downloadLinkAndroid": "https://drive.google.com/file/d/14HmhJlKh2UYMiCBM_d0pG_IQiyx_DeGd/view?usp=drivesdk",
-    "coverImage": "https://res.cloudinary.com/dzzawmvmc/image/upload/v1770693166/covers/ifnytothhh1pqxghphal.png",
-    "cardImage": "https://res.cloudinary.com/dzzawmvmc/image/upload/v1770693169/cards/vvybqsbtqpslgwkfg17d.png",
-    "icon": "https://res.cloudinary.com/dzzawmvmc/image/upload/v1770693171/icons/kttycpg573itzechlrc9.png",
+    "coverImage": "/media/ifnytothhh1pqxghphal.png",
+    "cardImage": "/media/vvybqsbtqpslgwkfg17d.png",
+    "icon": "/media/kttycpg573itzechlrc9.png",
     "gameplayVideo": "",
     "screenshots": [
-      "https://res.cloudinary.com/dzzawmvmc/image/upload/v1770693174/screenshots/jpxnsji0vjhydxhzefwd.png",
-      "https://res.cloudinary.com/dzzawmvmc/image/upload/v1770693174/screenshots/ycfrkifalum38wdkqpec.png",
-      "https://res.cloudinary.com/dzzawmvmc/image/upload/v1770693174/screenshots/mz7dt1fyddsbn9pwrdsh.png",
-      "https://res.cloudinary.com/dzzawmvmc/image/upload/v1770693175/screenshots/ymvek0amcwwx8ro3yyqr.png"
+      "/media/jpxnsji0vjhydxhzefwd.png",
+      "/media/ycfrkifalum38wdkqpec.png",
+      "/media/mz7dt1fyddsbn9pwrdsh.png",
+      "/media/ymvek0amcwwx8ro3yyqr.png"
     ],
     "downloadLink": "https://drive.google.com/file/d/14HmhJlKh2UYMiCBM_d0pG_IQiyx_DeGd/view?usp=drivesdk",
     "userId": "snMmKMDFGSP9EnEkzdk43R2DQTj2",
@@ -871,13 +871,13 @@
     "platform": "Both",
     "downloadLinkPC": "https://drive.google.com/file/d/1P_pBKYy20hfmal-bbHMYLfAuVzTwkKFU/view",
     "downloadLinkAndroid": "https://drive.google.com/file/d/16G6Ae67etI2qIl2EEa-NDhu1Z8MF-jUc/view",
-    "coverImage": "https://res.cloudinary.com/dzzawmvmc/image/upload/v1768398864/covers/lqdzqjpt9thosidy9fnx.png",
-    "icon": "https://res.cloudinary.com/dzzawmvmc/image/upload/v1768398865/icons/pwk9mb9cfaiofv34yzvg.jpg",
+    "coverImage": "/media/lqdzqjpt9thosidy9fnx.png",
+    "icon": "/media/pwk9mb9cfaiofv34yzvg.jpg",
     "gameplayVideo": "https://youtu.be/wXhcSAdF9uY",
     "screenshots": [
-      "https://res.cloudinary.com/dzzawmvmc/image/upload/v1768398867/screenshots/nhx8elumfwtesyowdnbk.jpg",
-      "https://res.cloudinary.com/dzzawmvmc/image/upload/v1768398868/screenshots/fe57u31rneq3dejla0lj.jpg",
-      "https://res.cloudinary.com/dzzawmvmc/image/upload/v1768398868/screenshots/sjhws6cnxwothjqh7jvn.jpg"
+      "/media/nhx8elumfwtesyowdnbk.jpg",
+      "/media/fe57u31rneq3dejla0lj.jpg",
+      "/media/sjhws6cnxwothjqh7jvn.jpg"
     ],
     "downloadLink": "https://drive.google.com/file/d/1P_pBKYy20hfmal-bbHMYLfAuVzTwkKFU/view",
     "userId": "EHxwhqIKfCZ8BPN8QulX3cJOJA83",
@@ -909,8 +909,8 @@
     "platform": "Both",
     "downloadLinkPC": "https://drive.google.com/file/d/18AEYIcE_iYyUQiDHMbSQoQg8Rm1z1A4a/view?usp=sharing",
     "downloadLinkAndroid": "https://drive.google.com/file/d/1hU_n9F2NPgRcaYI2_dA82TpTtJnGbN02/view?usp=drive_link",
-    "coverImage": "https://res.cloudinary.com/dzzawmvmc/image/upload/v1768376715/covers/hdf3fvkbz9qm99tqfxtw.png",
-    "icon": "https://res.cloudinary.com/dzzawmvmc/image/upload/v1768376717/icons/gvp5qbqqzbknoav425yb.jpg",
+    "coverImage": "/media/hdf3fvkbz9qm99tqfxtw.png",
+    "icon": "/media/gvp5qbqqzbknoav425yb.jpg",
     "gameplayVideo": "https://youtube.com/shorts/g-XkzZrcKPY?si=Blt4WODbFuQOhQx6",
     "screenshots": [],
     "downloadLink": "https://drive.google.com/file/d/18AEYIcE_iYyUQiDHMbSQoQg8Rm1z1A4a/view?usp=sharing",
@@ -944,8 +944,8 @@
     "platform": "Both",
     "downloadLinkPC": "https://drive.google.com/file/d/1F5X9Jtzum8lDIZ6sBzuaKPGJ8X76sO4c/view?usp=drivesdk",
     "downloadLinkAndroid": "https://drive.google.com/file/d/1esoZYScbR3AR3_l9y-7kpAfKYmCt31iv/view?usp=drivesdk",
-    "coverImage": "https://res.cloudinary.com/dzzawmvmc/image/upload/v1768836584/covers/blhzt5amoekqbcsjjane.png",
-    "icon": "https://res.cloudinary.com/dzzawmvmc/image/upload/v1768836585/icons/jwtxxiiuclbrbcq8kmk7.png",
+    "coverImage": "/media/blhzt5amoekqbcsjjane.png",
+    "icon": "/media/jwtxxiiuclbrbcq8kmk7.png",
     "gameplayVideo": "https://youtube.com/shorts/2SDtY-saBz8?si=HqSub8e5ZhTqIiep",
     "screenshots": [],
     "downloadLink": "https://drive.google.com/file/d/1F5X9Jtzum8lDIZ6sBzuaKPGJ8X76sO4c/view?usp=drivesdk",
