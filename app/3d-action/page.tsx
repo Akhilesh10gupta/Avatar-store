@@ -65,6 +65,19 @@ const ACTION_GAMES = [
         cardImage: '/games/midnight-underground-card.jpg',
         description: 'Experience high-octane 3D midnight street racing, drifting, and city cruising in your browser. Tune your ride with custom underglow, drift rain-slicked highways, and conquer the underground scene.',
         features: ['Realistic Drift Physics', 'Neon Night City', 'Controller & Keyboard Support']
+    },
+    {
+        id: 'tactical-infiltrator-3d',
+        title: 'Tactical Infiltrator 3D: Covert Ops',
+        tagline: 'High-Stakes Stealth Military Base Infiltration',
+        genre: 'Tactical FPS 3D',
+        rating: 4.9,
+        plays: '490+ Plays',
+        badge: 'Covert Ops',
+        badgeColor: 'from-emerald-500 to-teal-600',
+        cardImage: '/games/tactical-infiltrator-card.jpg',
+        description: 'Infiltrate high-security enemy military compounds undetected. Use silenced tactical weaponry, binoculars, surveillance cameras, and stealth combat tactics to complete covert ops in full 3D.',
+        features: ['Stealth & Silenced Combat', 'Enemy Base Infiltration', 'Tactical Surveillance & Sniper']
     }
 ];
 

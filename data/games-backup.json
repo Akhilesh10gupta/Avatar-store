@@ -970,5 +970,36 @@
     "title": "The Great Indian Pixel Adventure",
     "updatedAt": "2026-07-16T05:26:43.112Z",
     "downloadCount": 640
+  },
+  {
+    "id": "tactical-infiltrator-3d",
+    "title": "Tactical Infiltrator 3D: Covert Ops",
+    "genre": "Tactical FPS 3D",
+    "platform": "Web",
+    "releaseDate": "2026-11",
+    "developer": "Covert Stealth Studios",
+    "webPlayUrl": "https://playigi.com/",
+    "webPlayUrlAlternate": "https://playigi.com/",
+    "cardImage": "/games/tactical-infiltrator-card.jpg",
+    "coverImage": "/games/tactical-infiltrator-cover.jpg",
+    "icon": "/games/tactical-infiltrator-card.jpg",
+    "screenshots": [
+      "/games/tactical-infiltrator-cover.jpg",
+      "/games/tactical-infiltrator-card.jpg"
+    ],
+    "hiddenFromHome": true,
+    "rating": 4.88,
+    "ratingCount": 52,
+    "downloadCount": 493,
+    "description": "Step into the boots of an elite covert operative tasked with penetrating deep behind enemy lines. Infiltrate heavily guarded military airbases, snowy radar compounds, and missile depots undetected. Use silenced weaponry, surveillance binoculars, security hacking, and tactical stealth to eliminate threats and extract critical intelligence in full 3D.",
+    "systemRequirements": {
+      "os": "Web Browser (Chrome, Edge, Firefox, Safari)",
+      "processor": "WebGL 2.0 / WebAssembly Capable CPU",
+      "memory": "4 GB RAM",
+      "graphics": "Hardware Accelerated GPU",
+      "storage": "Zero Disk Space (Instant Play)"
+    },
+    "createdAt": "2026-11-28T11:11:57.373Z",
+    "updatedAt": "2026-11-28T11:11:57.374Z"
   }
 ]

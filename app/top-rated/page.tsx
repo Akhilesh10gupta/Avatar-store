@@ -14,7 +14,7 @@ export default async function TopRatedPage() {
     const ratedGames = await getTopRatedGamesAdmin();
     // Exclude standalone 3D action games (accessible via /3d-action)
     const filteredGames = ratedGames.filter(
-        g => !g.hiddenFromHome && g.id !== 'crt-city-80s-open-world' && g.id !== 'midnight-neon-underground-3d'
+        g => !g.hiddenFromHome && g.id !== 'crt-city-80s-open-world' && g.id !== 'midnight-neon-underground-3d' && g.id !== 'tactical-infiltrator-3d'
     );
     // Sort logic from original: (Downloads -> Rating)
     const sortedGames = [...filteredGames].sort((a, b) => {
