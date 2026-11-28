@@ -48,8 +48,8 @@ export default async function Home() {
     console.error("Error loading games from DB on homepage:", e);
   }
 
-  // Exclude standalone / dedicated 3D games (like CRT City, Midnight Underground, Tactical Infiltrator) from the public homepage
-  const isHomeVisible = (g: Game) => !g.hiddenFromHome && g.id !== 'crt-city-80s-open-world' && g.id !== 'midnight-neon-underground-3d' && g.id !== 'tactical-infiltrator-3d';
+  // Exclude standalone / dedicated 3D games from the public homepage
+  const isHomeVisible = (g: Game) => !g.hiddenFromHome && g.id !== 'crt-city-80s-open-world' && g.id !== 'midnight-neon-underground-3d' && g.id !== 'tactical-infiltrator-3d' && g.id !== 'apex-outlaw-3d';
   const displayGames = games.filter(isHomeVisible);
   const displayPopular = (popularGames.length > 0 ? popularGames : games).filter(isHomeVisible);
 

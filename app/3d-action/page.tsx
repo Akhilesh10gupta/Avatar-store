@@ -78,6 +78,19 @@ const ACTION_GAMES = [
         cardImage: '/games/tactical-infiltrator-card.jpg',
         description: 'Infiltrate high-security enemy military compounds undetected. Use silenced tactical weaponry, binoculars, surveillance cameras, and stealth combat tactics to complete covert ops in full 3D.',
         features: ['Stealth & Silenced Combat', 'Enemy Base Infiltration', 'Tactical Surveillance & Sniper']
+    },
+    {
+        id: 'apex-outlaw-3d',
+        title: 'Apex Outlaw 3D: High-Speed Police Pursuit',
+        tagline: 'High-Speed Open World Police Chases & Outlaw Racing',
+        genre: '3D Pursuit Racing',
+        rating: 4.9,
+        plays: '740+ Plays',
+        badge: 'Police Pursuit',
+        badgeColor: 'from-amber-500 to-orange-600',
+        cardImage: '/games/apex-outlaw-card.jpg',
+        description: 'Tear through open highways and industrial docklands in full 3D. Outrun aggressive police cruisers, smash through roadblocks, climb the blacklist hierarchy, and become the most elusive street racer in town.',
+        features: ['Intense Police Pursuit System', 'Heat Levels & Roadblocks', 'Daylight Autumn Open World']
     }
 ];
 

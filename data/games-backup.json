@@ -1001,5 +1001,36 @@
     },
     "createdAt": "2026-11-28T11:11:57.373Z",
     "updatedAt": "2026-11-28T11:11:57.374Z"
+  },
+  {
+    "id": "apex-outlaw-3d",
+    "title": "Apex Outlaw 3D: High-Speed Police Pursuit",
+    "genre": "3D Pursuit Racing",
+    "platform": "Web",
+    "releaseDate": "2026-11",
+    "developer": "Apex Velocity Studios",
+    "webPlayUrl": "https://web.nfsmwo.com/",
+    "webPlayUrlAlternate": "https://web.nfsmwo.com/",
+    "cardImage": "/games/apex-outlaw-card.jpg",
+    "coverImage": "/games/apex-outlaw-cover.jpg",
+    "icon": "/games/apex-outlaw-card.jpg",
+    "screenshots": [
+      "/games/apex-outlaw-cover.jpg",
+      "/games/apex-outlaw-card.jpg"
+    ],
+    "hiddenFromHome": true,
+    "rating": 4.91,
+    "ratingCount": 68,
+    "downloadCount": 742,
+    "description": "Tear through open highways and industrial docklands in full 3D. Outrun aggressive police cruisers, smash through roadblocks, climb the blacklist hierarchy, and become the most elusive street racer in town.",
+    "systemRequirements": {
+      "os": "Web Browser (Chrome, Edge, Firefox, Safari)",
+      "processor": "WebGL 2.0 / WebAssembly Capable CPU",
+      "memory": "4 GB RAM",
+      "graphics": "Hardware Accelerated GPU",
+      "storage": "Zero Disk Space (Instant Play)"
+    },
+    "createdAt": "2026-11-28T11:20:30.548Z",
+    "updatedAt": "2026-11-28T11:20:30.549Z"
   }
 ]
